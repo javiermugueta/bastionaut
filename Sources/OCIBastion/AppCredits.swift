@@ -2,7 +2,7 @@ import AppKit
 
 /// Autoría: código original de Israel y mejoras de Javier Mugueta.
 enum AppCredits {
-    static let originalAuthor = "Israel (israelgoracle)"
+    static let originalAuthor = "Israel Gutierrez"
     static let originalRepository = URL(string: "https://github.com/israelgoracle/OCIBastion_MacOs")!
     static let improvementsBy = "Javier Mugueta"
 
