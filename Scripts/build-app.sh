@@ -4,7 +4,9 @@
 # Variables opcionales:
 #   CONFIGURATION  debug | release (por defecto: release)
 #   UNIVERSAL      1 para generar binario arm64 + x86_64 (por defecto: 1 en release)
-#   SIGN_IDENTITY  identidad de firma (por defecto: "-" firma ad hoc)
+#   SIGN_IDENTITY  identidad de firma. Por defecto, tu certificado «Apple Development» si lo hay
+#                  (identidad estable: el Llavero y la carpeta de datos no vuelven a pedir permiso
+#                  tras cada compilación); si no, firma ad hoc ("-").
 #                  p. ej. "Developer ID Application: Nombre (TEAMID)"
 #   BUNDLE_ID      identificador del bundle (por defecto: com.javiermugueta.ocibastion)
 #   VERSION        CFBundleShortVersionString (por defecto: 0.1.0)
@@ -17,7 +19,11 @@ cd "${0:A:h:h}"
 
 configuration="${CONFIGURATION:-release}"
 universal="${UNIVERSAL:-$([[ $configuration == release ]] && echo 1 || echo 0)}"
-sign_identity="${SIGN_IDENTITY:--}"
+# Por huella SHA-1: puede haber varios «Apple Development» con el mismo nombre.
+default_identity="$(security find-identity -v -p codesigning 2>/dev/null | awk '/"Apple Development: /{print $2; exit}')"
+local_signing=0
+[[ -z "${SIGN_IDENTITY:-}" ]] && local_signing=1
+sign_identity="${SIGN_IDENTITY:-${default_identity:--}}"
 bundle_id="${BUNDLE_ID:-com.javiermugueta.ocibastion}"
 version="${VERSION:-0.1.0}"
 build_number="${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}"
@@ -36,7 +42,11 @@ fi
 swift build "${build_args[@]}"
 binary="$(swift build "${build_args[@]}" --show-bin-path)/OCIBastion"
 
-app="dist/Bastionaut.app"
+# La build de la App Store no se puede abrir en local: va aparte para no pisar la que usas.
+app_dir=dist
+[[ $edition == appstore ]] && app_dir=dist/appstore
+mkdir -p "$app_dir"
+app="$app_dir/Bastionaut.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary" "$app/Contents/MacOS/OCIBastion"
@@ -81,9 +91,9 @@ if [[ $edition == appstore ]]; then
     --entitlements Assets/OCIBastion.appstore.entitlements \
     --sign "$sign_identity" "$app"
   codesign --verify --deep --strict --verbose=2 "$app"
-elif [[ $sign_identity == "-" ]]; then
+elif [[ $local_signing == 1 || $sign_identity == "-" ]]; then
   # Firma local, también con sandbox: así se prueba lo mismo que se distribuye.
-  codesign --force --sign - --entitlements Assets/OCIBastion.entitlements "$app"
+  codesign --force --sign "$sign_identity" --entitlements Assets/OCIBastion.entitlements "$app"
 else
   # Hardened Runtime + marca de tiempo segura: obligatorios para notarizar.
   codesign --force --options runtime --timestamp \

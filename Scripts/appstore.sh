@@ -32,7 +32,7 @@ EDITION=appstore CONFIGURATION=release SIGN_IDENTITY="$app_identity" VERSION="$v
 
 pkg="dist/Bastionaut-${version}-appstore.pkg"
 rm -f "$pkg"
-productbuild --component "dist/Bastionaut.app" /Applications --sign "$installer_identity" "$pkg"
+productbuild --component "dist/appstore/Bastionaut.app" /Applications --sign "$installer_identity" "$pkg"
 
 xcrun altool --validate-app -f "$pkg" -t macos --apiKey "$key_id" --apiIssuer "$issuer_id"
 if [[ "${UPLOAD:-1}" == 1 ]]; then

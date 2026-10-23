@@ -38,7 +38,7 @@ Allow group BastionUsers to read instance-family in compartment MiCompartimento
 
 ```sh
 ./Scripts/build-app.sh
-open "dist/Bastionaut.app"
+open "dist/Bastionaut.app"   # firmada con tu «Apple Development» (o ad hoc) y con sandbox
 ```
 
 El icono fuente está en `Assets/AppIcon.png`. Si se modifica, ejecuta `Scripts/build-icon.sh` para regenerar `Assets/AppIcon.icns`.
@@ -49,7 +49,7 @@ Por defecto se compila en `release` como binario universal (arm64 + x86_64) con 
 
 Hay **una sola versión** de la app, siempre en sandbox. Solo cambia la firma según el canal:
 
-- **Mac App Store**: `PROVISIONING_PROFILE=~/Downloads/xxx.provisionprofile ./Scripts/appstore.sh` compila, firma con Apple Distribution, crea el `.pkg`, lo valida y lo sube a App Store Connect con la clave de API de `~/.private_keys`. Subir no publica nada.
+- **Mac App Store**: `PROVISIONING_PROFILE=~/.private_keys/xxx.provisionprofile ./Scripts/appstore.sh` compila en `dist/appstore/` (esa copia no se puede abrir en local), firma con Apple Distribution, crea el `.pkg`, lo valida y lo sube a App Store Connect con la clave de API de `~/.private_keys`. Subir no publica nada.
 - **Fuera de la tienda** (`.dmg` notarizado con Developer ID), con `./Scripts/release.sh`.
 
 Al pasar a sandbox, `Assets/container-migration.plist` hace que macOS mueva los datos de versiones anteriores (`~/Library/Application Support/OCIBastion`) al contenedor de la app.
