@@ -2,23 +2,6 @@ import CryptoKit
 import Foundation
 import Security
 
-/// Versión de la app: la de la Mac App Store va en sandbox y no lee `~/.oci` ni `~/.ssh`.
-enum AppEdition {
-    #if APPSTORE
-    static let isAppStore = true
-    #else
-    static let isAppStore = false
-    #endif
-}
-
-/// De dónde salen las credenciales de OCI de una conexión.
-enum OCICredentialSource: String, Codable, CaseIterable {
-    /// Un perfil de `~/.oci/config` (solo fuera de la App Store).
-    case configFile
-    /// Una cuenta guardada en la app, con la clave privada en el Llavero.
-    case app
-}
-
 /// Cuenta de OCI guardada en la app. La clave privada no está aquí: vive en el Llavero.
 struct OCIAccount: Codable, Identifiable, Equatable, Hashable {
     var id = UUID()

@@ -156,15 +156,16 @@
         }
       }
     },
-    "**Tus propias claves**: eliges un par de claves que ya tengas. Si la privada tiene contraseña, cárgala antes en `ssh-agent`.": {
+    "**Tus propias claves**: eliges un par de claves que ya tengas y la app guarda una copia privada. Deben ser claves sin contraseña; si la tuya la tiene, usa las temporales.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "**Your own keys**: pick a key pair you already have. If the private key has a passphrase, load it into `ssh-agent` first."
+            "value": "**Your own keys**: pick a key pair you already have and the app keeps a private copy. They must not have a passphrase; if yours does, use temporary keys."
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "**macOS 14 Sonoma** o posterior.": {
       "localizations": {
@@ -250,8 +251,7 @@
             "value": "About OCI Bastion"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Ajustes": {
       "localizations": {
@@ -319,16 +319,6 @@
         }
       }
     },
-    "Archivo": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "File"
-          }
-        }
-      }
-    },
     "Atajo: pega el fragmento de configuración que te da la consola de OCI": {
       "localizations": {
         "en": {
@@ -337,8 +327,7 @@
             "value": "Shortcut: paste the configuration snippet the OCI console gives you"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Atrás": {
       "localizations": {
@@ -368,8 +357,7 @@
             "value": "Original author: %@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Ayuda": {
       "localizations": {
@@ -410,6 +398,17 @@
           }
         }
       }
+    },
+    "Añadir cuenta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add account"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Base de datos": {
       "localizations": {
@@ -612,8 +611,7 @@
             "value": "Valid RSA key · fingerprint %@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Clave privada": {
       "localizations": {
@@ -633,8 +631,7 @@
             "value": "API private key"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Clave privada de la instancia": {
       "localizations": {
@@ -836,16 +833,6 @@
         }
       }
     },
-    "Configuración OCI": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCI configuration"
-          }
-        }
-      }
-    },
     "Configuración actual": {
       "localizations": {
         "en": {
@@ -884,8 +871,7 @@
             "value": "Key passphrase"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Copiar SSH del Bastion": {
       "localizations": {
@@ -907,17 +893,6 @@
         }
       }
     },
-    "Credenciales": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Credentials"
-          }
-        }
-      },
-      "shouldTranslate": true
-    },
     "Creo una clave por sesión, la guardo solo para ti y la borro al caducar.": {
       "localizations": {
         "en": {
@@ -936,8 +911,7 @@
             "value": "Account"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Cuenta %@": {
       "localizations": {
@@ -947,8 +921,7 @@
             "value": "Account %@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Cuenta OCI": {
       "localizations": {
@@ -968,8 +941,7 @@
             "value": "Original code on GitHub"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "DER truncado.": {
       "localizations": {
@@ -1179,8 +1151,7 @@
             "value": "The previous SSH (PID %@) is still running; I won’t open another until it exits."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El archivo contiene conexiones duplicadas o sin nombre.": {
       "localizations": {
@@ -1211,6 +1182,17 @@
           }
         }
       }
+    },
+    "El asistente te pide la tenancy, el usuario, la región y la clave privada. Lo más rápido: pega el **fragmento de configuración** que te enseña la consola al crear la clave y se rellena solo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The assistant asks for the tenancy, user, region and private key. Quickest way: paste the **configuration snippet** the console shows when you create the key and it fills itself in."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "El perfil «%@» no existe en la configuración OCI.": {
       "localizations": {
@@ -1246,8 +1228,7 @@
             "value": "El puerto local %1$@ lo está usando otro proceso (PID %2$@). Libéralo o elige otro."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El puerto local %@ lo está usando otro programa. Libéralo o elige otro.": {
       "localizations": {
@@ -1257,8 +1238,7 @@
             "value": "Local port %@ is in use by another program. Free it or pick another one."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El túnel SSH terminó.": {
       "localizations": {
@@ -1288,8 +1268,7 @@
             "value": "Choose .pem file…"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Elegir…": {
       "localizations": {
@@ -1411,6 +1390,17 @@
         }
       }
     },
+    "Esta conexión necesita tu clave de API de OCI. Añádela con el asistente; solo se hace una vez.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This connection needs your OCI API key. Add it with the assistant; you only do it once."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨.": {
       "localizations": {
         "en": {
@@ -1419,8 +1409,7 @@
             "value": "This connection has no OCI account. Pick one with the assistant ✨."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Este Bastion no tiene SOCKS5 activado": {
       "localizations": {
@@ -1540,8 +1529,7 @@
             "value": "The API private key is missing: choose the .pem file or paste it."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta la clave privada del servidor SSH.": {
       "localizations": {
@@ -1553,6 +1541,17 @@
         }
       }
     },
+    "Falta la cuenta de OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI account missing"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Falta «%@».": {
       "localizations": {
         "en": {
@@ -1561,8 +1560,7 @@
             "value": "“%@” is missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Faltan la IP y el usuario del servidor.": {
       "localizations": {
@@ -1634,6 +1632,17 @@
         }
       }
     },
+    "Hablo directamente con la API de OCI con tu clave de API, que guardo en el Llavero. No hace falta el OCI CLI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I talk straight to the OCI API with your API key, which I keep in the Keychain. No OCI CLI needed."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Host": {
       "shouldTranslate": false
     },
@@ -1695,8 +1704,7 @@
             "value": "Fingerprint (optional)"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "IP privada o DNS": {
       "localizations": {
@@ -1738,17 +1746,6 @@
         }
       }
     },
-    "Introducir mis datos": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter my details"
-          }
-        }
-      },
-      "shouldTranslate": true
-    },
     "La **Bitácora 📜** de cada conexión cuenta paso a paso lo que ha pasado. Es lo primero que hay que mirar.": {
       "localizations": {
         "en": {
@@ -1758,6 +1755,28 @@
           }
         }
       }
+    },
+    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «OCI Bastion».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your OCI **API key** is stored encrypted in the macOS **Keychain**. You can delete it from Keychain Access by searching for “OCI Bastion”."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "La app funciona dentro del **sandbox** de macOS: solo ve los archivos que tú le das.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app runs inside the macOS **sandbox**: it only sees the files you give it."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "La app habla **solo** con la API de OCI de tu región y con el Bastion. No hay telemetría.": {
       "localizations": {
@@ -1787,8 +1806,7 @@
             "value": "I’ll work it out from the key"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La clave de API %@ está cifrada. Añade pass_phrase al perfil OCI.": {
       "localizations": {
@@ -1800,15 +1818,27 @@
         }
       }
     },
-    "La clave de API o su huella no coinciden con las del perfil de `~/.oci/config`, o la hora del Mac está desajustada.": {
+    "La clave de API no está registrada en tu usuario de OCI (o es de otro usuario), o la hora del Mac está desajustada.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The API key or its fingerprint don’t match the `~/.oci/config` profile, or your Mac’s clock is off."
+            "value": "The API key isn’t registered on your OCI user (or belongs to another user), or your Mac’s clock is off."
           }
         }
-      }
+      },
+      "shouldTranslate": true
+    },
+    "La clave privada se guarda en el **Llavero** de macOS. Si estaba protegida con contraseña, la app te la pide una vez al importarla.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The private key is stored in the macOS **Keychain**. If it’s passphrase-protected, the app asks for it once when you import it."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "La clave privada tiene contraseña. Cárgala antes en ssh-agent.": {
       "localizations": {
@@ -1860,15 +1890,16 @@
         }
       }
     },
-    "La configuración se guarda en `~/Library/Application Support/OCIBastion` con permisos 0600. No se guardan contraseñas ni claves de API.": {
+    "La configuración, las claves temporales (que se borran al caducar) y las copias de las claves de tus servidores viven en la carpeta privada de la app, con permisos 0600.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Settings are stored in `~/Library/Application Support/OCIBastion` with 0600 permissions. No passwords or API keys are stored."
+            "value": "Settings, temporary keys (deleted when they expire) and the copies of your servers’ keys live in the app’s private folder, with 0600 permissions."
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "La duración de sesión debe estar entre 30 y 180 minutos.": {
       "localizations": {
@@ -1914,8 +1945,7 @@
             "value": "La huella escrita (%1$@) no corresponde a esta clave (%2$@). ¿Es la clave correcta?"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La sesión de OCI caduca a las %@": {
       "localizations": {
@@ -1947,25 +1977,16 @@
         }
       }
     },
-    "Las claves de tus **servidores** son otra cosa: las eliges en cada servidor o túnel, y pueden ser distintas en cada uno.": {
+    "Las claves de tus **servidores** son otra cosa: las eliges en cada servidor o túnel, y pueden ser distintas en cada uno. Al elegirlas, la app guarda una copia privada dentro de ella (macOS no le deja volver a leer el archivo original).": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your **servers’** keys are a separate thing: you pick them for each server or tunnel, and they can differ for each one."
+            "value": "Your **servers’** keys are a separate thing: you pick them for each server or tunnel, and they can differ for each one. When you pick one, the app keeps a private copy (macOS won’t let it read the original file again)."
           }
         }
-      }
-    },
-    "Las claves temporales viven en esa misma carpeta (`keys`) y se borran al caducar.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temporary keys live in that same folder (`keys`) and are deleted when they expire."
-          }
-        }
-      }
+      },
+      "shouldTranslate": true
     },
     "Las sesiones del Bastion caducan (como mucho a las 3 horas). La cuenta atrás de la tarjeta principal te dice cuánto queda.": {
       "localizations": {
@@ -2038,8 +2059,7 @@
             "value": "Improvements: %@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Mi servidor": {
       "localizations": {
@@ -2059,8 +2079,7 @@
             "value": "My tenancy"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Mis propias claves": {
       "localizations": {
@@ -2092,15 +2111,27 @@
         }
       }
     },
-    "Necesitas un perfil de OCI con clave de API, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**.": {
+    "Necesitas tu clave de API de OCI, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You need an OCI profile with an API key, a bastion that can reach your machines and your IP on its allowed list. The details are in **Requirements**."
+            "value": "You need your OCI API key, a bastion that can reach your machines and your IP on its allowed list. The details are in **Requirements**."
           }
         }
-      }
+      },
+      "shouldTranslate": true
+    },
+    "Necesito los datos de tu clave de API de OCI. Los encuentras en la consola de OCI › tu perfil › **Claves de API**.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I need your OCI API key details. You’ll find them in the OCI console › your profile › **API keys**."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Necesito tu ayuda": {
       "localizations": {
@@ -2166,8 +2197,7 @@
             "value": "I can’t find this account’s API key in the Keychain. Add it again with the assistant ✨."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "No encuentro un puerto local libre.": {
       "localizations": {
@@ -2247,8 +2277,7 @@
             "value": "Couldn’t save the key to the Keychain (%d)."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "No se pudo guardar la configuración: %@": {
       "localizations": {
@@ -2397,8 +2426,7 @@
             "value": "Tenancy OCID"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "OCID del Bastion": {
       "localizations": {
@@ -2418,8 +2446,7 @@
             "value": "User OCID"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Ocultar": {
       "localizations": {
@@ -2477,26 +2504,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Go through an SSH server"
-          }
-        }
-      }
-    },
-    "Perfil": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profile"
-          }
-        }
-      }
-    },
-    "Perfil OCI": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCI profile"
           }
         }
       }
@@ -2732,8 +2739,7 @@
             "value": "Fill in the fields ✨"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Renombrar conexión": {
       "localizations": {
@@ -2970,16 +2976,6 @@
         }
       }
     },
-    "Si no lo tienes: consola de OCI › tu perfil › **Claves de API** › Añadir clave de API, y copia el fragmento de configuración que te muestra en `~/.oci/config`. O ejecuta `oci setup config` si tienes el CLI.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "If you don’t have one: OCI console › your profile › **API keys** › Add API key, then copy the configuration snippet it shows into `~/.oci/config`. Or run `oci setup config` if you have the CLI."
-          }
-        }
-      }
-    },
     "Si quieres, me encargo de las claves del Bastion: creo una por sesión y la borro al caducar.": {
       "localizations": {
         "en": {
@@ -3094,8 +3090,7 @@
             "value": "Tenancy …%1$@ · %2$@ · huella %3$@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Terminal": {
       "shouldTranslate": false
@@ -3214,8 +3209,7 @@
             "value": "Tunnel ready on localhost:%@ 🎉"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Túneles a puertos": {
       "localizations": {
@@ -3273,16 +3267,6 @@
         }
       }
     },
-    "Un perfil en `~/.oci/config` con `user`, `fingerprint`, `tenancy`, `region` y `key_file` (clave de API RSA). Se admiten claves cifradas con `pass_phrase` y perfiles de sesión con `security_token_file`.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A profile in `~/.oci/config` with `user`, `fingerprint`, `tenancy`, `region` and `key_file` (an RSA API key). Encrypted keys with `pass_phrase` and session profiles with `security_token_file` are supported."
-          }
-        }
-      }
-    },
     "Un servidor es una máquina a la que entras por SSH. **Abrir SSH** abre una ventana de Terminal o iTerm2 ya conectada. **Copiar** te deja el comando en el portapapeles por si quieres usarlo en otro sitio.": {
       "localizations": {
         "en": {
@@ -3333,6 +3317,17 @@
         }
       }
     },
+    "Una **clave de API** (RSA) registrada en tu usuario de OCI. Si no la tienes: consola de OCI › tu perfil › **Claves de API** › Añadir clave de API › Generar par de claves, y descarga la clave privada.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An **API key** (RSA) registered on your OCI user. If you don’t have one: OCI console › your profile › **API keys** › Add API key › Generate key pair, and download the private key."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Una sesión por servidor o túnel, creada al abrirlo. Funciona con **cualquier** Bastion. Cada sesión tarda unos segundos en crearse la primera vez; después se reutiliza mientras dure.": {
       "localizations": {
         "en": {
@@ -3363,17 +3358,6 @@
         }
       }
     },
-    "Usar ~/.oci/config": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use ~/.oci/config"
-          }
-        }
-      },
-      "shouldTranslate": true
-    },
     "Uso mis propias claves": {
       "localizations": {
         "en": {
@@ -3383,27 +3367,6 @@
           }
         }
       }
-    },
-    "Uso tu `~/.oci/config` para hablar directamente con la API de OCI. No hace falta el OCI CLI.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I use your `~/.oci/config` to talk straight to the OCI API. No OCI CLI needed."
-          }
-        }
-      }
-    },
-    "Uso un perfil de `~/.oci/config` con su clave de API.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I use a profile from `~/.oci/config` with its API key."
-          }
-        }
-      },
-      "shouldTranslate": true
     },
     "Usuario": {
       "localizations": {
@@ -3532,8 +3495,7 @@
             "value": "the pasted key"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "la región": {
       "localizations": {
@@ -3563,8 +3525,7 @@
             "value": "macOS won’t let OCI Bastion control the terminal. Turn it on in System Settings › Privacy & Security › Automation."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "no se pudo descifrar con pass_phrase.": {
       "localizations": {
@@ -3584,8 +3545,7 @@
             "value": "couldn’t get the public key."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "no se pudo preparar el AppleScript.": {
       "localizations": {
@@ -3595,8 +3555,7 @@
             "value": "couldn’t prepare the AppleScript."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "o pégala aquí abajo": {
       "localizations": {
@@ -3606,8 +3565,7 @@
             "value": "or paste it below"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "ocid1.tenancy.oc1..aaaa…": {
       "shouldTranslate": false
@@ -3704,9 +3662,6 @@
           }
         }
       }
-    },
-    "~/.oci/config": {
-      "shouldTranslate": false
     },
     "~/.ssh/id_rsa": {
       "shouldTranslate": false
@@ -3871,16 +3826,6 @@
         }
       }
     },
-    "¿No tienes configuración? Créala con `oci setup config` o desde la consola de OCI › Perfil › Claves de API › Añadir clave de API.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No configuration yet? Create one with `oci setup config` or from the OCI console › Profile › API keys › Add API key."
-          }
-        }
-      }
-    },
     "¿Qué pasa? 📖": {
       "localizations": {
         "en": {
@@ -3994,8 +3939,7 @@
             "value": "➕ New account…"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🎉 %@: túnel listo en 127.0.0.1:%@": {
       "localizations": {
@@ -4011,8 +3955,7 @@
             "value": "🎉 %1$@: túnel listo en 127.0.0.1:%2$@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🏯": {
       "shouldTranslate": false
@@ -4083,8 +4026,7 @@
             "value": "🔐 The private key is stored encrypted in your macOS Keychain, for this app only."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🖥️ Abriendo SSH a %@": {
       "localizations": {
@@ -4140,8 +4082,7 @@
             "value": "🚇 Túnel %1$@ → 127.0.0.1:%2$@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🚇 Túnel %@: localhost:%@ → %@:%@": {
       "localizations": {
@@ -4157,8 +4098,7 @@
             "value": "🚇 Túnel %1$@: localhost:%2$@ → %3$@:%4$@"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🚇 Túnel a un puerto": {
       "localizations": {

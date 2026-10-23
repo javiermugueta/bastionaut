@@ -75,18 +75,30 @@ final class AccountAndSandboxTests: XCTestCase {
         XCTAssertEqual(profile.region, "eu-madrid-1")
     }
 
-    func testCredentialSourceDefaultsAndSnapshot() {
+    func testAccountTravelsWithTheConnection() {
         var settings = Settings()
-        XCTAssertEqual(settings.effectiveCredentialSource, .configFile)
+        XCTAssertNil(settings.account)
         let account = OCIAccount(name: "A", tenancy: "t", user: "u", fingerprint: "f", region: "r")
         settings.accounts = [account]
-        settings.credentialSource = .app
         settings.accountID = account.id
         XCTAssertEqual(settings.account, account)
         var restored = Settings()
         ConnectionSnapshot(settings: settings).apply(to: &restored)
-        XCTAssertEqual(restored.credentialSource, .app)
         XCTAssertEqual(restored.accountID, account.id)
+    }
+
+    func testOldSettingsWithCredentialSourceStillDecode() throws {
+        let json = #"{"configPath":"/x","profile":"P","compartmentID":"","bastionID":"b","publicKeyPath":"","privateKeyPath":"","socksPort":2222,"ttlSeconds":10800,"proxyHost":"","proxyPort":0,"destinations":[],"credentialSource":"configFile"}"#
+        let settings = try JSONDecoder().decode(Settings.self, from: Data(json.utf8))
+        XCTAssertEqual(settings.bastionID, "b")
+        XCTAssertNil(settings.account)
+    }
+
+    func testBastionSSHUsesOwnKnownHosts() {
+        let arguments = SSHCommands.bastionArguments(target: "a@b", privateKeyPath: "/k", forward: .socks(localPort: 2222),
+                                                     proxy: nil, token: UUID())
+        XCTAssertTrue(arguments.contains("-F"))
+        XCTAssertTrue(arguments.contains { $0.hasPrefix("UserKnownHostsFile=") && $0.hasSuffix("/OCIBastion/known_hosts") })
     }
 
     func testAppleScriptEscaping() {

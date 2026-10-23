@@ -148,7 +148,7 @@ struct WizardView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Voy a ayudarte a entrar en tus máquinas privadas de OCI sin pelearte con comandos.")
                 .font(.title3)
-            Bullet("☁️", "Uso tu `~/.oci/config` para hablar directamente con la API de OCI. No hace falta el OCI CLI.")
+            Bullet("☁️", "Hablo directamente con la API de OCI con tu clave de API, que guardo en el Llavero. No hace falta el OCI CLI.")
             Bullet("🏰", "Busco tus Bastiones en toda la tenancy, sin que tengas que saber en qué compartimento están.")
             Bullet("🔑", "Si quieres, me encargo de las claves del Bastion: creo una por sesión y la borro al caducar.")
             Bullet("⏳", "Renuevo la sesión antes de que caduque para que no se te corte nada.")
@@ -157,20 +157,9 @@ struct WizardView: View {
 
     private var account: some View {
         VStack(alignment: .leading, spacing: 14) {
-            if !AppEdition.isAppStore {
-                Picker("Credenciales", selection: Binding(get: { draft.effectiveCredentialSource },
-                                                          set: { draft.credentialSource = $0; accountOK = false })) {
-                    Text("Introducir mis datos").tag(OCICredentialSource.app)
-                    Text("Usar ~/.oci/config").tag(OCICredentialSource.configFile)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-            }
-            if draft.effectiveCredentialSource == .app {
-                appAccount
-            } else {
-                configFileAccount
-            }
+            Text("Necesito los datos de tu clave de API de OCI. Los encuentras en la consola de OCI › tu perfil › **Claves de API**.")
+                .foregroundStyle(.secondary)
+            appAccount
             Form {
                 ProxyPicker(settings: $draft)
                 if accountOK {
@@ -184,27 +173,6 @@ struct WizardView: View {
             HStack {
                 Button(accountOK ? "Volver a probar" : "Probar conexión 🔌") { testAccount() }.disabled(busy)
                 if accountOK { Label("¡Conectado! \(regions.count) región(es) disponibles", systemImage: "checkmark.seal.fill").foregroundStyle(.green) }
-            }
-        }
-    }
-
-    private var configFileAccount: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Uso un perfil de `~/.oci/config` con su clave de API.").foregroundStyle(.secondary)
-            Form {
-                LabeledContent("Archivo") {
-                    FileField(placeholder: "~/.oci/config", path: $draft.configPath, directory: NSHomeDirectory() + "/.oci")
-                }
-                Picker("Perfil", selection: $draft.profile) {
-                    ForEach(profiles, id: \.self) { Text($0).tag($0) }
-                }
-            }
-            .formStyle(.grouped)
-            .onChange(of: draft.configPath) { accountOK = false }
-            .onChange(of: draft.profile) { accountOK = false }
-            if profiles.isEmpty {
-                Text("¿No tienes configuración? Créala con `oci setup config` o desde la consola de OCI › Perfil › Claves de API › Añadir clave de API.")
-                    .font(.callout).foregroundStyle(.secondary)
             }
         }
     }
@@ -228,8 +196,6 @@ struct WizardView: View {
             }
         }
     }
-
-    private var profiles: [String] { (try? OCIConfig.profiles(at: draft.configPath)) ?? [] }
 
     private var filteredBastions: [BastionItem] {
         bastionFilter.isEmpty ? bastions : bastions.filter { $0.name.localizedCaseInsensitiveContains(bastionFilter) }
@@ -373,19 +339,14 @@ struct WizardView: View {
         draft = manager.settings
         if mode == .create {
             var fresh = Settings()
-            fresh.configPath = draft.configPath.isEmpty ? OCIConfig.defaultPath : draft.configPath
-            fresh.profile = draft.profile
             fresh.proxyMode = draft.proxyMode
             fresh.proxyHost = draft.proxyHost
             fresh.proxyPort = draft.proxyPort
             fresh.terminalApp = draft.terminalApp
-            fresh.credentialSource = draft.credentialSource
             fresh.accountID = draft.accountID
             fresh.keyMode = .ephemeral
             draft = fresh
         }
-        if !profiles.contains(draft.profile) { draft.profile = profiles.first ?? "DEFAULT" }
-        if draft.credentialSource == nil && (profiles.isEmpty || !manager.accounts.isEmpty) { draft.credentialSource = .app }
         accountChoice = draft.accountID ?? manager.accounts.first?.id
         step = steps.first ?? .account
     }
@@ -397,7 +358,7 @@ struct WizardView: View {
         withAnimation(.easeInOut(duration: 0.2)) { step = steps[target] }
         if step == .bastion && bastions.isEmpty { searchBastions() }
         if step == .bastion && bastionDetails == nil && !draft.bastionID.isEmpty { selectBastion(draft.bastionID, name: draft.bastionName) }
-        if step == .account && !accountOK && !profiles.isEmpty { testAccount() }
+        if step == .account && !accountOK && accountChoice != nil { testAccount() }
         if step == .name && name.isEmpty { name = draft.bastionName ?? "" }
     }
 
@@ -452,11 +413,11 @@ struct WizardView: View {
 
     private func testAccount() {
         var snapshot = draft
-        let newAccount = draft.effectiveCredentialSource == .app && accountChoice == nil
+        let newAccount = accountChoice == nil
         var candidate = accountDraft
         let pem = keyText
         let passphrase = keyPassphrase
-        if draft.effectiveCredentialSource == .app, let accountChoice { snapshot.accountID = accountChoice }
+        if let accountChoice { snapshot.accountID = accountChoice }
         run("Hablando con OCI para comprobar tu cuenta… 🔌") {
             var profile: OCIProfile?
             var key: ImportedAPIKey?
@@ -490,10 +451,7 @@ struct WizardView: View {
                 accountDraft = candidate
                 accountChoice = candidate.id
             }
-            if draft.effectiveCredentialSource == .app {
-                draft.credentialSource = .app
-                draft.accountID = accountChoice
-            }
+            draft.accountID = accountChoice
             accountOK = true
         }
     }

@@ -38,20 +38,6 @@ struct OwnedTunnelRecord: Codable, Equatable {
         throw BastionError.ownedTunnelCouldNotStop(pid: pid)
     }
 
-    static func listenerPID(port: Int) async -> Int32? {
-        guard let result = try? await CommandRunner.run("/usr/sbin/lsof", [
-            "-nP", "-iTCP:\(port)", "-sTCP:LISTEN", "-Fp"
-        ]), result.status == 0 else { return nil }
-        return result.output.split(whereSeparator: \.isNewline)
-            .first(where: { $0.hasPrefix("p") })
-            .flatMap { Int32($0.dropFirst()) }
-    }
-
-    /// PID que escucha en el puerto, si `lsof` puede verlo (fuera del sandbox). Solo para mensajes.
-    static func describeListener(port: Int) async -> Int32? {
-        AppEdition.isAppStore ? nil : await listenerPID(port: port)
-    }
-
     /// `true` si se puede reservar el puerto en 127.0.0.1 (nadie escucha en él).
     static func isPortFree(_ port: Int) -> Bool {
         withLoopbackSocket(port: port) { socketFD, address in

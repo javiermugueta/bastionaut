@@ -9,7 +9,8 @@
 #   BUNDLE_ID      identificador del bundle (por defecto: com.javiermugueta.ocibastion)
 #   VERSION        CFBundleShortVersionString (por defecto: 0.1.0)
 #   BUILD_NUMBER   CFBundleVersion (por defecto: número de commits de git)
-#   EDITION        developer-id (por defecto) | appstore (sandbox, sin acceso a ~/.oci ni ~/.ssh)
+#   EDITION        developer-id (por defecto) | appstore. La app es la misma y siempre va en sandbox;
+#                  solo cambian la firma y, en la App Store, el perfil de aprovisionamiento.
 #   PROVISIONING_PROFILE  perfil «Mac App Store Connect» (.provisionprofile), obligatorio con EDITION=appstore
 set -euo pipefail
 cd "${0:A:h:h}"
@@ -28,10 +29,7 @@ if [[ -z "${SDKROOT:-}" && -d /Library/Developer/CommandLineTools/SDKs/MacOSX26.
   export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 fi
 
-scratch=.build
-[[ $edition == appstore ]] && scratch=.build/appstore
-build_args=(--disable-sandbox --scratch-path "$scratch" --cache-path .build/cache -c "$configuration")
-[[ $edition == appstore ]] && build_args+=(-Xswiftc -DAPPSTORE)
+build_args=(--disable-sandbox --scratch-path .build --cache-path .build/cache -c "$configuration")
 if [[ $universal == 1 ]]; then
   build_args+=(--arch arm64 --arch x86_64)
 fi
@@ -45,6 +43,8 @@ cp "$binary" "$app/Contents/MacOS/OCIBastion"
 cp Assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 # Español e inglés desde el catálogo de textos (editable en Xcode).
 xcrun xcstringstool compile Assets/Localizable.xcstrings --output-directory "$app/Contents/Resources" --language es --language en
+# Al pasar a sandbox, macOS mueve los datos de versiones anteriores al contenedor de la app.
+cp Assets/container-migration.plist "$app/Contents/Resources/container-migration.plist"
 for lang in es en; do mkdir -p "$app/Contents/Resources/$lang.lproj"; cp "Assets/$lang.lproj/InfoPlist.strings" "$app/Contents/Resources/$lang.lproj/"; done
 cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -77,7 +77,8 @@ if [[ $edition == appstore ]]; then
     --sign "$sign_identity" "$app"
   codesign --verify --deep --strict --verbose=2 "$app"
 elif [[ $sign_identity == "-" ]]; then
-  codesign --force --sign - "$app"
+  # Firma local, también con sandbox: así se prueba lo mismo que se distribuye.
+  codesign --force --sign - --entitlements Assets/OCIBastion.entitlements "$app"
 else
   # Hardened Runtime + marca de tiempo segura: obligatorios para notarizar.
   codesign --force --options runtime --timestamp \

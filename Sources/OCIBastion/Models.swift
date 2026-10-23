@@ -44,7 +44,6 @@ struct Settings: Codable {
     var sessionMode: SessionMode? = nil
     var keyMode: KeyMode? = nil
     var renewMarginMinutes: Int? = nil
-    var credentialSource: OCICredentialSource? = nil
     var accountID: UUID? = nil
     /// Cuentas de OCI guardadas en la app, compartidas por todas las conexiones.
     var accounts: [OCIAccount]? = nil
@@ -58,9 +57,6 @@ struct Settings: Codable {
 
     var effectiveTerminalApp: TerminalApp { terminalApp ?? .terminal }
     var effectiveSessionMode: SessionMode { sessionMode ?? .socks }
-    var effectiveCredentialSource: OCICredentialSource {
-        AppEdition.isAppStore ? .app : (credentialSource ?? .configFile)
-    }
     var account: OCIAccount? { accounts?.first { $0.id == accountID } }
     /// Las configuraciones antiguas que ya tenían claves siguen usándolas.
     var effectiveKeyMode: KeyMode { keyMode ?? (publicKeyPath.isEmpty ? .ephemeral : .custom) }
@@ -134,7 +130,6 @@ struct ConnectionSnapshot: Codable, Equatable {
     var sessionMode: SessionMode?
     var keyMode: KeyMode?
     var renewMarginMinutes: Int?
-    var credentialSource: OCICredentialSource?
     var accountID: UUID?
 
     init(settings: Settings) {
@@ -157,7 +152,6 @@ struct ConnectionSnapshot: Codable, Equatable {
         sessionMode = settings.sessionMode
         keyMode = settings.keyMode
         renewMarginMinutes = settings.renewMarginMinutes
-        credentialSource = settings.credentialSource
         accountID = settings.accountID
     }
 
@@ -181,7 +175,6 @@ struct ConnectionSnapshot: Codable, Equatable {
         settings.sessionMode = sessionMode
         settings.keyMode = keyMode
         settings.renewMarginMinutes = renewMarginMinutes
-        settings.credentialSource = credentialSource
         settings.accountID = accountID
     }
 }

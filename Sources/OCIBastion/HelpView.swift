@@ -59,7 +59,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
             return [
                 .text("OCI Bastion abre túneles hacia tus máquinas privadas de Oracle Cloud a través del servicio **Bastion**, sin que tengas que escribir comandos."),
                 .heading("Antes de empezar"),
-                .text("Necesitas un perfil de OCI con clave de API, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**."),
+                .text("Necesitas tu clave de API de OCI, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**."),
                 .heading("En tres pasos"),
                 .bullets([
                     "**Nueva conexión ✨**: el asistente comprueba tu cuenta, busca tus bastiones en toda la tenancy y te deja añadir el primer servidor.",
@@ -81,9 +81,9 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 .text("El Bastion pide una clave SSH para cada sesión. Tienes dos opciones:"),
                 .bullets([
                     "**Temporales (recomendado)**: la app crea una clave RSA por sesión, la guarda solo para ti (permisos 0600) y la borra cuando la sesión caduca. No tienes que hacer nada.",
-                    "**Tus propias claves**: eliges un par de claves que ya tengas. Si la privada tiene contraseña, cárgala antes en `ssh-agent`.",
+                    "**Tus propias claves**: eliges un par de claves que ya tengas y la app guarda una copia privada. Deben ser claves sin contraseña; si la tuya la tiene, usa las temporales.",
                 ]),
-                .text("Las claves de tus **servidores** son otra cosa: las eliges en cada servidor o túnel, y pueden ser distintas en cada uno."),
+                .text("Las claves de tus **servidores** son otra cosa: las eliges en cada servidor o túnel, y pueden ser distintas en cada uno. Al elegirlas, la app guarda una copia privada dentro de ella (macOS no le deja volver a leer el archivo original)."),
             ]
         case .targets:
             return [
@@ -114,7 +114,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 .heading("«OCI respondió 404 NotAuthorizedOrNotFound»"),
                 .text("Falta algún permiso IAM o el recurso no está en la región elegida. Mira **Requisitos**."),
                 .heading("«OCI respondió 401»"),
-                .text("La clave de API o su huella no coinciden con las del perfil de `~/.oci/config`, o la hora del Mac está desajustada."),
+                .text("La clave de API no está registrada en tu usuario de OCI (o es de otro usuario), o la hora del Mac está desajustada."),
                 .heading("«El Bastion no tiene activado SOCKS5»"),
                 .text("Cambia a **Reenvío de puerto** en Ajustes, o activa **FQDN y SOCKS5** en el Bastion."),
                 .heading("«SSH rechazó la clave» en el servidor"),
@@ -135,8 +135,9 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 ]),
                 .heading("Tu cuenta de OCI ☁️"),
                 .bullets([
-                    "Un perfil en `~/.oci/config` con `user`, `fingerprint`, `tenancy`, `region` y `key_file` (clave de API RSA). Se admiten claves cifradas con `pass_phrase` y perfiles de sesión con `security_token_file`.",
-                    "Si no lo tienes: consola de OCI › tu perfil › **Claves de API** › Añadir clave de API, y copia el fragmento de configuración que te muestra en `~/.oci/config`. O ejecuta `oci setup config` si tienes el CLI.",
+                    "Una **clave de API** (RSA) registrada en tu usuario de OCI. Si no la tienes: consola de OCI › tu perfil › **Claves de API** › Añadir clave de API › Generar par de claves, y descarga la clave privada.",
+                    "El asistente te pide la tenancy, el usuario, la región y la clave privada. Lo más rápido: pega el **fragmento de configuración** que te enseña la consola al crear la clave y se rellena solo.",
+                    "La clave privada se guarda en el **Llavero** de macOS. Si estaba protegida con contraseña, la app te la pide una vez al importarla.",
                 ]),
                 .heading("El Bastion 🏰"),
                 .bullets([
@@ -169,8 +170,9 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 .bullets([
                     "La app habla **solo** con la API de OCI de tu región y con el Bastion. No hay telemetría.",
                     "La comprobación **¿Está permitida mi IP?** consulta `checkip.amazonaws.com`, y solo cuando la pulsas.",
-                    "La configuración se guarda en `~/Library/Application Support/OCIBastion` con permisos 0600. No se guardan contraseñas ni claves de API.",
-                    "Las claves temporales viven en esa misma carpeta (`keys`) y se borran al caducar.",
+                    "La app funciona dentro del **sandbox** de macOS: solo ve los archivos que tú le das.",
+                    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «OCI Bastion».",
+                    "La configuración, las claves temporales (que se borran al caducar) y las copias de las claves de tus servidores viven en la carpeta privada de la app, con permisos 0600.",
                     "Los archivos exportados incluyen rutas y OCID, pero nunca claves.",
                 ]),
             ]

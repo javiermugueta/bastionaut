@@ -8,12 +8,12 @@ La ayuda de la app (menú **Ayuda › Ayuda de OCI Bastion**, ⌘?) los explica 
 
 **En tu Mac**
 - macOS 14 Sonoma o posterior.
-- No hace falta el OCI CLI ni Python: la app usa directamente la API REST de OCI.
+- No hace falta el OCI CLI ni Python: la app usa directamente la API REST de OCI. Funciona dentro del sandbox de macOS.
 - Terminal o iTerm2. La primera vez, acepta el permiso de **Automatización** para que la app abra las sesiones SSH.
 - Proxy corporativo HTTP CONNECT opcional (se detecta solo o se indica a mano).
 
 **Cuenta de OCI**
-- Perfil en `~/.oci/config` con `user`, `fingerprint`, `tenancy`, `region` y `key_file` (clave de API RSA, PKCS#1 o PKCS#8). Se admiten `pass_phrase` y `security_token_file`.
+- Una clave de API RSA registrada en tu usuario (consola de OCI › tu perfil › Claves de API). En el asistente se introducen tenancy, usuario, región y la clave privada (archivo `.pem` o pegada; se puede pegar el fragmento de configuración de la consola). La huella se calcula sola y la clave se guarda en el Llavero de macOS.
 
 **Bastion**
 - Un Bastion activo en la región, con subred de destino que llegue a tus servidores, y listas de seguridad que permitan el tráfico desde el Bastion.
@@ -43,9 +43,18 @@ El icono fuente está en `Assets/AppIcon.png`. Si se modifica, ejecuta `Scripts/
 
 Por defecto se compila en `release` como binario universal (arm64 + x86_64) con firma ad hoc. Para una compilación de depuración rápida: `CONFIGURATION=debug ./Scripts/build-app.sh`.
 
-## Distribución firmada y notarizada
+## Distribución
 
-La app se distribuye fuera del Mac App Store (necesita ejecutar `oci`, `ssh` y controlar Terminal/iTerm2, algo incompatible con App Sandbox). Requisitos, una sola vez:
+Hay **una sola versión** de la app, siempre en sandbox. Solo cambia la firma según el canal:
+
+- **Mac App Store**: `PROVISIONING_PROFILE=~/Downloads/xxx.provisionprofile ./Scripts/appstore.sh` compila, firma con Apple Distribution, crea el `.pkg`, lo valida y lo sube a App Store Connect con la clave de API de `~/.private_keys`. Subir no publica nada.
+- **Fuera de la tienda** (`.dmg` notarizado con Developer ID), con `./Scripts/release.sh`.
+
+Al pasar a sandbox, `Assets/container-migration.plist` hace que macOS mueva los datos de versiones anteriores (`~/Library/Application Support/OCIBastion`) al contenedor de la app.
+
+### Developer ID y notarización
+
+Requisitos, una sola vez:
 
 1. Certificado **Developer ID Application** en el llavero (Xcode › Settings › Accounts › Manage Certificates).
 2. Credenciales de notarización guardadas en el llavero:
@@ -64,7 +73,7 @@ Genera `dist/OCIBastion-<versión>.dmg` firmado con Hardened Runtime, notarizado
 
 ## Uso
 
-1. La primera vez se abre un **asistente**: cuenta OCI y región, búsqueda del Bastion en toda la tenancy (OCI Search), tipo de sesión, claves y primer servidor.
+1. La primera vez se abre un **asistente**: cuenta OCI (clave de API) y región, búsqueda del Bastion en toda la tenancy (OCI Search), tipo de sesión, claves y primer servidor.
 2. **Tipos de sesión**:
    - **SOCKS5**: un túnel para todos los servidores. Requiere «FQDN y SOCKS5» activado en el Bastion.
    - **Reenvío de puerto**: una sesión gestionada por servidor; funciona con cualquier Bastion. Cada servidor abre su sesión al pulsar **Abrir SSH**.

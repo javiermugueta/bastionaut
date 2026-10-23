@@ -12,7 +12,6 @@ struct LogEntry: Identifiable, Equatable {
 @MainActor
 final class TunnelManager {
     var settings = Settings.load()
-    var profiles: [String] = []
     var proxyDescription = ""
     var toast: String?
     var toastIsError = false
@@ -35,8 +34,6 @@ final class TunnelManager {
            !(settings.savedConnections ?? []).contains(where: { $0.id == selected }) {
             settings.selectedSavedConnectionID = nil
         }
-        if settings.configPath.isEmpty && !AppEdition.isAppStore { settings.configPath = OCIConfig.defaultPath }
-        reloadProfiles()
         startup = Task {
             let closed = await OwnedTunnelRegistry.reclaimStale()
             if closed > 0 { record(String(localized: "🧹 Cerré \(closed) túnel(es) que quedaron de la última vez")) }
@@ -147,7 +144,6 @@ final class TunnelManager {
             settings.selectedSavedConnectionID = record.id
             settings.hasCompletedOnboarding = true
             contextCache = nil
-            reloadProfiles()
             save()
             self.record(String(localized: "✨ Conexión «\(name)» creada"))
             return true
@@ -162,7 +158,6 @@ final class TunnelManager {
         guard !isRunning else { return report(BastionError.message(String(localized: "Desconecta antes de cambiar la configuración."))) }
         ConnectionSnapshot(settings: draft).apply(to: &settings)
         contextCache = nil
-        reloadProfiles()
         save()
         record(String(localized: "🛠️ Configuración actualizada"))
     }
@@ -183,7 +178,6 @@ final class TunnelManager {
         contextCache = nil
         bastionDetails = nil
         publicIPReport = nil
-        reloadProfiles()
         save()
     }
 
@@ -251,7 +245,6 @@ final class TunnelManager {
                 fresh.proxyPort = settings.proxyPort
                 fresh.terminalApp = settings.terminalApp
                 fresh.accounts = settings.accounts
-                fresh.credentialSource = settings.credentialSource
                 fresh.accountID = settings.accountID
                 fresh.hasCompletedOnboarding = true
                 settings = fresh
@@ -307,18 +300,12 @@ final class TunnelManager {
             try imported.save()
             settings = imported
             contextCache = nil
-            reloadProfiles()
             record(String(localized: "📥 Importadas \(plan.archive.savedConnections.count) conexión(es) de \(plan.fileName)"))
             showToast(String(localized: "¡Importación completada! 📥"))
         } catch { report(BastionError.message(String(localized: "No se pudo importar: \(error.localizedDescription)"))) }
     }
 
     // MARK: OCI
-
-    func reloadProfiles() {
-        guard !AppEdition.isAppStore else { return }
-        profiles = (try? OCIConfig.profiles(at: settings.configPath)) ?? []
-    }
 
     func resolvedProxy(for value: Settings, fresh: Bool = false) async throws -> ProxyEndpoint? {
         let key = "\(value.effectiveProxyMode.rawValue)|\(value.proxyHost)|\(value.proxyPort)"
@@ -329,20 +316,14 @@ final class TunnelManager {
         return result.endpoint
     }
 
-    /// Cliente de API para una configuración (también la del asistente, que aún no está guardada).
     var accounts: [OCIAccount] { settings.accounts ?? [] }
 
-    /// Credenciales de OCI de una configuración: un perfil de `~/.oci/config` o una cuenta de la app.
+    /// Credenciales de OCI de una configuración: su cuenta guardada en la app, con la clave en el Llavero.
     func ociProfile(for value: Settings) throws -> OCIProfile {
-        switch value.effectiveCredentialSource {
-        case .configFile:
-            return try OCIConfig.load(at: value.configPath, profile: value.profile)
-        case .app:
-            guard let id = value.accountID, let account = (value.accounts ?? accounts).first(where: { $0.id == id }) else {
-                throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
-            }
-            return account.profile(privateKeyPEM: try APIKeyKeychain.load(for: id))
+        guard let id = value.accountID, let account = (value.accounts ?? accounts).first(where: { $0.id == id }) else {
+            throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
         }
+        return account.profile(privateKeyPEM: try APIKeyKeychain.load(for: id))
     }
 
     /// Guarda (o actualiza) una cuenta y, si viene, su clave privada en el Llavero.
@@ -354,6 +335,7 @@ final class TunnelManager {
         save()
     }
 
+    /// Cliente de API para una configuración (también la del asistente, que aún no está guardada).
     func client(for value: Settings, profile override: OCIProfile? = nil) async throws -> OCIAPIClient {
         let profile = try override ?? ociProfile(for: value)
         let proxy = try await resolvedProxy(for: value)
@@ -361,8 +343,7 @@ final class TunnelManager {
     }
 
     private func context(for snapshot: Settings) async throws -> RunnerContext {
-        let key = [snapshot.effectiveCredentialSource.rawValue, snapshot.accountID?.uuidString ?? "",
-                   snapshot.configPath, snapshot.profile, snapshot.region ?? "", snapshot.bastionID,
+        let key = [snapshot.accountID?.uuidString ?? "", snapshot.region ?? "", snapshot.bastionID,
                    snapshot.effectiveProxyMode.rawValue, snapshot.proxyHost, String(snapshot.proxyPort)].joined(separator: "|")
         if let contextCache, contextCache.key == key {
             do { return try await contextCache.task.value } catch { self.contextCache = nil; throw error }
@@ -381,14 +362,8 @@ final class TunnelManager {
     }
 
     private func validate(_ value: Settings) throws {
-        switch value.effectiveCredentialSource {
-        case .configFile:
-            _ = try InputCheck.singleLine(value.configPath, name: "Configuración OCI")
-            _ = try InputCheck.singleLine(value.profile, name: "Perfil OCI")
-        case .app:
-            guard value.account != nil else {
-                throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
-            }
+        guard value.account != nil else {
+            throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
         }
         _ = try InputCheck.singleLine(value.bastionID, name: "Bastion")
         if value.effectiveKeyMode == .custom {

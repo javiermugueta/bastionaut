@@ -167,7 +167,7 @@ struct FileField: View {
     let placeholder: LocalizedStringKey
     @Binding var path: String
     var directory: String? = nil
-    /// Claves SSH: en la versión App Store se guarda una copia privada, porque el sandbox no deja volver a leer la ruta.
+    /// Claves SSH: se guarda una copia privada dentro de la app, porque el sandbox no deja volver a leer la ruta original.
     var importsKey = false
     @State private var problem: String?
 
@@ -175,10 +175,10 @@ struct FileField: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 TextField("", text: $path, prompt: Text(placeholder)).labelsHidden().textFieldStyle(.roundedBorder)
-                    .disabled(importsKey && AppEdition.isAppStore)
+                    .disabled(importsKey)
                 Button("Elegir…") {
                     guard let value = pickFile(directory: directory) else { return }
-                    if importsKey && AppEdition.isAppStore {
+                    if importsKey {
                         do { path = try SSHKeyImport.importCopy(of: URL(fileURLWithPath: value)); problem = nil }
                         catch { problem = error.localizedDescription }
                     } else {

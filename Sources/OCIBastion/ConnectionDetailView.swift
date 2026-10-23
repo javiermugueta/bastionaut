@@ -14,6 +14,21 @@ struct ConnectionDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
+                if manager.settings.account == nil {
+                    HStack(spacing: 14) {
+                        IconTile(symbol: "person.badge.key.fill", color: .orange, size: 40)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Falta la cuenta de OCI").font(.headline)
+                            Text("Esta conexión necesita tu clave de API de OCI. Añádela con el asistente; solo se hace una vez.")
+                                .font(.callout).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button(action: editWithWizard) { Label("Añadir cuenta", systemImage: "sparkles") }
+                            .buttonStyle(FunButtonStyle(tint: .orange))
+                    }
+                    .padding(14)
+                    .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
                 HeroCard(manager: manager)
                 destinationsCard
                 tunnelsCard
@@ -301,7 +316,7 @@ struct SettingsCard: View {
             if expanded {
                 Form {
                     Section {
-                        LabeledContent("Cuenta OCI", value: "\(manager.settings.effectiveCredentialSource == .app ? (manager.settings.account?.displayName ?? "—") : manager.settings.profile) · \(manager.settings.region ?? String(localized: "región del perfil"))")
+                        LabeledContent("Cuenta OCI", value: "\(manager.settings.account?.displayName ?? "—") · \(manager.settings.region ?? String(localized: "región del perfil"))")
                         LabeledContent("Bastion", value: manager.settings.bastionName ?? manager.settings.bastionID)
                         Button("Cambiar cuenta o Bastion con el asistente ✨", action: editWithWizard)
                     }

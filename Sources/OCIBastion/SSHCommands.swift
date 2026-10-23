@@ -87,10 +87,8 @@ enum SSHCommands {
             "-o", "StrictHostKeyChecking=accept-new",
             "-o", "SetEnv=OCIBASTION_TUNNEL_ID=\(token.uuidString)"
         ]
-        if AppEdition.isAppStore {
-            // En sandbox no se puede escribir ~/.ssh/known_hosts: usamos uno dentro del contenedor.
-            arguments += ["-F", "/dev/null", "-o", "UserKnownHostsFile=\(Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts").path)"]
-        }
+        // En sandbox no se puede leer ~/.ssh/config ni escribir ~/.ssh/known_hosts: usamos uno propio del contenedor.
+        arguments += ["-F", "/dev/null", "-o", "UserKnownHostsFile=\(Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts").path)"]
         if let proxy { arguments += ["-o", "ProxyCommand=/usr/bin/nc -X connect -x \(proxy.address) %h %p"] }
         arguments.append(target)
         return arguments

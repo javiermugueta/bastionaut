@@ -252,7 +252,7 @@ final class ForwardRunner {
     private func startForward(_ lease: SessionLease, context: RunnerContext, port: Int) async throws {
         state = .working(String(localized: "Abriendo el túnel 🚇"))
         if !OwnedTunnelRecord.isPortFree(port) {
-            throw BastionError.portInUse(port: port, pid: await OwnedTunnelRecord.describeListener(port: port))
+            throw BastionError.portInUse(port: port, pid: nil)
         }
         let forward: BastionForward
         switch target {
