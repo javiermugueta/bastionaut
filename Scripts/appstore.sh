@@ -36,6 +36,15 @@ productbuild --component "dist/Bastionaut.app" /Applications --sign "$installer_
 
 xcrun altool --validate-app -f "$pkg" -t macos --apiKey "$key_id" --apiIssuer "$issuer_id"
 if [[ "${UPLOAD:-1}" == 1 ]]; then
-  xcrun altool --upload-app -f "$pkg" -t macos --apiKey "$key_id" --apiIssuer "$issuer_id"
+  upload_log="$(mktemp)"
+  xcrun altool --upload-app -f "$pkg" -t macos --apiKey "$key_id" --apiIssuer "$issuer_id" 2>&1 | tee "$upload_log"
+  delivery="$(sed -n 's/.*Delivery UUID: *\([0-9a-f-]*\).*/\1/p' "$upload_log" | head -1)"
+  rm -f "$upload_log"
+  [[ -n "$delivery" ]] || { echo "No se obtuvo el identificador de la entrega." >&2; exit 1; }
+  # La validación previa no detecta todo: esperamos al procesado de Apple y mostramos su resultado.
+  echo "Esperando a que Apple procese la build ($delivery)…"
+  status="$(xcrun altool --build-status --delivery-id "$delivery" --wait --apiKey "$key_id" --apiIssuer "$issuer_id" 2>&1)"
+  echo "$status" | grep -E "BUILD-STATUS|IMPORT-STATUS|PROCESSING-ERRORS|description" || echo "$status"
+  echo "$status" | grep -q "BUILD-STATUS: FAILED" && exit 1
 fi
 echo "$PWD/$pkg"

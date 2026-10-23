@@ -73,6 +73,10 @@ PLIST
 if [[ $edition == appstore ]]; then
   [[ -f "${PROVISIONING_PROFILE:-}" ]] || { echo "Falta PROVISIONING_PROFILE (perfil Mac App Store Connect)." >&2; exit 1; }
   cp "$PROVISIONING_PROFILE" "$app/Contents/embedded.provisionprofile"
+fi
+# Apple rechaza paquetes con atributos extendidos (p. ej. com.apple.quarantine de archivos descargados).
+xattr -cr "$app"
+if [[ $edition == appstore ]]; then
   codesign --force --options runtime --timestamp \
     --entitlements Assets/OCIBastion.appstore.entitlements \
     --sign "$sign_identity" "$app"
