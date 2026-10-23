@@ -97,6 +97,12 @@ enum OCIRealm {
     static func host(_ service: String, region: String) -> String {
         "\(service).\(region).oci.\(domain(for: region))"
     }
+
+    /// Destino representativo de la API (para elegir proxy).
+    static func apiURL(region: String) -> URL { URL(string: "https://" + host("bastion", region: region))! }
+
+    /// Host SSH de las sesiones del Bastion (para elegir proxy).
+    static func sshURL(region: String) -> URL { URL(string: "https://host." + host("bastion", region: region))! }
 }
 
 /// Cliente REST mínimo de OCI: Identity, Search y Bastion.

@@ -399,7 +399,7 @@ struct WizardView: View {
         Task {
             defer { checkingIP = false }
             do {
-                let proxy = try await manager.resolvedProxy(for: snapshot)
+                let proxy = try await manager.resolvedProxy(for: snapshot, destination: PublicIP.serviceURL)
                 ipReport = PublicIP.report(ip: try await PublicIP.fetch(proxy: proxy), allowList: allowList)
             } catch { ipReport = error.localizedDescription }
         }

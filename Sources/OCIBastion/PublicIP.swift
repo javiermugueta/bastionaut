@@ -2,6 +2,8 @@ import Foundation
 
 /// Comprobación, a petición del usuario, de si su IP pública está en la lista de IPs permitidas del Bastion.
 enum PublicIP {
+    static let serviceURL = URL(string: "https://checkip.amazonaws.com")!
+
     static func fetch(proxy: ProxyEndpoint?) async throws -> String {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 10
@@ -11,7 +13,7 @@ enum PublicIP {
             ]
         }
         let (data, _) = try await URLSession(configuration: configuration)
-            .data(from: URL(string: "https://checkip.amazonaws.com")!)
+            .data(from: serviceURL)
         let value = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
         guard InputCheck.isIPAddress(value) else { throw BastionError.network(String(localized: "respuesta inesperada al consultar la IP pública")) }
         return value

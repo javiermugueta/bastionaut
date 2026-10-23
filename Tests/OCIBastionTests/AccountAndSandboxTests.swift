@@ -126,12 +126,13 @@ final class AccountAndSandboxTests: XCTestCase {
         XCTAssertFalse(OwnedTunnelRecord.isPortFree(port))
     }
 
-    func testSystemProxySettingsParsing() {
-        XCTAssertEqual(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 1, "HTTPProxy": "proxy.corp", "HTTPPort": 8080]),
+    func testCFProxyEntriesBecomeEndpoints() throws {
+        XCTAssertEqual(ProxyResolver.endpoint(fromCFProxy: [kCFProxyHostNameKey as String: "proxy.corp",
+                                                            kCFProxyPortNumberKey as String: NSNumber(value: 8080)]),
                        try ProxyEndpoint(host: "proxy.corp", port: 8080))
-        XCTAssertEqual(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 0, "HTTPSEnable": 1, "HTTPSProxy": "p", "HTTPSPort": 3128]),
-                       try ProxyEndpoint(host: "p", port: 3128))
-        XCTAssertNil(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 0]))
+        XCTAssertNil(ProxyResolver.endpoint(fromCFProxy: [kCFProxyHostNameKey as String: "proxy.corp"]))
+        XCTAssertNil(ProxyResolver.endpoint(fromCFProxy: [kCFProxyHostNameKey as String: "-oProxyCommand=x",
+                                                          kCFProxyPortNumberKey as String: NSNumber(value: 80)]))
     }
 
     func testPortInUseMessageWithoutPID() {

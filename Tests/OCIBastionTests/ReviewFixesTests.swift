@@ -5,23 +5,52 @@ import XCTest
 final class ReviewFixesTests: XCTestCase {
     // MARK: 1. Proxy automático
 
+    private let oci = URL(string: "https://bastion.eu-madrid-1.oci.oraclecloud.com")!
+
     func testAutomaticProxyNeverProbesWPADUnlessEnabledInMacOS() {
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: [:]), .direct)
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoDiscoveryEnable": 0]), .direct)
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoDiscoveryEnable": 1]), .wpad)
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: [:], destination: oci), .direct)
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoDiscoveryEnable": 0], destination: oci), .direct)
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoDiscoveryEnable": 1], destination: oci), .wpad)
     }
 
     func testAutomaticProxyPrefersExplicitSettings() throws {
         let proxy = try ProxyEndpoint(host: "proxy.corp", port: 3128)
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: ["https_proxy": "http://proxy.corp:3128"], system: ["ProxyAutoDiscoveryEnable": 1]),
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: ["https_proxy": "http://proxy.corp:3128"], system: ["ProxyAutoDiscoveryEnable": 1], destination: oci),
                        .endpoint(proxy, source: String(localized: "Variable \("https_proxy")")))
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["HTTPSEnable": 1, "HTTPSProxy": "proxy.corp", "HTTPSPort": 3128]),
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["HTTPSEnable": 1, "HTTPSProxy": "proxy.corp", "HTTPSPort": 3128], destination: oci),
                        .endpoint(proxy, source: String(localized: "Proxy del sistema")))
         XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoConfigEnable": 1,
-                                                                              "ProxyAutoConfigURLString": "http://pac.corp/proxy.pac"]),
+                                                                              "ProxyAutoConfigURLString": "http://pac.corp/proxy.pac"], destination: oci),
                        .pac(URL(string: "http://pac.corp/proxy.pac")!))
-        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: ["ProxyAutoConfigEnable": 1,
-                                                                              "ProxyAutoConfigURLString": "javascript:alert(1)"]), .direct)
+    }
+
+    func testSystemProxyExceptionsAreRespected() {
+        let system: [String: Any] = ["HTTPSEnable": 1, "HTTPSProxy": "proxy.corp", "HTTPSPort": 3128,
+                                     "ExceptionsList": ["*.oraclecloud.com"]]
+        XCTAssertEqual(ProxyResolver.automaticPlan(environment: [:], system: system, destination: oci), .direct)
+        XCTAssertNotEqual(ProxyResolver.automaticPlan(environment: [:], system: system, destination: URL(string: "https://example.com")!), .direct)
+    }
+
+    func testPACIsEvaluatedPerDestination() async throws {
+        let script = """
+        // Ojo: PROXY trampa.example:9999 en un comentario no debe usarse.
+        function FindProxyForURL(url, host) {
+          if (dnsDomainIs(host, ".corp.example")) { return "PROXY corp-proxy.example:8080"; }
+          if (shExpMatch(host, "*.oraclecloud.com")) { return "DIRECT"; }
+          return "PROXY general.example:3128; DIRECT";
+        }
+        """
+        let ociProxy = await PACEvaluator.proxy(script: script, destination: oci)
+        XCTAssertNil(ociProxy, "Para OCI el PAC dice DIRECT")
+        let corp = await PACEvaluator.proxy(script: script, destination: URL(string: "https://intranet.corp.example")!)
+        XCTAssertEqual(corp, try ProxyEndpoint(host: "corp-proxy.example", port: 8080))
+        let other = await PACEvaluator.proxy(script: script, destination: URL(string: "https://checkip.amazonaws.com")!)
+        XCTAssertEqual(other, try ProxyEndpoint(host: "general.example", port: 3128))
+    }
+
+    func testBrokenPACFallsBackToDirect() async {
+        let result = await PACEvaluator.proxy(script: "esto no es javascript (", destination: oci)
+        XCTAssertNil(result)
     }
 
     // MARK: 2. Ajustes al reconectar
@@ -37,20 +66,74 @@ final class ReviewFixesTests: XCTestCase {
         first.bastionID = "ocid1.bastion.test"
         first.ttlSeconds = 10800
         first.keyMode = .ephemeral
+        first.proxyMode = .direct
         let manager = TunnelManager(settings: first, startServices: false)
-        manager.primeSharedContext(.init(client: client, bastion: Showcase.bastion, proxy: nil), for: first)
+        manager.primeSharedContext(.init(client: client, bastion: Showcase.bastion), for: first)
 
         var changed = first
         changed.ttlSeconds = 3600
         changed.keyMode = .custom
         changed.renewMarginMinutes = 10
         changed.socksPort = 3333
-        XCTAssertEqual(TunnelManager.sharedContextKey(for: first), TunnelManager.sharedContextKey(for: changed))
+        XCTAssertEqual(TunnelManager.sharedContextKey(for: first, apiProxy: nil), TunnelManager.sharedContextKey(for: changed, apiProxy: nil))
         let context = try await manager.context(for: changed)
         XCTAssertEqual(context.settings.ttlSeconds, 3600)
         XCTAssertEqual(context.settings.effectiveKeyMode, .custom)
         XCTAssertEqual(context.settings.renewMarginMinutes, 10)
         XCTAssertEqual(context.settings.socksPort, 3333)
+    }
+
+    @MainActor
+    func testProxyChangeOrNetworkChangeInvalidatesCachedClient() async throws {
+        var settings = Settings()
+        settings.accountID = UUID()
+        settings.bastionID = "b"
+        let proxy = try ProxyEndpoint(host: "proxy.corp", port: 3128)
+        XCTAssertNotEqual(TunnelManager.sharedContextKey(for: settings, apiProxy: nil),
+                          TunnelManager.sharedContextKey(for: settings, apiProxy: proxy),
+                          "Si la red cambia el proxy de la API, el cliente cacheado deja de valer")
+
+        let pem = String(decoding: try runOpenSSL(["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048"]), as: UTF8.self)
+        let account = OCIAccount(name: "A", tenancy: "t", user: "u", fingerprint: "f", region: "eu-madrid-1")
+        let client = try await OCIAPIClient.make(profile: account.profile(privateKeyPEM: pem), proxy: nil)
+        let manager = TunnelManager(settings: settings, startServices: false)
+        manager.primeSharedContext(.init(client: client, bastion: Showcase.bastion), for: settings)
+        XCTAssertTrue(manager.hasCachedSharedContext)
+        manager.networkChanged()
+        XCTAssertFalse(manager.hasCachedSharedContext)
+    }
+
+    // MARK: 4b. Migración de huellas
+
+    func testMisplacedKnownHostsAreMergedNotLost() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("khm-\(UUID().uuidString.prefix(6))")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let stray = folder.appendingPathComponent("Application")
+        let target = folder.appendingPathComponent("OCIBastion/known_hosts")
+        try FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try "host.bastion.eu-madrid-1.oci.oraclecloud.com ssh-ed25519 AAAAold\n[127.0.0.1]:2222 ecdsa-sha2-nistp256 AAAAx\n"
+            .write(to: stray, atomically: true, encoding: .utf8)
+        try "[127.0.0.1]:2222 ecdsa-sha2-nistp256 AAAAx\nother.example ssh-rsa AAAAy".write(to: target, atomically: true, encoding: .utf8)
+
+        SSHCommands.migrateMisplacedKnownHosts(from: stray, to: target)
+
+        let merged = try String(contentsOf: target, encoding: .utf8).split(whereSeparator: \.isNewline).map(String.init)
+        XCTAssertEqual(merged, ["[127.0.0.1]:2222 ecdsa-sha2-nistp256 AAAAx", "other.example ssh-rsa AAAAy",
+                                "host.bastion.eu-madrid-1.oci.oraclecloud.com ssh-ed25519 AAAAold"])
+        XCTAssertFalse(FileManager.default.fileExists(atPath: stray.path), "Se borra solo cuando las huellas ya están a salvo")
+    }
+
+    func testUnrelatedFileIsNotTouched() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("khu-\(UUID().uuidString.prefix(6))")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let stray = folder.appendingPathComponent("Application")
+        let target = folder.appendingPathComponent("known_hosts")
+        try "esto no es un known_hosts".write(to: stray, atomically: true, encoding: .utf8)
+        SSHCommands.migrateMisplacedKnownHosts(from: stray, to: target)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: stray.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: target.path))
     }
 
     @MainActor

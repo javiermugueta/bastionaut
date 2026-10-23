@@ -103,16 +103,47 @@ enum SSHCommands {
         Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts")
     }
 
-    /// Las versiones anteriores, por la ruta sin comillas, guardaban las huellas en «Library/Application».
-    /// Se borra: la siguiente conexión vuelve a registrar la del Bastion en el archivo correcto.
-    static func removeMisplacedKnownHosts() {
-        let stray = Settings.fileURL.deletingLastPathComponent().deletingLastPathComponent()
+    /// Archivo donde las versiones anteriores, por la ruta sin comillas, guardaban las huellas.
+    static var misplacedKnownHostsURL: URL {
+        Settings.fileURL.deletingLastPathComponent().deletingLastPathComponent()
             .deletingLastPathComponent().appendingPathComponent("Application")
+    }
+
+    /// Traslada las huellas ya conocidas al archivo correcto (sin perderlas: si no, accept-new aceptaría a ciegas
+    /// la siguiente clave del servidor). El archivo antiguo solo se borra cuando las huellas ya están a salvo.
+    static func migrateMisplacedKnownHosts(from stray: URL = misplacedKnownHostsURL, to target: URL = knownHostsURL) {
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: stray.path, isDirectory: &isDirectory), !isDirectory.boolValue,
-              let contents = try? String(contentsOf: stray, encoding: .utf8),
-              contents.split(whereSeparator: \.isNewline).allSatisfy({ $0.contains(" ssh-") || $0.contains(" ecdsa-") }) else { return }
-        try? FileManager.default.removeItem(at: stray)
+              let contents = try? String(contentsOf: stray, encoding: .utf8) else { return }
+        let lines = contents.split(whereSeparator: \.isNewline).map(String.init)
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        // Solo si parece un known_hosts: no tocamos un archivo que no sea nuestro.
+        guard lines.allSatisfy(isKnownHostsLine) else { return }
+        do {
+            let existing = (try? String(contentsOf: target, encoding: .utf8)) ?? ""
+            let known = Set(existing.split(whereSeparator: \.isNewline).map(String.init))
+            let missing = lines.filter { !known.contains($0) }
+            if !missing.isEmpty {
+                let separator = existing.isEmpty || existing.hasSuffix("\n") ? "" : "\n"
+                let merged = existing + separator + missing.joined(separator: "\n") + "\n"
+                try FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try merged.write(to: target, atomically: true, encoding: .utf8)
+                try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: target.path)
+            }
+            try FileManager.default.removeItem(at: stray)
+        } catch {
+            // Si no se pudo escribir, el archivo antiguo se queda: mejor duplicado que sin huellas.
+        }
+    }
+
+    /// `host[,host…] tipo-de-clave base64 [comentario]`, también con marcadores (@cert-authority) o hosts cifrados (|1|…).
+    static func isKnownHostsLine(_ line: String) -> Bool {
+        if line.hasPrefix("#") { return true }
+        let fields = line.split(separator: " ")
+        let offset = fields.first?.hasPrefix("@") == true ? 1 : 0
+        guard fields.count >= 3 + offset else { return false }
+        let type = fields[1 + offset]
+        return type.hasPrefix("ssh-") || type.hasPrefix("ecdsa-") || type.hasPrefix("sk-")
     }
 
     /// Versión para copiar y pegar del túnel con el Bastion.

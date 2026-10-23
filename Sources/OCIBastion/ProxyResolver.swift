@@ -1,3 +1,4 @@
+import CFNetwork
 import Foundation
 
 struct ProxyEndpoint: Equatable {
@@ -13,8 +14,11 @@ struct ProxyEndpoint: Equatable {
     var address: String { "\(host):\(port)" }
 }
 
+/// Elige el proxy HTTP CONNECT para un destino concreto (la API de OCI, el SSH del Bastion…).
+/// En modo automático solo sigue lo configurado de forma explícita y, si hay un PAC, lo ejecuta de verdad
+/// (`FindProxyForURL`) para ese destino.
 enum ProxyResolver {
-    static func resolve(settings: Settings) async throws -> (endpoint: ProxyEndpoint?, source: String) {
+    static func resolve(settings: Settings, destination: URL) async throws -> (endpoint: ProxyEndpoint?, source: String) {
         switch settings.effectiveProxyMode {
         case .direct:
             return (nil, String(localized: "Conexión directa"))
@@ -22,13 +26,21 @@ enum ProxyResolver {
             return (try ProxyEndpoint(host: settings.proxyHost, port: settings.proxyPort), String(localized: "Proxy manual"))
         case .automatic:
             let system = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any] ?? [:]
-            switch automaticPlan(environment: ProcessInfo.processInfo.environment, system: system) {
+            switch automaticPlan(environment: ProcessInfo.processInfo.environment, system: system, destination: destination) {
             case .endpoint(let endpoint, let source):
                 return (endpoint, source)
             case .pac(let url):
-                if let endpoint = await proxy(fromScriptAt: url) { return (endpoint, String(localized: "PAC del sistema")) }
+                if let script = await downloadScript(url),
+                   let endpoint = await PACEvaluator.proxy(script: script, destination: destination) {
+                    return (endpoint, String(localized: "PAC del sistema"))
+                }
+            case .pacScript(let script):
+                if let endpoint = await PACEvaluator.proxy(script: script, destination: destination) {
+                    return (endpoint, String(localized: "PAC del sistema"))
+                }
             case .wpad:
-                if let endpoint = await proxy(fromScriptAt: URL(string: "http://wpad/wpad.dat")!) {
+                if let script = await downloadScript(URL(string: "http://wpad/wpad.dat")!),
+                   let endpoint = await PACEvaluator.proxy(script: script, destination: destination) {
                     return (endpoint, String(localized: "WPAD (activado en macOS)"))
                 }
             case .direct:
@@ -39,28 +51,40 @@ enum ProxyResolver {
     }
 
     /// Qué hacer en modo automático. Solo se sigue lo configurado de forma explícita: variables de entorno,
-    /// el proxy del sistema o su PAC, y WPAD únicamente si está activado en los ajustes de red de macOS.
+    /// el proxy del sistema (con sus excepciones) o su PAC, y WPAD únicamente si está activado en macOS.
     /// (Consultar http://wpad/wpad.dat siempre dejaría que cualquier red impusiera su proxy.)
     enum AutomaticPlan: Equatable {
         case endpoint(ProxyEndpoint, source: String)
         case pac(URL)
+        case pacScript(String)
         case wpad
         case direct
     }
 
-    static func automaticPlan(environment: [String: String], system: [String: Any]) -> AutomaticPlan {
-        for key in ["http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY"] {
+    static func automaticPlan(environment: [String: String], system: [String: Any], destination: URL) -> AutomaticPlan {
+        for key in ["https_proxy", "HTTPS_PROXY", "http_proxy", "HTTP_PROXY"] {
             if let value = environment[key], let endpoint = endpoint(fromURL: value) {
                 return .endpoint(endpoint, source: String(localized: "Variable \(key)"))
             }
         }
-        if let endpoint = endpoint(fromSystemSettings: system) {
-            return .endpoint(endpoint, source: String(localized: "Proxy del sistema"))
-        }
-        if (system["ProxyAutoConfigEnable"] as? Int) == 1,
-           let value = system["ProxyAutoConfigURLString"] as? String, let url = URL(string: value),
-           ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") {
-            return .pac(url)
+        // CFNetwork aplica la configuración del sistema al destino: proxies explícitos, lista de excepciones y PAC.
+        let entries = CFNetworkCopyProxiesForURL(destination as CFURL, system as CFDictionary).takeRetainedValue() as? [[String: Any]] ?? []
+        for entry in entries {
+            let type = entry[kCFProxyTypeKey as String] as? String
+            if type == kCFProxyTypeHTTP as String || type == kCFProxyTypeHTTPS as String,
+               let endpoint = endpoint(fromCFProxy: entry) {
+                return .endpoint(endpoint, source: String(localized: "Proxy del sistema"))
+            }
+            if type == kCFProxyTypeAutoConfigurationURL as String,
+               let url = entry[kCFProxyAutoConfigurationURLKey as String] as? URL,
+               ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") {
+                return .pac(url)
+            }
+            if type == kCFProxyTypeAutoConfigurationJavaScript as String,
+               let script = entry[kCFProxyAutoConfigurationJavaScriptKey as String] as? String {
+                return .pacScript(script)
+            }
+            if type == kCFProxyTypeNone as String { break }
         }
         if (system["ProxyAutoDiscoveryEnable"] as? Int) == 1 { return .wpad }
         return .direct
@@ -77,48 +101,64 @@ enum ProxyResolver {
         return try? ProxyEndpoint(host: host, port: parts.port ?? 80)
     }
 
-    static func endpoint(fromWPAD contents: String) -> ProxyEndpoint? {
-        let proxyLine = contents.split(whereSeparator: \.isNewline)
-            .first { $0.range(of: "proxies\\s*=", options: [.regularExpression, .caseInsensitive]) != nil }
-        if let proxyLine, let endpoint = firstHostPort(in: String(proxyLine)) { return endpoint }
-        let pattern = #"(?i)\bPROXY\s+([A-Za-z0-9._-]+):(\d{1,5})"#
-        let regex = try? NSRegularExpression(pattern: pattern)
-        let range = NSRange(contents.startIndex..<contents.endIndex, in: contents)
-        guard let match = regex?.firstMatch(in: contents, range: range),
-              let hostRange = Range(match.range(at: 1), in: contents),
-              let portRange = Range(match.range(at: 2), in: contents),
-              let port = Int(contents[portRange]) else { return nil }
-        return try? ProxyEndpoint(host: String(contents[hostRange]), port: port)
+    static func endpoint(fromCFProxy entry: [String: Any]) -> ProxyEndpoint? {
+        guard let host = entry[kCFProxyHostNameKey as String] as? String,
+              let port = (entry[kCFProxyPortNumberKey as String] as? NSNumber)?.intValue else { return nil }
+        return try? ProxyEndpoint(host: host, port: port)
     }
 
-    private static func firstHostPort(in value: String) -> ProxyEndpoint? {
-        let pattern = #"([A-Za-z0-9._-]+):(\d{1,5})"#
-        let regex = try? NSRegularExpression(pattern: pattern)
-        let range = NSRange(value.startIndex..<value.endIndex, in: value)
-        guard let match = regex?.firstMatch(in: value, range: range),
-              let hostRange = Range(match.range(at: 1), in: value),
-              let portRange = Range(match.range(at: 2), in: value),
-              let port = Int(value[portRange]) else { return nil }
-        return try? ProxyEndpoint(host: String(value[hostRange]), port: port)
+    /// Descarga un script PAC/WPAD de la URL configurada en el sistema, sin proxy y con límites de tiempo y tamaño.
+    private static func downloadScript(_ url: URL) async -> String? {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.connectionProxyDictionary = [:]
+        configuration.timeoutIntervalForRequest = 5
+        guard let (data, response) = try? await URLSession(configuration: configuration).data(from: url),
+              data.count < 1_000_000 else { return nil }
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 { return nil }
+        return String(decoding: data, as: UTF8.self)
+    }
+}
+
+/// Ejecuta un script PAC con el motor de CFNetwork (`FindProxyForURL(url, host)`) para un destino.
+enum PACEvaluator {
+    private final class Box {
+        var entries: [[String: Any]]?
     }
 
-    static func endpoint(fromSystemSettings values: [String: Any]) -> ProxyEndpoint? {
-        for prefix in ["HTTP", "HTTPS"] {
-            guard (values[prefix + "Enable"] as? Int) == 1,
-                  let host = values[prefix + "Proxy"] as? String,
-                  let port = values[prefix + "Port"] as? Int else { continue }
-            if let endpoint = try? ProxyEndpoint(host: host, port: port) { return endpoint }
+    /// Primer proxy HTTP(S) que el PAC devuelve para el destino; `nil` si dice DIRECT, falla o solo ofrece SOCKS.
+    static func proxy(script: String, destination: URL) async -> ProxyEndpoint? {
+        let entries = await evaluate(script: script, destination: destination)
+        for entry in entries {
+            let type = entry[kCFProxyTypeKey as String] as? String
+            if type == kCFProxyTypeNone as String { return nil }
+            if type == kCFProxyTypeHTTP as String || type == kCFProxyTypeHTTPS as String,
+               let endpoint = ProxyResolver.endpoint(fromCFProxy: entry) {
+                return endpoint
+            }
         }
         return nil
     }
 
-    /// Descarga un script PAC/WPAD (solo de una URL configurada en el sistema) y toma su primer proxy.
-    private static func proxy(fromScriptAt url: URL) async -> ProxyEndpoint? {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.connectionProxyDictionary = [:]
-        configuration.timeoutIntervalForRequest = 5
-        guard let (data, response) = try? await URLSession(configuration: configuration).data(from: url) else { return nil }
-        if let http = response as? HTTPURLResponse, http.statusCode != 200 { return nil }
-        return endpoint(fromWPAD: String(decoding: data, as: UTF8.self))
+    /// El motor necesita un run loop: se usa un hilo propio con un tiempo máximo.
+    static func evaluate(script: String, destination: URL, timeout: TimeInterval = 10) async -> [[String: Any]] {
+        await withCheckedContinuation { continuation in
+            let thread = Thread {
+                let box = Box()
+                var context = CFStreamClientContext(version: 0, info: Unmanaged.passUnretained(box).toOpaque(),
+                                                    retain: nil, release: nil, copyDescription: nil)
+                let callback: CFProxyAutoConfigurationResultCallback = { info, proxies, _ in
+                    let box = Unmanaged<Box>.fromOpaque(info).takeUnretainedValue()
+                    box.entries = proxies as? [[String: Any]] ?? []
+                    CFRunLoopStop(CFRunLoopGetCurrent())
+                }
+                let source = CFNetworkExecuteProxyAutoConfigurationScript(script as CFString, destination as CFURL,
+                                                                          callback, &context)
+                CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .defaultMode)
+                _ = CFRunLoopRunInMode(.defaultMode, timeout, false)
+                CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .defaultMode)
+                continuation.resume(returning: box.entries ?? [])
+            }
+            thread.start()
+        }
     }
 }
