@@ -6,6 +6,9 @@ cd "${0:A:h:h}"
 out=.build/l10n-strings
 rm -rf "$out" && mkdir -p "$out" .build/clang-cache .build/cache
 export CLANG_MODULE_CACHE_PATH="$PWD/.build/clang-cache"
+# Compilación limpia: una incremental solo emite los textos de los archivos recompilados
+# y el resto quedaría marcado como obsoleto.
+rm -rf .build/l10n
 swift build --disable-sandbox --scratch-path .build/l10n --cache-path .build/cache \
   -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$PWD/$out" >/dev/null
 catalog=Assets/Localizable.xcstrings
