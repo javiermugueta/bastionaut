@@ -77,13 +77,13 @@ struct ConnectionDetailView: View {
         Card(title: "Servidores", emoji: "🖥️", trailing: AnyView(
             Button { editingDestination = Destination(privateKeyPath: SSHKeys.suggestedPrivateKey) } label: {
                 Label("Añadir", systemImage: "plus")
-            })) {
+            }.buttonStyle(SoftButtonStyle()))) {
             if manager.settings.destinations.isEmpty {
                 Text("Sin servidores todavía. Añade uno y ábrelo con un clic.").foregroundStyle(.secondary)
             }
             ForEach(manager.settings.destinations) { destination in
                 TargetRow(
-                    emoji: "🖥️",
+                    symbol: "server.rack", color: .blue, primarySymbol: "terminal.fill",
                     title: destination.name.isEmpty ? destination.host : destination.name,
                     subtitle: "\(destination.user)@\(destination.host):\(destination.port)",
                     runner: portMode ? manager.runner(for: destination.id) : nil,
@@ -101,13 +101,14 @@ struct ConnectionDetailView: View {
         Card(title: "Túneles a puertos", emoji: "🚇", trailing: AnyView(
             Button { editingTunnel = LocalTunnel(host: "", privateKeyPath: SSHKeys.suggestedPrivateKey, remoteHost: "") } label: {
                 Label("Añadir", systemImage: "plus")
-            })) {
+            }.buttonStyle(SoftButtonStyle()))) {
             if (manager.settings.tunnels ?? []).isEmpty {
                 Text("Lleva un puerto remoto (una base de datos, una consola web…) a tu Mac.").foregroundStyle(.secondary)
             }
             ForEach(manager.settings.tunnels ?? []) { tunnel in
                 TargetRow(
-                    emoji: "🔌",
+                    symbol: tunnel.isDirect ? "arrow.left.arrow.right" : "point.3.filled.connected.trianglepath.dotted",
+                    color: .purple, primarySymbol: "arrow.left.arrow.right",
                     title: tunnel.name.isEmpty ? (tunnel.isDirect ? tunnel.remoteHost : tunnel.host) : tunnel.name,
                     subtitle: "localhost:\(tunnel.localPort) → \(tunnel.remoteHost):\(tunnel.remotePort) \(String(localized: "vía")) \(tunnel.isDirect ? "Bastion" : tunnel.host)",
                     runner: portMode ? manager.runner(for: tunnel.id) : nil,
@@ -170,12 +171,14 @@ struct HeroCard: View {
                     CountdownRing(expiresAt: expires, total: TimeInterval(manager.settings.ttlSeconds))
                 }
                 if manager.isRunning {
-                    Button("Desconectar") { manager.disconnect() }.buttonStyle(FunButtonStyle(tint: .black.opacity(0.55)))
+                    Button { manager.disconnect() } label: { Label("Desconectar", systemImage: "stop.circle.fill") }
+                        .buttonStyle(FunButtonStyle(tint: .black.opacity(0.55)))
                 } else {
-                    Button("Conectar 🚀") { manager.connect() }.buttonStyle(FunButtonStyle(tint: .black.opacity(0.55)))
+                    Button { manager.connect() } label: { Label("Conectar 🚀", systemImage: "power") }
+                        .buttonStyle(FunButtonStyle(tint: .black.opacity(0.55)))
                 }
                 if manager.isConnected {
-                    Button("Copiar SSH del Bastion") { manager.copyBastionCommand() }
+                    Button { manager.copyBastionCommand() } label: { Label("Copiar SSH del Bastion", systemImage: "doc.on.doc") }
                         .buttonStyle(.plain).font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.9))
                 }
             }
@@ -222,7 +225,9 @@ struct CountdownRing: View {
 // MARK: Filas
 
 struct TargetRow: View {
-    let emoji: String
+    let symbol: String
+    let color: Color
+    let primarySymbol: String
     let title: String
     let subtitle: String
     let runner: ForwardRunner?
@@ -237,7 +242,8 @@ struct TargetRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text(emoji).font(.title2)
+            IconTile(symbol: symbol, color: runner?.state.isConnected == true ? .green : color)
+                .animation(.easeInOut, value: runner?.state)
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(title).font(.headline)
@@ -251,17 +257,20 @@ struct TargetRow: View {
                 Text(subtitle).font(.caption.monospaced()).foregroundStyle(.secondary).lineLimit(1)
             }
             Spacer()
-            Group {
-                Button(action: copy) { Image(systemName: "doc.on.doc") }.help("Copiar comando")
-                Button(action: edit) { Image(systemName: "pencil") }.help("Editar")
-                Button { confirmDelete = true } label: { Image(systemName: "trash") }.help("Eliminar")
+            HStack(spacing: 6) {
                 if runner?.isActive == true {
-                    Button(action: stop) { Image(systemName: "stop.fill") }.help("Cerrar la sesión de este destino")
+                    Button(action: stop) { Image(systemName: "stop.fill") }
+                        .buttonStyle(CircleIconButtonStyle(tint: .orange)).help("Cerrar la sesión de este destino")
                 }
+                Button(action: copy) { Image(systemName: "doc.on.doc") }
+                    .buttonStyle(CircleIconButtonStyle(tint: .blue)).help("Copiar comando")
+                Button(action: edit) { Image(systemName: "pencil") }
+                    .buttonStyle(CircleIconButtonStyle(tint: .purple)).help("Editar")
+                Button { confirmDelete = true } label: { Image(systemName: "trash") }
+                    .buttonStyle(CircleIconButtonStyle(tint: .red)).help("Eliminar")
             }
-            .buttonStyle(.borderless)
-            .opacity(hovering ? 1 : 0.55)
-            Button(primaryTitle, action: primary).buttonStyle(FunButtonStyle())
+            .opacity(hovering ? 1 : 0.7)
+            Button(action: primary) { Label(primaryTitle, systemImage: primarySymbol) }.buttonStyle(FunButtonStyle())
         }
         .padding(10)
         .background(hovering ? Color.primary.opacity(0.05) : .clear, in: RoundedRectangle(cornerRadius: 12))
@@ -281,7 +290,11 @@ struct SettingsCard: View {
 
     var body: some View {
         Card(title: "Ajustes", emoji: "⚙️", trailing: AnyView(
-            Button(expanded ? "Ocultar" : "Mostrar") { withAnimation { expanded.toggle() } })) {
+            Button { withAnimation(.spring(response: 0.3)) { expanded.toggle() } } label: {
+                Image(systemName: "chevron.right").rotationEffect(.degrees(expanded ? 90 : 0))
+            }
+            .buttonStyle(CircleIconButtonStyle(tint: .accentColor))
+            .help(expanded ? "Ocultar" : "Mostrar"))) {
             if expanded {
                 Form {
                     Section {
@@ -366,7 +379,10 @@ struct LogCard: View {
 
     var body: some View {
         Card(title: "Bitácora", emoji: "📜", trailing: AnyView(
-            Button("Limpiar") { manager.clearLog() }.disabled(manager.log.isEmpty))) {
+            Button { manager.clearLog() } label: { Image(systemName: "trash") }
+                .buttonStyle(CircleIconButtonStyle(tint: .red))
+                .help("Limpiar")
+                .disabled(manager.log.isEmpty))) {
             if manager.log.isEmpty {
                 Text("Aquí iré apuntando lo que pase.").foregroundStyle(.secondary)
             } else {

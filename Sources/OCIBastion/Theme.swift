@@ -175,3 +175,62 @@ struct FileField: View {
         }
     }
 }
+
+/// Icono en un cuadrado redondeado de color, al estilo de Ajustes del Sistema.
+struct IconTile: View {
+    let symbol: String
+    let color: Color
+    var size: CGFloat = 34
+
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: size * 0.48, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(color.gradient, in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+            .shadow(color: color.opacity(0.3), radius: 3, y: 1)
+    }
+}
+
+/// Botón circular de icono con fondo al pasar el ratón.
+struct CircleIconButtonStyle: ButtonStyle {
+    var tint: Color = .secondary
+
+    func makeBody(configuration: Configuration) -> some View {
+        CircleIcon(configuration: configuration, tint: tint)
+    }
+
+    private struct CircleIcon: View {
+        let configuration: Configuration
+        let tint: Color
+        @State private var hovering = false
+        @Environment(\.isEnabled) private var isEnabled
+
+        var body: some View {
+            configuration.label
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(hovering ? tint : Color.secondary)
+                .frame(width: 30, height: 30)
+                .background(Circle().fill(hovering ? tint.opacity(0.15) : Color.primary.opacity(0.05)))
+                .scaleEffect(configuration.isPressed ? 0.9 : 1)
+                .opacity(isEnabled ? 1 : 0.4)
+                .onHover { hovering = $0 }
+                .animation(.easeOut(duration: 0.15), value: hovering)
+        }
+    }
+}
+
+/// Cápsula de color suave para acciones secundarias como «Añadir».
+struct SoftButtonStyle: ButtonStyle {
+    var tint: Color = .accentColor
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.callout.weight(.semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .foregroundStyle(tint)
+            .background(tint.opacity(configuration.isPressed ? 0.25 : 0.14), in: Capsule())
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+    }
+}

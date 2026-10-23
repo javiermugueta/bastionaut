@@ -27,6 +27,7 @@
       "shouldTranslate": false
     },
     "%@ contiene caracteres no admitidos.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -37,6 +38,7 @@
       }
     },
     "%@ no puede estar vacío ni contener saltos de línea.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -71,8 +73,7 @@
             "value": "Open the tunnel first to get its command 🙂"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Abriendo el túnel 🚇": {
       "localizations": {
@@ -407,6 +408,7 @@
       }
     },
     "Clave privada de la instancia": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -417,6 +419,7 @@
       }
     },
     "Clave privada del Bastion": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -427,6 +430,7 @@
       }
     },
     "Clave privada del túnel": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -484,8 +488,7 @@
             "value": "SSH command copied 📋"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Comando del Bastion copiado 📋": {
       "localizations": {
@@ -495,8 +498,7 @@
             "value": "Bastion command copied 📋"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Comando del túnel copiado 📋": {
       "localizations": {
@@ -506,8 +508,7 @@
             "value": "Tunnel command copied 📋"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Compartimento": {
       "localizations": {
@@ -602,6 +603,7 @@
       }
     },
     "Conexión directa": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -770,10 +772,10 @@
             "value": "Destination"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Destino SSH del Bastion no válido.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -841,8 +843,7 @@
             "value": "The bastion brings the remote port straight to a port on your Mac. No servers in between."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El Bastion «%@» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion.": {
       "extractionState": "stale",
@@ -867,6 +868,7 @@
       }
     },
     "El archivo contiene conexiones duplicadas o sin nombre.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -877,6 +879,7 @@
       }
     },
     "El archivo no contiene ninguna configuración.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -898,6 +901,7 @@
       }
     },
     "El puerto debe estar entre 1 y 65535.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1014,8 +1018,7 @@
             "value": "In SOCKS5 mode the tunnel always goes through an SSH server."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Entro por SSH en el servidor y llevo su puerto remoto a un puerto de tu Mac.": {
       "localizations": {
@@ -1095,8 +1098,7 @@
             "value": "The remote host is missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta el puerto en tu Mac.": {
       "localizations": {
@@ -1106,8 +1108,7 @@
             "value": "The port on your Mac is missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta el puerto remoto.": {
       "localizations": {
@@ -1117,8 +1118,7 @@
             "value": "The remote port is missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta la IP del servidor SSH (o desmarca «Pasar por un servidor SSH»).": {
       "localizations": {
@@ -1128,8 +1128,7 @@
             "value": "The SSH server IP is missing (or turn off “Go through an SSH server”)."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta la clave privada del servidor SSH.": {
       "localizations": {
@@ -1139,8 +1138,7 @@
             "value": "The SSH server private key is missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Faltan la IP y el usuario del servidor.": {
       "localizations": {
@@ -1150,8 +1148,7 @@
             "value": "The server IP and user are missing."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Filtrar por nombre": {
       "localizations": {
@@ -1217,6 +1214,7 @@
       "shouldTranslate": false
     },
     "Host SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1227,6 +1225,7 @@
       }
     },
     "Host del Bastion": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1247,6 +1246,7 @@
       }
     },
     "Host destino del túnel": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1340,6 +1340,7 @@
       }
     },
     "La conexión seleccionada no existe en el archivo.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1789,8 +1790,7 @@
             "value": "Go through an SSH server"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Perfil": {
       "localizations": {
@@ -1856,6 +1856,7 @@
       "shouldTranslate": false
     },
     "Proxy del sistema": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1866,6 +1867,7 @@
       }
     },
     "Proxy manual": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2239,6 +2241,7 @@
       }
     },
     "Sin proxy detectado; conexión directa": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2368,8 +2371,7 @@
             "value": "Tunnel ready on localhost:%lld 🎉"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Túneles a puertos": {
       "localizations": {
@@ -2427,8 +2429,7 @@
             "value": "A tunnel without an SSH server needs “Port forwarding” mode. Switch it in Settings or add an SSH server."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Una sesión por servidor. Funciona con cualquier Bastion.": {
       "localizations": {
@@ -2471,6 +2472,7 @@
       }
     },
     "Usuario SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2481,6 +2483,7 @@
       }
     },
     "Usuario de sesión": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2491,6 +2494,7 @@
       }
     },
     "Variable %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2501,6 +2505,7 @@
       }
     },
     "Versión de archivo no compatible: %lld.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2529,9 +2534,6 @@
           }
         }
       }
-    },
-    "WPAD": {
-      "shouldTranslate": false
     },
     "Ya existe una conexión llamada «%@».": {
       "localizations": {
@@ -2577,6 +2579,7 @@
       }
     },
     "falta el script de iTerm2 en la aplicación.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2849,8 +2852,7 @@
             "value": "Handy when the port only listens inside the server (e.g. 127.0.0.1)."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "…ocid1.bastion": {
       "shouldTranslate": false
@@ -3067,8 +3069,7 @@
             "value": "🚇 Túnel %1$@: localhost:%2$lld → %3$@:%4$lld"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🚇 Túnel a un puerto": {
       "localizations": {
