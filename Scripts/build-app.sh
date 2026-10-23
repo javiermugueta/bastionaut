@@ -6,7 +6,7 @@
 #   UNIVERSAL      1 para generar binario arm64 + x86_64 (por defecto: 1 en release)
 #   SIGN_IDENTITY  identidad de firma (por defecto: "-" firma ad hoc)
 #                  p. ej. "Developer ID Application: Nombre (TEAMID)"
-#   BUNDLE_ID      identificador del bundle (por defecto: com.ocibastion.app)
+#   BUNDLE_ID      identificador del bundle (por defecto: com.javiermugueta.ocibastion)
 #   VERSION        CFBundleShortVersionString (por defecto: 0.1.0)
 #   BUILD_NUMBER   CFBundleVersion (por defecto: número de commits de git)
 set -euo pipefail
@@ -15,7 +15,7 @@ cd "${0:A:h:h}"
 configuration="${CONFIGURATION:-release}"
 universal="${UNIVERSAL:-$([[ $configuration == release ]] && echo 1 || echo 0)}"
 sign_identity="${SIGN_IDENTITY:--}"
-bundle_id="${BUNDLE_ID:-com.ocibastion.app}"
+bundle_id="${BUNDLE_ID:-com.javiermugueta.ocibastion}"
 version="${VERSION:-0.1.0}"
 build_number="${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}"
 
