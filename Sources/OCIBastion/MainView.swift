@@ -12,6 +12,8 @@ struct MainView: View {
     @State private var wizard: WizardMode?
     @State private var showImportConfirmation = false
     @State private var importPlan: ConfigurationImportPlan?
+    @State private var pendingDelete: SavedConnection?
+    @State private var renaming: SavedConnection?
 
     var body: some View {
         NavigationSplitView {
@@ -71,7 +73,29 @@ struct MainView: View {
                     }
                     .padding(.vertical, 3)
                     .tag(Optional(connection.id))
+                    .contextMenu {
+                        Button("Renombrar…") { renaming = connection }
+                        Button("Duplicar") { manager.duplicateConnection(id: connection.id) }
+                            .disabled(manager.isRunning)
+                        Divider()
+                        Button("Eliminar…", role: .destructive) { pendingDelete = connection }
+                    }
                 }
+            }
+        }
+        .onDeleteCommand {
+            if let selected = manager.selectedConnection { pendingDelete = selected }
+        }
+        .confirmationDialog("¿Eliminar «\(pendingDelete?.name ?? "")»?",
+                            isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } })) {
+            Button("Eliminar", role: .destructive) {
+                if let pendingDelete { manager.deleteConnection(id: pendingDelete.id) }
+                pendingDelete = nil
+            }
+        } message: { Text("Esta acción no se puede deshacer.") }
+        .sheet(item: $renaming) { connection in
+            NameSheet(title: "Renombrar conexión", name: connection.name, emoji: connection.displayEmoji) { name, emoji in
+                manager.renameConnection(id: connection.id, to: name, emoji: emoji)
             }
         }
         .navigationSplitViewColumnWidth(min: 200, ideal: 230)

@@ -2,6 +2,7 @@
   "sourceLanguage": "es",
   "strings": {
     " Solo acepta conexiones desde: %@.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -23,6 +24,7 @@
       "shouldTranslate": false
     },
     "%@ contiene caracteres no admitidos.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -33,6 +35,7 @@
       }
     },
     "%@ no puede estar vacío ni contener saltos de línea.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -42,21 +45,11 @@
         }
       }
     },
-    "%@: %@": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "new",
-            "value": "%1$@: %2$@"
-          }
-        }
-      },
-      "shouldTranslate": false
-    },
     "10.0.1.23": {
       "shouldTranslate": false
     },
     "Abre el asistente ✨ y revisa la cuenta OCI.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -67,6 +60,7 @@
       }
     },
     "Abriendo el túnel 🚇": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -117,6 +111,7 @@
       }
     },
     "Al perfil «%@» le falta el campo «%@».": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -246,6 +241,7 @@
       }
     },
     "Borra la entrada antigua de ~/.ssh/known_hosts para ese host.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -276,6 +272,7 @@
       }
     },
     "Buscando una sesión que reutilizar 🔎": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -306,6 +303,7 @@
       }
     },
     "Calentando motores 🔥": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -316,6 +314,7 @@
       }
     },
     "Cambia a «Reenvío de puerto» en Ajustes.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -396,6 +395,7 @@
       }
     },
     "Clave privada de la instancia": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -406,6 +406,7 @@
       }
     },
     "Clave privada del Bastion": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -416,6 +417,7 @@
       }
     },
     "Clave privada del túnel": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -486,6 +488,7 @@
       }
     },
     "Comprueba que tu IP pública esté en la lista de IPs permitidas del Bastion (consola OCI › Bastion › Editar). Si sales por un proxy o VPN, cuenta la IP de salida.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -506,6 +509,7 @@
       }
     },
     "Conecta primero el Bastion.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -556,6 +560,7 @@
       }
     },
     "Conexión directa": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -636,11 +641,22 @@
       }
     },
     "DER truncado.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "truncated DER."
+          }
+        }
+      }
+    },
+    "Desconecta antes de borrar esta conexión 🙏": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect before deleting this connection 🙏"
           }
         }
       }
@@ -706,6 +722,7 @@
       }
     },
     "Destino SSH del Bastion no válido.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -736,6 +753,7 @@
       }
     },
     "Echando la siesta": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -756,6 +774,7 @@
       }
     },
     "El Bastion aún está preparando la sesión… (%lld/4)": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -766,6 +785,7 @@
       }
     },
     "El Bastion «%@» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -776,6 +796,7 @@
       }
     },
     "El SSH anterior (PID %d) sigue vivo; no abro otro hasta que termine.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -786,6 +807,7 @@
       }
     },
     "El archivo contiene conexiones duplicadas o sin nombre.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -796,6 +818,7 @@
       }
     },
     "El archivo no contiene ninguna configuración.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -806,6 +829,7 @@
       }
     },
     "El perfil «%@» no existe en la configuración OCI.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -816,6 +840,7 @@
       }
     },
     "El puerto debe estar entre 1 y 65535.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -826,6 +851,7 @@
       }
     },
     "El puerto local %lld lo está usando otro proceso (PID %d). Libéralo o elige otro.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -842,6 +868,7 @@
       }
     },
     "El túnel SSH terminó.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -852,6 +879,7 @@
       }
     },
     "El túnel está abierto. ¡A trabajar!": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -862,6 +890,7 @@
       }
     },
     "Elegir…": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -882,6 +911,7 @@
       }
     },
     "Elige otro puerto local o cierra lo que lo esté usando.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1055,6 +1085,7 @@
       "shouldTranslate": false
     },
     "Host SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1065,6 +1096,7 @@
       }
     },
     "Host del Bastion": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1085,6 +1117,7 @@
       }
     },
     "Host destino del túnel": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1145,6 +1178,7 @@
       }
     },
     "La clave de API %@ está cifrada. Añade pass_phrase al perfil OCI.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1155,6 +1189,7 @@
       }
     },
     "La clave privada tiene contraseña. Cárgala antes en ssh-agent.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1165,6 +1200,7 @@
       }
     },
     "La clave pública y la privada del Bastion no forman pareja.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1175,6 +1211,7 @@
       }
     },
     "La conexión seleccionada no existe en el archivo.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1195,6 +1232,7 @@
       }
     },
     "La huella del servidor no coincide: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1215,6 +1253,7 @@
       }
     },
     "La sesión de OCI tardó demasiado en activarse.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1235,6 +1274,7 @@
       }
     },
     "Llamando a la puerta del Bastion 🚪": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1255,6 +1295,7 @@
       }
     },
     "Manos a la obra…": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1308,6 +1349,7 @@
       }
     },
     "Necesito tu ayuda": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1328,6 +1370,7 @@
       }
     },
     "No consigo conectar con el Bastion por SSH.%@ (%@)": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1354,6 +1397,7 @@
       }
     },
     "No encuentro el Bastion. ¿Está en la región elegida?": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1364,6 +1408,7 @@
       }
     },
     "No encuentro el archivo de configuración OCI en %@.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1374,6 +1419,7 @@
       }
     },
     "No encuentro un puerto local libre.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1384,6 +1430,7 @@
       }
     },
     "No existe la clave: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1394,6 +1441,7 @@
       }
     },
     "No hay forma de hablar con OCI: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1404,6 +1452,7 @@
       }
     },
     "No pude abrir la terminal: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1414,6 +1463,7 @@
       }
     },
     "No puedo usar la clave de API de OCI: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1434,6 +1484,7 @@
       }
     },
     "No se pudo generar la clave temporal": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1474,6 +1525,7 @@
       }
     },
     "No se pudo leer la clave SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1484,6 +1536,7 @@
       }
     },
     "No se pudo obtener la huella de la clave SSH.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1537,6 +1590,7 @@
       "shouldTranslate": false
     },
     "OCI está preparando la sesión ☕️ · %lld s": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1547,6 +1601,7 @@
       }
     },
     "OCI no pudo crear la sesión: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1557,6 +1612,7 @@
       }
     },
     "OCI respondió %lld %@: %@%@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1623,6 +1679,7 @@
       }
     },
     "Pidiendo una sesión nueva a OCI 🛎️": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1633,6 +1690,7 @@
       }
     },
     "Pido una sesión nueva antes de que caduque la actual.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1666,6 +1724,7 @@
       "shouldTranslate": false
     },
     "Proxy del sistema": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1676,6 +1735,7 @@
       }
     },
     "Proxy manual": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1686,6 +1746,7 @@
       }
     },
     "Puede faltar un permiso IAM (p. ej. «manage bastion-session») o el recurso no está en esta región.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1746,6 +1807,7 @@
       }
     },
     "Pulsa conectar cuando quieras salir de paseo.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1826,6 +1888,7 @@
       }
     },
     "Renovando la sesión": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1856,6 +1919,7 @@
       }
     },
     "Respuesta de OCI inesperada en %@: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1872,6 +1936,7 @@
       }
     },
     "Revisa la huella y la clave de API del perfil OCI.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1901,6 +1966,7 @@
       "shouldTranslate": false
     },
     "SSH no pudo abrir el puerto local: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1911,6 +1977,7 @@
       }
     },
     "SSH rechazó la clave: %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1931,6 +1998,7 @@
       }
     },
     "Se cayó, reintentando…": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2011,6 +2079,7 @@
       }
     },
     "Si usas tus propias claves, comprueba que la privada corresponde a la pública.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2041,6 +2110,7 @@
       }
     },
     "Sin proxy detectado; conexión directa": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2091,6 +2161,7 @@
       }
     },
     "Tenancy (raíz)": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2114,6 +2185,7 @@
       }
     },
     "Tu IP pública es %@. Compárala con la lista del Bastion: %@.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2130,6 +2202,7 @@
       }
     },
     "Tu IP pública es %@. El Bastion no tiene lista de IPs permitidas.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2170,6 +2243,7 @@
       }
     },
     "URL de OCI no válida.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2180,6 +2254,7 @@
       }
     },
     "URL de OCI no válida: %@%@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2246,6 +2321,7 @@
       }
     },
     "Usuario SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2256,6 +2332,7 @@
       }
     },
     "Usuario de sesión": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2266,6 +2343,7 @@
       }
     },
     "Variable %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2276,6 +2354,7 @@
       }
     },
     "Versión de archivo no compatible: %lld.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2305,9 +2384,6 @@
         }
       }
     },
-    "WPAD": {
-      "shouldTranslate": false
-    },
     "Ya existe una conexión llamada «%@».": {
       "localizations": {
         "en": {
@@ -2319,6 +2395,7 @@
       }
     },
     "el PEM no contiene base64 válido.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2329,6 +2406,7 @@
       }
     },
     "estructura DER inesperada.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2339,6 +2417,7 @@
       }
     },
     "falta el bloque BEGIN/END del PEM.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2349,6 +2428,7 @@
       }
     },
     "falta el script de iTerm2 en la aplicación.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2372,6 +2452,7 @@
       }
     },
     "longitud DER no válida.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2382,6 +2463,7 @@
       }
     },
     "no se pudo descifrar con pass_phrase.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2402,6 +2484,7 @@
       }
     },
     "respuesta inesperada al consultar la IP pública": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2412,6 +2495,7 @@
       }
     },
     "respuesta no HTTP": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2422,6 +2506,7 @@
       }
     },
     "se esperaba una clave RSA en formato PEM.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2442,6 +2527,7 @@
       }
     },
     "sin respuesta": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2452,6 +2538,7 @@
       }
     },
     "sin respuesta en 30 s": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2462,6 +2549,7 @@
       }
     },
     "solo se admiten claves RSA.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2508,6 +2596,7 @@
       }
     },
     "¡En órbita!": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2611,6 +2700,7 @@
       "shouldTranslate": false
     },
     "⏱️ %@: la sesión es nueva y todavía no acepta la clave; reintento en 5 s": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2621,6 +2711,7 @@
       }
     },
     "⏳ %@: renovando la sesión antes de que caduque": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2631,6 +2722,7 @@
       }
     },
     "♻️ %@: reutilizo una sesión que ya existía": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2641,6 +2733,7 @@
       }
     },
     "✅ Tu IP pública %@ está permitida en el Bastion.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2661,6 +2754,7 @@
       }
     },
     "❌ Tu IP pública %@ NO está en la lista del Bastion (%@). Añádela en la consola de OCI.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2677,6 +2771,7 @@
       }
     },
     "🎉 %@: túnel listo en 127.0.0.1:%lld": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2725,6 +2820,7 @@
       }
     },
     "🔁 %@: no pude renovar todavía (%@); reintento en 1 min": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2741,6 +2837,7 @@
       }
     },
     "🔌 %@: el túnel se cerró": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2817,6 +2914,7 @@
       }
     },
     "🛎️ %@: sesión creada, esperando a OCI": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {

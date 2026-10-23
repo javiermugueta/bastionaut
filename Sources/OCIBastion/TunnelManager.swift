@@ -188,8 +188,12 @@ final class TunnelManager {
     }
 
     func renameSelectedConnection(to rawName: String, emoji: String) {
+        guard let id = settings.selectedSavedConnectionID else { return }
+        renameConnection(id: id, to: rawName, emoji: emoji)
+    }
+
+    func renameConnection(id: UUID, to rawName: String, emoji: String) {
         do {
-            guard let id = settings.selectedSavedConnectionID else { return }
             let name = try InputCheck.singleLine(rawName, name: "Nombre de conexión")
             var records = savedConnections
             guard let index = records.firstIndex(where: { $0.id == id }) else { return }
@@ -204,27 +208,60 @@ final class TunnelManager {
     }
 
     func duplicateSelectedConnection() {
-        guard let selected = selectedConnection else { return }
+        guard let id = settings.selectedSavedConnectionID else { return }
+        duplicateConnection(id: id)
+    }
+
+    func duplicateConnection(id: UUID) {
+        guard let selected = savedConnections.first(where: { $0.id == id }) else { return }
         var name = selected.name + " (copia)"
         var counter = 2
         while savedConnections.contains(where: { $0.name == name }) {
             name = "\(selected.name) (copia \(counter))"
             counter += 1
         }
-        addConnection(named: name, emoji: selected.displayEmoji, from: settings)
+        // La seleccionada se copia con lo que hay en pantalla; las demás, tal como están guardadas.
+        var source = settings
+        if id != settings.selectedSavedConnectionID { selected.snapshot.apply(to: &source) }
+        addConnection(named: name, emoji: selected.displayEmoji, from: source)
     }
 
     func deleteSelectedConnection() {
-        guard let id = settings.selectedSavedConnectionID, !isRunning else { return }
-        let name = selectedConnection?.name ?? ""
+        guard let id = settings.selectedSavedConnectionID else { return }
+        deleteConnection(id: id)
+    }
+
+    /// Borra una conexión guardada. La activa solo se puede borrar desconectada.
+    func deleteConnection(id: UUID) {
+        guard let record = savedConnections.first(where: { $0.id == id }) else { return }
+        let isSelected = id == settings.selectedSavedConnectionID
+        guard !(isSelected && isRunning) else { return showToast(String(localized: "Desconecta antes de borrar esta conexión 🙏")) }
         settings.savedConnections = savedConnections.filter { $0.id != id }
-        settings.selectedSavedConnectionID = nil
-        if let next = savedConnections.first {
-            selectConnection(next.id)
+        if isSelected {
+            settings.selectedSavedConnectionID = nil
+            if let next = savedConnections.first {
+                selectConnection(next.id)
+            } else {
+                // Sin conexiones: vuelta al estado vacío, conservando cuenta, proxy y terminal.
+                var fresh = Settings()
+                fresh.configPath = settings.configPath
+                fresh.profile = settings.profile
+                fresh.proxyMode = settings.proxyMode
+                fresh.proxyHost = settings.proxyHost
+                fresh.proxyPort = settings.proxyPort
+                fresh.terminalApp = settings.terminalApp
+                fresh.hasCompletedOnboarding = true
+                settings = fresh
+                portRunners = [:]
+                socksRunner = nil
+                contextCache = nil
+                bastionDetails = nil
+                save()
+            }
         } else {
             save()
         }
-        record(String(localized: "🗑️ Conexión «\(name)» eliminada"))
+        self.record(String(localized: "🗑️ Conexión «\(record.name)» eliminada"))
     }
 
     func exportConfiguration(to url: URL, scope: ExportScope) {
