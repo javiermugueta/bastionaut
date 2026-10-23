@@ -36,16 +36,27 @@ struct Settings: Codable {
     var terminalApp: TerminalApp? = nil
     var destinations: [Destination] = []
     var tunnels: [LocalTunnel]? = nil
-    var ownedSessionID: String = ""
-    var ownedSessionKeyFingerprint: String = ""
+    var region: String? = nil
+    var bastionName: String? = nil
+    var sessionMode: SessionMode? = nil
+    var keyMode: KeyMode? = nil
+    var renewMarginMinutes: Int? = nil
     var savedConnections: [SavedConnection]? = nil
     var selectedSavedConnectionID: UUID? = nil
+    var hasCompletedOnboarding: Bool? = nil
 
     var effectiveProxyMode: ProxyMode {
         proxyMode ?? (proxyHost.isEmpty ? .automatic : .manual)
     }
 
     var effectiveTerminalApp: TerminalApp { terminalApp ?? .terminal }
+    var effectiveSessionMode: SessionMode { sessionMode ?? .socks }
+    /// Las configuraciones antiguas que ya tenían claves siguen usándolas.
+    var effectiveKeyMode: KeyMode { keyMode ?? (publicKeyPath.isEmpty ? .ephemeral : .custom) }
+    var effectiveRenewMargin: TimeInterval {
+        let configured = TimeInterval((renewMarginMinutes ?? 30) * 60)
+        return max(120, min(configured, TimeInterval(ttlSeconds) / 3))
+    }
 
     static var fileURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -78,6 +89,20 @@ enum TerminalApp: String, Codable, CaseIterable {
     case iterm
 }
 
+enum SessionMode: String, Codable, CaseIterable {
+    /// Una sesión SOCKS5 (reenvío dinámico) para todos los destinos.
+    case socks
+    /// Una sesión de reenvío de puerto gestionado por destino.
+    case portForwarding
+}
+
+enum KeyMode: String, Codable, CaseIterable {
+    /// La app crea una clave por sesión y la borra al caducar.
+    case ephemeral
+    /// El usuario aporta su par de claves.
+    case custom
+}
+
 struct ConnectionSnapshot: Codable, Equatable {
     var configPath: String
     var profile: String
@@ -93,6 +118,11 @@ struct ConnectionSnapshot: Codable, Equatable {
     var terminalApp: TerminalApp?
     var destinations: [Destination]
     var tunnels: [LocalTunnel]?
+    var region: String?
+    var bastionName: String?
+    var sessionMode: SessionMode?
+    var keyMode: KeyMode?
+    var renewMarginMinutes: Int?
 
     init(settings: Settings) {
         configPath = settings.configPath
@@ -109,12 +139,14 @@ struct ConnectionSnapshot: Codable, Equatable {
         terminalApp = settings.terminalApp
         destinations = settings.destinations
         tunnels = settings.tunnels
+        region = settings.region
+        bastionName = settings.bastionName
+        sessionMode = settings.sessionMode
+        keyMode = settings.keyMode
+        renewMarginMinutes = settings.renewMarginMinutes
     }
 
     func apply(to settings: inout Settings) {
-        let sameSession = settings.configPath == configPath && settings.profile == profile &&
-            settings.bastionID == bastionID && settings.publicKeyPath == publicKeyPath &&
-            settings.privateKeyPath == privateKeyPath
         settings.configPath = configPath
         settings.profile = profile
         settings.compartmentID = compartmentID
@@ -129,10 +161,11 @@ struct ConnectionSnapshot: Codable, Equatable {
         settings.terminalApp = terminalApp
         settings.destinations = destinations
         settings.tunnels = tunnels
-        if !sameSession {
-            settings.ownedSessionID = ""
-            settings.ownedSessionKeyFingerprint = ""
-        }
+        settings.region = region
+        settings.bastionName = bastionName
+        settings.sessionMode = sessionMode
+        settings.keyMode = keyMode
+        settings.renewMarginMinutes = renewMarginMinutes
     }
 }
 
@@ -140,6 +173,9 @@ struct SavedConnection: Codable, Identifiable, Equatable {
     var id: UUID
     var name: String
     var snapshot: ConnectionSnapshot
+    var emoji: String? = nil
+
+    var displayEmoji: String { emoji ?? "🏰" }
 }
 
 enum ExportScope {
@@ -164,7 +200,7 @@ struct ConfigurationArchive: Codable {
         case .active:
             if let selected = (settings.savedConnections ?? []).first(where: { $0.id == settings.selectedSavedConnectionID }) {
                 current = nil
-                savedConnections = [SavedConnection(id: selected.id, name: selected.name, snapshot: active)]
+                savedConnections = [SavedConnection(id: selected.id, name: selected.name, snapshot: active, emoji: selected.emoji)]
             } else {
                 current = active
                 savedConnections = []
@@ -175,19 +211,19 @@ struct ConfigurationArchive: Codable {
 
     func validate() throws {
         guard formatVersion == 1 || formatVersion == 2 else {
-            throw AppError.message("Versión de archivo no compatible: \(formatVersion).")
+            throw BastionError.message("Versión de archivo no compatible: \(formatVersion).")
         }
         guard current != nil || !savedConnections.isEmpty else {
-            throw AppError.message("El archivo no contiene ninguna configuración.")
+            throw BastionError.message("El archivo no contiene ninguna configuración.")
         }
         let ids = Set(savedConnections.map(\.id))
         let names = Set(savedConnections.map { Self.normalizedName($0.name) })
         guard ids.count == savedConnections.count, names.count == savedConnections.count,
               savedConnections.allSatisfy({ !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
-            throw AppError.message("El archivo contiene conexiones duplicadas o sin nombre.")
+            throw BastionError.message("El archivo contiene conexiones duplicadas o sin nombre.")
         }
         if let selectedSavedConnectionID, !ids.contains(selectedSavedConnectionID) {
-            throw AppError.message("La conexión seleccionada no existe en el archivo.")
+            throw BastionError.message("La conexión seleccionada no existe en el archivo.")
         }
     }
 
@@ -204,10 +240,11 @@ struct ConfigurationArchive: Codable {
             if let index = records.firstIndex(where: { Self.normalizedName($0.name) == Self.normalizedName(imported.name) }) {
                 records[index].name = imported.name
                 records[index].snapshot = imported.snapshot
+                records[index].emoji = imported.emoji ?? records[index].emoji
                 importedIDs[imported.id] = records[index].id
             } else {
                 let id = records.contains(where: { $0.id == imported.id }) ? UUID() : imported.id
-                records.append(SavedConnection(id: id, name: imported.name, snapshot: imported.snapshot))
+                records.append(SavedConnection(id: id, name: imported.name, snapshot: imported.snapshot, emoji: imported.emoji))
                 importedIDs[imported.id] = id
             }
         }
@@ -233,52 +270,11 @@ struct ConfigurationImportPlan {
     var needsConfirmation: Bool { archive.current != nil || !conflictingNames.isEmpty }
 }
 
-enum AppError: LocalizedError {
-    case message(String)
-    var errorDescription: String? {
-        if case .message(let value) = self { return value }
-        return nil
-    }
-}
-
-enum OCIConfig {
-    static func profiles(at path: String) throws -> [String] {
-        let contents = try String(contentsOfFile: path, encoding: .utf8)
-        let values = contents.split(whereSeparator: \.isNewline).compactMap { line -> String? in
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard trimmed.first == "[", trimmed.last == "]" else { return nil }
-            return String(trimmed.dropFirst().dropLast())
-        }
-        return Array(Set(values)).sorted()
-    }
-
-    static func tenancyID(at path: String, profile: String) throws -> String {
-        let contents = try String(contentsOfFile: path, encoding: .utf8)
-        var currentProfile = ""
-        for line in contents.split(whereSeparator: \.isNewline) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.first == "[", trimmed.last == "]" {
-                currentProfile = String(trimmed.dropFirst().dropLast())
-                continue
-            }
-            guard currentProfile == profile,
-                  !trimmed.hasPrefix("#"), !trimmed.hasPrefix(";"),
-                  let separator = trimmed.firstIndex(of: "=") else { continue }
-            let key = trimmed[..<separator].trimmingCharacters(in: .whitespaces)
-            if key == "tenancy" {
-                let value = trimmed[trimmed.index(after: separator)...].trimmingCharacters(in: .whitespaces)
-                return try InputCheck.singleLine(value, name: "OCID de la tenancy")
-            }
-        }
-        throw AppError.message("El perfil \(profile) no contiene el campo tenancy en el archivo OCI.")
-    }
-}
-
 enum InputCheck {
     static func singleLine(_ value: String, name: String) throws -> String {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !trimmed.contains("\n"), !trimmed.contains("\r") else {
-            throw AppError.message("\(name) no puede estar vacío ni contener saltos de línea.")
+            throw BastionError.message("\(name) no puede estar vacío ni contener saltos de línea.")
         }
         return trimmed
     }
@@ -287,12 +283,18 @@ enum InputCheck {
         let checked = try singleLine(value, name: name)
         let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._:-")
         guard !checked.hasPrefix("-"), checked.unicodeScalars.allSatisfy({ allowed.contains($0) }) else {
-            throw AppError.message("\(name) contiene caracteres no admitidos.")
+            throw BastionError.message("\(name) contiene caracteres no admitidos.")
         }
         return checked
     }
 
     static func port(_ value: Int) throws {
-        guard (1...65535).contains(value) else { throw AppError.message("El puerto debe estar entre 1 y 65535.") }
+        guard (1...65535).contains(value) else { throw BastionError.message("El puerto debe estar entre 1 y 65535.") }
+    }
+
+    static func isIPAddress(_ value: String) -> Bool {
+        var v4 = in_addr()
+        var v6 = in6_addr()
+        return inet_pton(AF_INET, value, &v4) == 1 || inet_pton(AF_INET6, value, &v6) == 1
     }
 }

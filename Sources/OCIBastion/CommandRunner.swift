@@ -48,24 +48,8 @@ enum CommandRunner {
     static func requireSuccess(_ result: CommandResult, label: String) throws -> String {
         guard result.status == 0 else {
             let detail = result.error.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw AppError.message("\(label): \(detail.isEmpty ? "salida \(result.status)" : detail)")
+            throw BastionError.message("\(label): \(detail.isEmpty ? "salida \(result.status)" : detail)")
         }
         return result.output
-    }
-}
-
-enum JSONValue {
-    static func object(_ data: String) throws -> [String: Any] {
-        guard let parsed = try JSONSerialization.jsonObject(with: Data(data.utf8)) as? [String: Any] else {
-            throw AppError.message("OCI devolvió una respuesta JSON inesperada.")
-        }
-        return parsed
-    }
-
-    static func data(_ object: [String: Any]) throws -> [String: Any] {
-        guard let value = object["data"] as? [String: Any] else {
-            throw AppError.message("La respuesta de OCI no contiene los datos esperados.")
-        }
-        return value
     }
 }
