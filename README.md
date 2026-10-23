@@ -106,6 +106,6 @@ OCIB_LIVE=1 ./Scripts/test.sh --filter LiveOCITests  # lecturas reales contra OC
 
 El repositorio contiene la app Swift en `Sources/OCIBastion`, los recursos en `Assets`, los scripts de compilación en `Scripts` y ejemplos anonimizados en `Tests`.
 
-La carpeta `Tests/LocalFixtures` conserva archivos de prueba personales solo en este equipo y está excluida de Git. También se excluyen `.build`, `dist`, claves, archivos de configuración SSH y datos de ejecución. Cada usuario debe aportar su propio `~/.oci/config` y sus propias claves; la app guarda únicamente sus rutas en `~/Library/Application Support/OCIBastion/settings.json`.
+La carpeta `Tests/LocalFixtures` conserva archivos de prueba personales solo en este equipo y está excluida de Git. También se excluyen `.build`, `dist`, claves, archivos de configuración SSH y datos de ejecución. Cada usuario aporta su propia clave de API (que la app guarda en el Llavero) y sus claves SSH (de las que guarda una copia privada en su contenedor, `~/Library/Containers/com.javiermugueta.ocibastion`).
 
 Para publicar el código en GitHub, crea un repositorio vacío en la cuenta `israelgoracle`, añade su URL como remoto `origin` y sube la rama `main`. Los binarios de `dist` se distribuyen aparte del código fuente.
