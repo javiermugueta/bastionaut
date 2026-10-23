@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-es="Privacidad — Bastionaut" data-en="Privacy — Bastionaut">Bastionaut Privacy Policy</title>
+  <link rel="icon" href="img/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="img/icon.png" alt="">Bastionaut</a>
+    <nav>
+      <a href="./"><span lang="es">Inicio</span><span lang="en">Home</span></a>
+      <a href="support.html"><span lang="es">Soporte</span><span lang="en">Support</span></a>
+      <span class="lang"><button data-lang="es">ES</button> <button data-lang="en">EN</button></span>
+    </nav>
+  </header>
+
+  <div lang="es">
+    <h1>Política de privacidad 🔐</h1>
+    <p><em>Última actualización: 23 de octubre de 2026</em></p>
+    <section class="card">
+      <h2>Resumen</h2>
+      <p><strong>Bastionaut no recopila ningún dato.</strong> No hay analítica, publicidad ni seguimiento, y los desarrolladores no recibimos ninguna información sobre ti ni sobre cómo usas la app.</p>
+    </section>
+    <h2>Con quién se comunica la app</h2>
+    <ul>
+      <li><strong>Oracle Cloud Infrastructure</strong>: la API de OCI de tu región y el servicio Bastion de tu propia cuenta, para buscar bastiones y crear sesiones. Esas comunicaciones se rigen por tu contrato y la política de privacidad de Oracle.</li>
+      <li><strong>Tus servidores</strong>, mediante SSH a través del Bastion, cuando tú lo pides.</li>
+      <li><strong>checkip.amazonaws.com</strong>, solo cuando pulsas «¿Está permitida mi IP?», para saber tu IP pública. Ese servicio ve tu IP, como cualquier web que visitas.</li>
+    </ul>
+    <h2>Qué se guarda y dónde</h2>
+    <ul>
+      <li>Tu <strong>clave de API de OCI</strong>, cifrada en el Llavero de macOS. Puedes borrarla desde Acceso a Llaveros buscando «Bastionaut».</li>
+      <li>Tus conexiones, servidores y ajustes, las claves temporales de las sesiones (que se borran al caducar) y las copias de las claves SSH que eliges, en la carpeta privada de la app en tu Mac, accesible solo para tu usuario.</li>
+      <li>Nada de esto sale de tu Mac, salvo que tú exportes una configuración. Los archivos exportados incluyen rutas y OCID, pero nunca claves.</li>
+    </ul>
+    <h2>Cómo borrar tus datos</h2>
+    <p>Elimina las conexiones desde la app, borra la entrada «Bastionaut» del Llavero y desinstala la app. macOS borra su carpeta privada al eliminar la app.</p>
+    <h2>Contacto</h2>
+    <p>Para cualquier duda, abre una incidencia en <a href="https://github.com/javiermugueta/bastionaut/issues">GitHub</a>.</p>
+  </div>
+
+  <div lang="en">
+    <h1>Privacy policy 🔐</h1>
+    <p><em>Last updated: October 23, 2026</em></p>
+    <section class="card">
+      <h2>Summary</h2>
+      <p><strong>Bastionaut collects no data.</strong> There is no analytics, advertising or tracking, and the developers receive no information about you or how you use the app.</p>
+    </section>
+    <h2>Who the app talks to</h2>
+    <ul>
+      <li><strong>Oracle Cloud Infrastructure</strong>: the OCI API in your region and the Bastion service of your own account, to find bastions and create sessions. Those communications are governed by your agreement with Oracle and Oracle's privacy policy.</li>
+      <li><strong>Your servers</strong>, over SSH through the bastion, when you ask it to.</li>
+      <li><strong>checkip.amazonaws.com</strong>, only when you press "Is my IP allowed?", to find out your public IP. That service sees your IP, like any website you visit.</li>
+    </ul>
+    <h2>What is stored and where</h2>
+    <ul>
+      <li>Your <strong>OCI API key</strong>, encrypted in the macOS Keychain. You can delete it from Keychain Access by searching for "Bastionaut".</li>
+      <li>Your connections, servers and settings, the temporary session keys (deleted when they expire) and the copies of the SSH keys you pick, in the app's private folder on your Mac, accessible only to your user.</li>
+      <li>None of this leaves your Mac unless you export a configuration. Exported files include paths and OCIDs, but never keys.</li>
+    </ul>
+    <h2>How to delete your data</h2>
+    <p>Delete the connections in the app, remove the "Bastionaut" item from the Keychain and uninstall the app. macOS removes its private folder when you delete the app.</p>
+    <h2>Contact</h2>
+    <p>For any questions, open an issue on <a href="https://github.com/javiermugueta/bastionaut/issues">GitHub</a>.</p>
+  </div>
+
+  <footer>
+    <p lang="es">Bastionaut es una app independiente, no afiliada a Oracle. Oracle y OCI son marcas registradas de Oracle Corporation.</p>
+    <p lang="en">Bastionaut is an independent app, not affiliated with Oracle. Oracle and OCI are registered trademarks of Oracle Corporation.</p>
+  </footer>
+</div>
+<script src="lang.js"></script>
+</body>
+</html>

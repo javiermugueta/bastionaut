@@ -11,3 +11,8 @@ Tests/LocalFixtures/
 *.pfx
 *.pub
 *.conf
+
+# Datos locales de publicación
+.appstore.env
+*.provisionprofile
+*.p8

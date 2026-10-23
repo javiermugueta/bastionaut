@@ -1,6 +1,8 @@
 # Bastionaut
 
-Bastionaut es una app de macOS para abrir túneles SSH a instancias privadas de Oracle Cloud a través del servicio OCI Bastion. Autor original: Israel Gutierrez · Mejoras: Javier Mugueta.
+Bastionaut es una app de macOS para abrir túneles SSH a instancias privadas de Oracle Cloud a través del servicio OCI Bastion. Autor original: Israel Gutiérrez · Mejoras: Javier Mugueta.
+
+🌐 Web: https://javiermugueta.github.io/bastionaut/ · [Soporte](https://javiermugueta.github.io/bastionaut/support.html) · [Privacidad](https://javiermugueta.github.io/bastionaut/privacy.html)
 
 ## Requisitos
 

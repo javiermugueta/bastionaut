@@ -11,7 +11,8 @@
 # Variables:
 #   PROVISIONING_PROFILE  ruta al .provisionprofile (obligatoria)
 #   VERSION               versión visible (por defecto 0.2.0); BUILD_NUMBER debe crecer en cada subida
-#   ASC_KEY_ID / ASC_ISSUER_ID  clave de API (por defecto U2LFZZ42BX y el issuer del equipo)
+#   ASC_KEY_ID / ASC_ISSUER_ID  clave de API de App Store Connect (la .p8 en ~/.private_keys/AuthKey_<ID>.p8).
+#                         Se pueden dejar en .appstore.env (no se sube a Git):  ASC_KEY_ID=…  ASC_ISSUER_ID=…
 #   UPLOAD=0              solo compilar, empaquetar y validar
 set -euo pipefail
 cd "${0:A:h:h}"
@@ -22,8 +23,9 @@ installer_identity="${INSTALLER_SIGN_IDENTITY:-$(find_identity | grep -E '^(Mac 
 [[ -n "$app_identity" ]] || { echo "Falta el certificado «Apple Distribution» en el llavero." >&2; exit 1; }
 [[ -n "$installer_identity" ]] || { echo "Falta el certificado «Mac Installer Distribution» en el llavero." >&2; exit 1; }
 
-key_id="${ASC_KEY_ID:-U2LFZZ42BX}"
-issuer_id="${ASC_ISSUER_ID:-69a6de91-5590-47e3-e053-5b8c7c11a4d1}"
+[[ -f .appstore.env ]] && source .appstore.env
+key_id="${ASC_KEY_ID:?Define ASC_KEY_ID (o créalo en .appstore.env)}"
+issuer_id="${ASC_ISSUER_ID:?Define ASC_ISSUER_ID (o créalo en .appstore.env)}"
 version="${VERSION:-0.2.0}"
 
 EDITION=appstore CONFIGURATION=release SIGN_IDENTITY="$app_identity" VERSION="$version" ./Scripts/build-app.sh

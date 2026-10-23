@@ -64,7 +64,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <key>LSApplicationCategoryType</key><string>public.app-category.developer-tools</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSHighResolutionCapable</key><true/>
-<key>NSHumanReadableCopyright</key><string>Original: Israel Gutierrez · Improvements: Javier Mugueta · © $(date +%Y)</string>
+<key>NSHumanReadableCopyright</key><string>Original: Israel Gutiérrez · Improvements: Javier Mugueta · © $(date +%Y)</string>
 <key>ITSAppUsesNonExemptEncryption</key><false/>
 <key>NSAppleEventsUsageDescription</key><string>Bastionaut opens SSH connections in the terminal app you choose.</string>
 </dict></plist>

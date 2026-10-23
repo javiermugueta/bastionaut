@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-es="Bastionaut — Túneles SSH a Oracle Cloud" data-en="Bastionaut — SSH tunnels to Oracle Cloud">Bastionaut</title>
+  <meta name="description" content="Bastionaut opens SSH tunnels to your private Oracle Cloud machines through the OCI Bastion service, from your Mac.">
+  <link rel="icon" href="img/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="img/icon.png" alt="">Bastionaut</a>
+    <nav>
+      <a href="support.html"><span lang="es">Soporte</span><span lang="en">Support</span></a>
+      <a href="privacy.html"><span lang="es">Privacidad</span><span lang="en">Privacy</span></a>
+      <a href="https://github.com/javiermugueta/bastionaut">GitHub</a>
+      <span class="lang"><button data-lang="es">ES</button> <button data-lang="en">EN</button></span>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <img src="img/icon.png" alt="Bastionaut">
+    <div>
+      <h1>Bastionaut</h1>
+      <p lang="es">Túneles SSH a tus máquinas privadas de Oracle Cloud, sin pelearte con comandos. 🚀</p>
+      <p lang="en">SSH tunnels to your private Oracle Cloud machines, without wrestling with commands. 🚀</p>
+      <a class="badge" href="support.html"><span lang="es">Para macOS 14 o posterior · Próximamente en la Mac App Store</span><span lang="en">For macOS 14 or later · Coming soon to the Mac App Store</span></a>
+    </div>
+  </div>
+
+  <section>
+    <div class="grid">
+      <div class="card"><div class="emoji">✨</div>
+        <h3 lang="es">Un asistente que te guía</h3><h3 lang="en">An assistant that guides you</h3>
+        <p lang="es">Pega el fragmento de configuración de la consola de OCI y busca tus bastiones en toda la tenancy.</p>
+        <p lang="en">Paste the configuration snippet from the OCI console and find your bastions across the whole tenancy.</p></div>
+      <div class="card"><div class="emoji">⏳</div>
+        <h3 lang="es">Túneles que se cuidan solos</h3><h3 lang="en">Tunnels that look after themselves</h3>
+        <p lang="es">SOCKS5 o reenvío de puerto, reutiliza sesiones, las renueva antes de caducar y reconecta si cae la red.</p>
+        <p lang="en">SOCKS5 or port forwarding, reuses sessions, renews them before they expire and reconnects if the network drops.</p></div>
+      <div class="card"><div class="emoji">🖥️</div>
+        <h3 lang="es">Un clic para entrar</h3><h3 lang="en">One click to get in</h3>
+        <p lang="es">Abre Terminal o iTerm2 ya conectado, o lleva una base de datos a un puerto de tu Mac.</p>
+        <p lang="en">Opens Terminal or iTerm2 already connected, or brings a database to a port on your Mac.</p></div>
+      <div class="card"><div class="emoji">🆘</div>
+        <h3 lang="es">Te explica qué falla</h3><h3 lang="en">Tells you what's wrong</h3>
+        <p lang="es">Detecta si tu IP no está permitida en el Bastion y te dice cómo arreglar cada problema.</p>
+        <p lang="en">Detects when your IP isn't allowed on the bastion and tells you how to fix each problem.</p></div>
+      <div class="card"><div class="emoji">🔐</div>
+        <h3 lang="es">Seguro y privado</h3><h3 lang="en">Secure and private</h3>
+        <p lang="es">Clave de API en el Llavero, claves temporales por sesión, sandbox de macOS y cero datos recopilados.</p>
+        <p lang="en">API key in the Keychain, temporary per-session keys, the macOS sandbox and zero data collected.</p></div>
+      <div class="card"><div class="emoji">🌍</div>
+        <h3 lang="es">Español e inglés</h3><h3 lang="en">English and Spanish</h3>
+        <p lang="es">Toda la app y su ayuda, en los dos idiomas. Y con modo oscuro.</p>
+        <p lang="en">The whole app and its help, in both languages. With Dark Mode too.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 lang="es">Así se ve</h2><h2 lang="en">Take a look</h2>
+    <figure lang="es"><img src="img/es-01-conectado.jpg" alt="Bastionaut con túneles conectados" loading="lazy"><figcaption>Tus servidores privados de Oracle Cloud, a un clic</figcaption></figure>
+    <figure lang="en"><img src="img/en-01-conectado.jpg" alt="Bastionaut with connected tunnels" loading="lazy"><figcaption>Your private Oracle Cloud servers, one click away</figcaption></figure>
+    <figure lang="es"><img src="img/es-03-ayuda-ip.jpg" alt="Aviso de IP no permitida" loading="lazy"><figcaption>Si algo falla, te dice por qué y cómo arreglarlo</figcaption></figure>
+    <figure lang="en"><img src="img/en-03-ayuda-ip.jpg" alt="IP not allowed warning" loading="lazy"><figcaption>When something breaks, it tells you why and how to fix it</figcaption></figure>
+    <figure lang="es"><img src="img/es-02-modo-oscuro.jpg" alt="Modo oscuro" loading="lazy"><figcaption>Precioso también en modo oscuro</figcaption></figure>
+    <figure lang="en"><img src="img/en-02-modo-oscuro.jpg" alt="Dark Mode" loading="lazy"><figcaption>Just as lovely in Dark Mode</figcaption></figure>
+    <figure lang="es"><img src="img/es-04-ayuda.jpg" alt="Ayuda integrada" loading="lazy"><figcaption>Ayuda integrada</figcaption></figure>
+    <figure lang="en"><img src="img/en-04-ayuda.jpg" alt="Built-in help" loading="lazy"><figcaption>Built-in help</figcaption></figure>
+  </section>
+
+  <section class="card">
+    <h2 lang="es">Qué necesitas</h2><h2 lang="en">What you need</h2>
+    <ul lang="es">
+      <li>Un Mac con macOS 14 Sonoma o posterior.</li>
+      <li>Una cuenta de Oracle Cloud con una clave de API.</li>
+      <li>Un Bastion de OCI que llegue a tus servidores, con tu IP en su lista de permitidas.</li>
+    </ul>
+    <ul lang="en">
+      <li>A Mac with macOS 14 Sonoma or later.</li>
+      <li>An Oracle Cloud account with an API key.</li>
+      <li>An OCI bastion that can reach your servers, with your IP on its allowed list.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p lang="es">Proyecto original de <a href="https://github.com/israelgoracle/OCIBastion_MacOs">Israel Gutiérrez</a>, con mejoras de Javier Mugueta.
+      Oracle y OCI son marcas registradas de Oracle Corporation. Bastionaut es una app independiente, no afiliada a Oracle.</p>
+    <p lang="en">Original project by <a href="https://github.com/israelgoracle/OCIBastion_MacOs">Israel Gutiérrez</a>, with improvements by Javier Mugueta.
+      Oracle and OCI are registered trademarks of Oracle Corporation. Bastionaut is an independent app, not affiliated with Oracle.</p>
+    <p><a href="support.html"><span lang="es">Soporte</span><span lang="en">Support</span></a> · <a href="privacy.html"><span lang="es">Privacidad</span><span lang="en">Privacy</span></a></p>
+  </footer>
+</div>
+<script src="lang.js"></script>
+</body>
+</html>

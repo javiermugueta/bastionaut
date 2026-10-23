@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-es="Soporte — Bastionaut" data-en="Support — Bastionaut">Bastionaut Support</title>
+  <link rel="icon" href="img/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="img/icon.png" alt="">Bastionaut</a>
+    <nav>
+      <a href="./"><span lang="es">Inicio</span><span lang="en">Home</span></a>
+      <a href="privacy.html"><span lang="es">Privacidad</span><span lang="en">Privacy</span></a>
+      <span class="lang"><button data-lang="es">ES</button> <button data-lang="en">EN</button></span>
+    </nav>
+  </header>
+
+  <h1 lang="es">Soporte 🛟</h1><h1 lang="en">Support 🛟</h1>
+
+  <section class="card">
+    <h2 lang="es">¿Necesitas ayuda?</h2><h2 lang="en">Need help?</h2>
+    <p lang="es">Abre una incidencia en GitHub contando qué ha pasado. Si puedes, copia el mensaje de error y las últimas líneas de la <strong>Bitácora 📜</strong> de la conexión (sin OCID ni IP que no quieras compartir).</p>
+    <p lang="en">Open an issue on GitHub describing what happened. If you can, include the error message and the last lines of the connection's <strong>Activity log 📜</strong> (leave out any OCIDs or IPs you'd rather not share).</p>
+    <p><a class="badge" style="background:var(--accent)" href="https://github.com/javiermugueta/bastionaut/issues/new"><span lang="es">Abrir una incidencia</span><span lang="en">Open an issue</span></a></p>
+    <p class="tip" lang="es">💡 La app trae su propia ayuda: menú <strong>Ayuda › Ayuda de Bastionaut</strong> (⌘?).</p>
+    <p class="tip" lang="en">💡 The app has built-in help: <strong>Help › Bastionaut Help</strong> (⌘?).</p>
+  </section>
+
+  <section>
+    <h2 lang="es">Preguntas frecuentes</h2><h2 lang="en">Frequently asked questions</h2>
+
+    <div lang="es">
+      <h3>«No consigo conectar con el Bastion por SSH»</h3>
+      <p>Casi siempre es la lista de IPs permitidas del Bastion. Pulsa <strong>¿Está permitida mi IP? 🌐</strong> en la app y, si no lo está, añádela en la consola de OCI › Bastion › Editar. Si sales por un proxy o una VPN, cuenta la IP de salida.</p>
+      <h3>«OCI respondió 401»</h3>
+      <p>La clave de API no está registrada en tu usuario de OCI, es de otro usuario, o la hora del Mac está desajustada.</p>
+      <h3>«OCI respondió 404 NotAuthorizedOrNotFound»</h3>
+      <p>Falta algún permiso IAM o el Bastion no está en la región elegida. Un ejemplo de política:</p>
+      <pre>Allow group BastionUsers to use bastion in compartment MiCompartimento
+Allow group BastionUsers to manage bastion-session in compartment MiCompartimento
+Allow group BastionUsers to read virtual-network-family in compartment MiCompartimento
+Allow group BastionUsers to read instance-family in compartment MiCompartimento</pre>
+      <h3>«El Bastion no tiene activado SOCKS5»</h3>
+      <p>Usa el modo <strong>Reenvío de puerto</strong> (Ajustes ⚙️), que funciona con cualquier Bastion, o activa «FQDN y SOCKS5» en el Bastion.</p>
+      <h3>«SSH rechazó la clave» en el servidor</h3>
+      <p>La clave elegida para ese servidor no está autorizada en él, o el usuario no es el correcto (<code>opc</code> en Oracle Linux, <code>ubuntu</code> en Ubuntu).</p>
+      <h3>¿Dónde se guardan mis datos?</h3>
+      <p>Solo en tu Mac: la clave de API en el Llavero y el resto en la carpeta privada de la app. Mira la <a href="privacy.html">política de privacidad</a>.</p>
+    </div>
+
+    <div lang="en">
+      <h3>"I can't reach the bastion over SSH"</h3>
+      <p>It's almost always the bastion's allowed IP list. Press <strong>Is my IP allowed? 🌐</strong> in the app and, if it isn't, add it in the OCI console › Bastion › Edit. If you go through a proxy or VPN, its egress IP is what counts.</p>
+      <h3>"OCI returned 401"</h3>
+      <p>The API key isn't registered on your OCI user, belongs to another user, or your Mac's clock is off.</p>
+      <h3>"OCI returned 404 NotAuthorizedOrNotFound"</h3>
+      <p>An IAM permission is missing or the bastion isn't in the selected region. A sample policy:</p>
+      <pre>Allow group BastionUsers to use bastion in compartment MyCompartment
+Allow group BastionUsers to manage bastion-session in compartment MyCompartment
+Allow group BastionUsers to read virtual-network-family in compartment MyCompartment
+Allow group BastionUsers to read instance-family in compartment MyCompartment</pre>
+      <h3>"The bastion doesn't have SOCKS5 enabled"</h3>
+      <p>Use <strong>Port forwarding</strong> mode (Settings ⚙️), which works with any bastion, or enable "FQDN and SOCKS5" on the bastion.</p>
+      <h3>"SSH rejected the key" on the server</h3>
+      <p>The key you picked for that server isn't authorized on it, or the user is wrong (<code>opc</code> on Oracle Linux, <code>ubuntu</code> on Ubuntu).</p>
+      <h3>Where is my data stored?</h3>
+      <p>Only on your Mac: the API key in the Keychain and everything else in the app's private folder. See the <a href="privacy.html">privacy policy</a>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p lang="es">Bastionaut es una app independiente, no afiliada a Oracle. Proyecto original de Israel Gutiérrez, con mejoras de Javier Mugueta.</p>
+    <p lang="en">Bastionaut is an independent app, not affiliated with Oracle. Original project by Israel Gutiérrez, with improvements by Javier Mugueta.</p>
+  </footer>
+</div>
+<script src="lang.js"></script>
+</body>
+</html>

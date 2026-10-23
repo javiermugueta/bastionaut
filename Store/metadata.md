@@ -19,8 +19,9 @@ palabras clave 100 (separadas por comas, sin espacios). `Scripts/check-metadata.
 | Precio | Gratis (o el que decidas) |
 | Privacidad de la app | **Datos no recopilados** |
 | Cifrado (exportación) | Solo cifrado estándar del sistema (HTTPS/SSH): exento. `ITSAppUsesNonExemptEncryption = NO` ya está en el Info.plist |
-| URL de soporte | _pendiente_ (p. ej. la página de GitHub del proyecto) |
-| URL de la política de privacidad | _pendiente_ (obligatoria; texto propuesto al final) |
+| URL de soporte | https://javiermugueta.github.io/bastionaut/support.html |
+| URL de la política de privacidad | https://javiermugueta.github.io/bastionaut/privacy.html |
+| URL de marketing (opcional) | https://javiermugueta.github.io/bastionaut/ |
 
 ## Capturas
 
@@ -89,7 +90,7 @@ Varias conexiones (por región, por cliente…) con su propio emoji, icono en la
 
 Requisitos: una cuenta de Oracle Cloud con una clave de API, un Bastion de OCI que llegue a tus servidores y tu IP en su lista de permitidas.
 
-Basada en el proyecto original de Israel Gutierrez, con mejoras de Javier Mugueta.
+Basada en el proyecto original de Israel Gutiérrez, con mejoras de Javier Mugueta.
 Oracle y OCI son marcas registradas de Oracle Corporation. Bastionaut es una app independiente, no afiliada a Oracle.
 ```
 
@@ -158,7 +159,7 @@ Multiple connections (per region, per customer…) each with its own emoji, a me
 
 Requirements: an Oracle Cloud account with an API key, an OCI bastion that can reach your servers, and your IP on its allowed list.
 
-Based on the original project by Israel Gutierrez, with improvements by Javier Mugueta.
+Based on the original project by Israel Gutiérrez, with improvements by Javier Mugueta.
 Oracle and OCI are registered trademarks of Oracle Corporation. Bastionaut is an independent app, not affiliated with Oracle.
 ```
 
@@ -193,7 +194,7 @@ Entitlements:
 
 ---
 
-## Política de privacidad (texto propuesto para publicar en la URL)
+## Política de privacidad (resumen; la versión completa está en `docs/privacy.html`)
 
 ### Español
 > **Bastionaut no recopila ningún dato.** La app se comunica únicamente con la API de Oracle Cloud Infrastructure y con el servicio Bastion de tu propia cuenta, usando tu clave de API, que se guarda cifrada en el Llavero de tu Mac. La configuración y las claves SSH se guardan solo en tu Mac, dentro de la carpeta privada de la app. La función opcional «¿Está permitida mi IP?» consulta `checkip.amazonaws.com` únicamente cuando la pulsas. No hay analítica, publicidad ni seguimiento.
