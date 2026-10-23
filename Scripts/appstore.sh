@@ -43,8 +43,8 @@ if [[ "${UPLOAD:-1}" == 1 ]]; then
   [[ -n "$delivery" ]] || { echo "No se obtuvo el identificador de la entrega." >&2; exit 1; }
   # La validación previa no detecta todo: esperamos al procesado de Apple y mostramos su resultado.
   echo "Esperando a que Apple procese la build ($delivery)…"
-  status="$(xcrun altool --build-status --delivery-id "$delivery" --wait --apiKey "$key_id" --apiIssuer "$issuer_id" 2>&1)"
-  echo "$status" | grep -E "BUILD-STATUS|IMPORT-STATUS|PROCESSING-ERRORS|description" || echo "$status"
-  echo "$status" | grep -q "BUILD-STATUS: FAILED" && exit 1
+  build_status="$(xcrun altool --build-status --delivery-id "$delivery" --wait --apiKey "$key_id" --apiIssuer "$issuer_id" 2>&1)"
+  echo "$build_status" | grep -E "BUILD-STATUS|IMPORT-STATUS|PROCESSING-ERRORS|description" || echo "$build_status"
+  if echo "$build_status" | grep -q "BUILD-STATUS: FAILED"; then exit 1; fi
 fi
 echo "$PWD/$pkg"
