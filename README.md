@@ -4,10 +4,33 @@ Primera versión de una app SwiftUI para crear y mantener una sesión SOCKS5 de 
 
 ## Requisitos
 
-- macOS 14 o posterior.
-- Un perfil en `~/.oci/config` con clave de API (la app habla directamente con la API REST de OCI; **no necesita el OCI CLI**). Admite claves PKCS#1/PKCS#8, `pass_phrase` y `security_token_file`.
-- Permisos IAM para leer bastiones y gestionar sesiones (`manage bastion-session`).
-- Tu IP pública dentro de la lista de IPs permitidas del Bastion. Si no lo está, la app lo detecta y te ofrece comprobar tu IP.
+La ayuda de la app (menú **Ayuda › Ayuda de OCI Bastion**, ⌘?) los explica con detalle en el tema **Requisitos**.
+
+**En tu Mac**
+- macOS 14 Sonoma o posterior.
+- No hace falta el OCI CLI ni Python: la app usa directamente la API REST de OCI.
+- Terminal o iTerm2. La primera vez, acepta el permiso de **Automatización** para que la app abra las sesiones SSH.
+- Proxy corporativo HTTP CONNECT opcional (se detecta solo o se indica a mano).
+
+**Cuenta de OCI**
+- Perfil en `~/.oci/config` con `user`, `fingerprint`, `tenancy`, `region` y `key_file` (clave de API RSA, PKCS#1 o PKCS#8). Se admiten `pass_phrase` y `security_token_file`.
+
+**Bastion**
+- Un Bastion activo en la región, con subred de destino que llegue a tus servidores, y listas de seguridad que permitan el tráfico desde el Bastion.
+- Tu IP pública (o la de salida de tu proxy o VPN) en la lista de IPs permitidas del Bastion. Si no lo está, la app lo detecta y te ofrece comprobarla.
+- Para el modo SOCKS5, «FQDN y SOCKS5» activado. El modo reenvío de puerto funciona con cualquier Bastion.
+
+**Permisos IAM** (ejemplo, ajusta grupo y compartimento):
+
+```
+Allow group BastionUsers to use bastion in compartment MiCompartimento
+Allow group BastionUsers to manage bastion-session in compartment MiCompartimento
+Allow group BastionUsers to read virtual-network-family in compartment MiCompartimento
+Allow group BastionUsers to read instance-family in compartment MiCompartimento
+```
+
+**Servidores**
+- Usuario (`opc` en Oracle Linux, `ubuntu` en Ubuntu…) y una clave SSH privada autorizada en el servidor.
 
 ## Compilar y abrir
 

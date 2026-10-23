@@ -26,6 +26,9 @@ struct MainView: View {
             }
         }
         .fontDesign(.rounded)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) { HelpButton() }
+        }
         .overlay(alignment: .bottom) {
             if let toast = manager.toast {
                 Text(toast)

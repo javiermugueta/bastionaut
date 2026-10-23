@@ -99,6 +99,7 @@ struct WizardView: View {
     private var footer: some View {
         HStack {
             Button("Cancelar", action: close).keyboardShortcut(.cancelAction)
+            HelpButton(topic: step == .keys ? .modes : (step == .bastion ? .oci : .start))
             Spacer()
             if busy { ProgressView().controlSize(.small) }
             if step != steps.first {

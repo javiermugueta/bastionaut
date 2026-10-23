@@ -33,6 +33,12 @@ struct OCIBastionApp: App {
                     }
                 }
         }
+        .commands { HelpCommands() }
+
+        Window("Ayuda de OCI Bastion", id: "help") {
+            HelpView()
+        }
+        .defaultSize(width: 900, height: 640)
 
         MenuBarExtra {
             StatusMenu(manager: manager)
@@ -82,6 +88,11 @@ struct StatusMenu: View {
         Divider()
         Button("Abrir OCI Bastion") {
             openWindow(id: "main")
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        Button("Ayuda") {
+            HelpRouter.shared.topic = .start
+            openWindow(id: "help")
             NSApp.activate(ignoringOtherApps: true)
         }
         Button("Salir") { manager.disconnect(); NSApp.terminate(nil) }

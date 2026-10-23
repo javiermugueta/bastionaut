@@ -151,6 +151,9 @@ struct HeroCard: View {
                         if manager.isCheckingPublicIP { ProgressView().controlSize(.small).tint(.white) }
                     }
                 }
+                if case .needsAttention = state {
+                    HelpLink(topic: .troubleshooting)
+                }
                 if let report = manager.publicIPReport {
                     Text(report).font(.callout.weight(.semibold)).textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true)
