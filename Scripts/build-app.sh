@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Compila y empaqueta "OCI Bastion.app".
+# Compila y empaqueta "Bastionaut.app".
 #
 # Variables opcionales:
 #   CONFIGURATION  debug | release (por defecto: release)
@@ -36,7 +36,7 @@ fi
 swift build "${build_args[@]}"
 binary="$(swift build "${build_args[@]}" --show-bin-path)/OCIBastion"
 
-app="dist/OCI Bastion.app"
+app="dist/Bastionaut.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary" "$app/Contents/MacOS/OCIBastion"
@@ -51,8 +51,8 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
 <key>CFBundleIdentifier</key><string>${bundle_id}</string>
-<key>CFBundleName</key><string>OCI Bastion</string>
-<key>CFBundleDisplayName</key><string>OCI Bastion</string>
+<key>CFBundleName</key><string>Bastionaut</string>
+<key>CFBundleDisplayName</key><string>Bastionaut</string>
 <key>CFBundleExecutable</key><string>OCIBastion</string>
 <key>CFBundleIconFile</key><string>AppIcon.icns</string>
 <key>CFBundlePackageType</key><string>APPL</string>
@@ -65,7 +65,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <key>NSHighResolutionCapable</key><true/>
 <key>NSHumanReadableCopyright</key><string>Original: Israel Gutierrez · Improvements: Javier Mugueta · © $(date +%Y)</string>
 <key>ITSAppUsesNonExemptEncryption</key><false/>
-<key>NSAppleEventsUsageDescription</key><string>OCI Bastion opens SSH connections in the terminal app you choose.</string>
+<key>NSAppleEventsUsageDescription</key><string>Bastionaut opens SSH connections in the terminal app you choose.</string>
 </dict></plist>
 PLIST
 

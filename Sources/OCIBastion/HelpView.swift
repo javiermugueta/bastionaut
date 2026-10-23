@@ -57,7 +57,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
         switch self {
         case .start:
             return [
-                .text("OCI Bastion abre túneles hacia tus máquinas privadas de Oracle Cloud a través del servicio **Bastion**, sin que tengas que escribir comandos."),
+                .text("Bastionaut abre túneles hacia tus máquinas privadas de Oracle Cloud a través del servicio **Bastion**, sin que tengas que escribir comandos."),
                 .heading("Antes de empezar"),
                 .text("Necesitas tu clave de API de OCI, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**."),
                 .heading("En tres pasos"),
@@ -130,7 +130,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 .bullets([
                     "**macOS 14 Sonoma** o posterior.",
                     "**No hace falta el OCI CLI** ni Python: la app habla directamente con la API de OCI.",
-                    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que OCI Bastion controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).",
+                    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que Bastionaut controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).",
                     "Si estás detrás de un **proxy corporativo**, la app lo detecta sola; también puedes indicarlo a mano en Ajustes.",
                 ]),
                 .heading("Tu cuenta de OCI ☁️"),
@@ -171,7 +171,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                     "La app habla **solo** con la API de OCI de tu región y con el Bastion. No hay telemetría.",
                     "La comprobación **¿Está permitida mi IP?** consulta `checkip.amazonaws.com`, y solo cuando la pulsas.",
                     "La app funciona dentro del **sandbox** de macOS: solo ve los archivos que tú le das.",
-                    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «OCI Bastion».",
+                    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «Bastionaut».",
                     "La configuración, las claves temporales (que se borran al caducar) y las copias de las claves de tus servidores viven en la carpeta privada de la app, con permisos 0600.",
                     "Los archivos exportados incluyen rutas y OCID, pero nunca claves.",
                 ]),
@@ -279,10 +279,10 @@ struct HelpCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .appInfo) {
-            Button("Acerca de OCI Bastion") { AppCredits.showAboutPanel() }
+            Button("Acerca de Bastionaut") { AppCredits.showAboutPanel() }
         }
         CommandGroup(replacing: .help) {
-            Button("Ayuda de OCI Bastion") {
+            Button("Ayuda de Bastionaut") {
                 HelpRouter.shared.topic = .start
                 openWindow(id: "help")
             }

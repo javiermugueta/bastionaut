@@ -164,8 +164,7 @@
             "value": "**Your own keys**: pick a key pair you already have and the app keeps a private copy. They must not have a passphrase; if yours does, use temporary keys."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "**macOS 14 Sonoma** o posterior.": {
       "localizations": {
@@ -213,12 +212,12 @@
         }
       }
     },
-    "Abrir OCI Bastion": {
+    "Abrir Bastionaut": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open OCI Bastion"
+            "value": "Open Bastionaut"
           }
         }
       }
@@ -243,12 +242,12 @@
         }
       }
     },
-    "Acerca de OCI Bastion": {
+    "Acerca de Bastionaut": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "About OCI Bastion"
+            "value": "About Bastionaut"
           }
         }
       }
@@ -369,12 +368,12 @@
         }
       }
     },
-    "Ayuda de OCI Bastion": {
+    "Ayuda de Bastionaut": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "OCI Bastion Help"
+            "value": "Bastionaut Help"
           }
         }
       }
@@ -407,8 +406,7 @@
             "value": "Add account"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Base de datos": {
       "localizations": {
@@ -429,6 +427,19 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sample bastion"
+          }
+        }
+      }
+    },
+    "Bastionaut": {
+      "shouldTranslate": false
+    },
+    "Bastionaut abre túneles hacia tus máquinas privadas de Oracle Cloud a través del servicio **Bastion**, sin que tengas que escribir comandos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastionaut opens tunnels to your private Oracle Cloud machines through the **Bastion** service, without you having to type commands."
           }
         }
       }
@@ -1191,8 +1202,7 @@
             "value": "The assistant asks for the tenancy, user, region and private key. Quickest way: paste the **configuration snippet** the console shows when you create the key and it fills itself in."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El perfil «%@» no existe en la configuración OCI.": {
       "localizations": {
@@ -1398,8 +1408,7 @@
             "value": "This connection needs your OCI API key. Add it with the assistant; you only do it once."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨.": {
       "localizations": {
@@ -1549,8 +1558,7 @@
             "value": "OCI account missing"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Falta «%@».": {
       "localizations": {
@@ -1640,8 +1648,7 @@
             "value": "I talk straight to the OCI API with your API key, which I keep in the Keychain. No OCI CLI needed."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Host": {
       "shouldTranslate": false
@@ -1756,16 +1763,15 @@
         }
       }
     },
-    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «OCI Bastion».": {
+    "La **clave de API** de OCI se guarda cifrada en el **Llavero** de macOS. Puedes borrarla desde Acceso a Llaveros buscando «Bastionaut».": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your OCI **API key** is stored encrypted in the macOS **Keychain**. You can delete it from Keychain Access by searching for “OCI Bastion”."
+            "value": "Your OCI **API key** is stored encrypted in the macOS **Keychain**. You can delete it from Keychain Access by searching for “Bastionaut”."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La app funciona dentro del **sandbox** de macOS: solo ve los archivos que tú le das.": {
       "localizations": {
@@ -1775,8 +1781,7 @@
             "value": "The app runs inside the macOS **sandbox**: it only sees the files you give it."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La app habla **solo** con la API de OCI de tu región y con el Bastion. No hay telemetría.": {
       "localizations": {
@@ -1826,8 +1831,7 @@
             "value": "The API key isn’t registered on your OCI user (or belongs to another user), or your Mac’s clock is off."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La clave privada se guarda en el **Llavero** de macOS. Si estaba protegida con contraseña, la app te la pide una vez al importarla.": {
       "localizations": {
@@ -1837,8 +1841,7 @@
             "value": "The private key is stored in the macOS **Keychain**. If it’s passphrase-protected, the app asks for it once when you import it."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La clave privada tiene contraseña. Cárgala antes en ssh-agent.": {
       "localizations": {
@@ -1898,8 +1901,7 @@
             "value": "Settings, temporary keys (deleted when they expire) and the copies of your servers’ keys live in the app’s private folder, with 0600 permissions."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "La duración de sesión debe estar entre 30 y 180 minutos.": {
       "localizations": {
@@ -1985,8 +1987,7 @@
             "value": "Your **servers’** keys are a separate thing: you pick them for each server or tunnel, and they can differ for each one. When you pick one, the app keeps a private copy (macOS won’t let it read the original file again)."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Las sesiones del Bastion caducan (como mucho a las 3 horas). La cuenta atrás de la tarjeta principal te dice cuánto queda.": {
       "localizations": {
@@ -2119,8 +2120,7 @@
             "value": "You need your OCI API key, a bastion that can reach your machines and your IP on its allowed list. The details are in **Requirements**."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Necesito los datos de tu clave de API de OCI. Los encuentras en la consola de OCI › tu perfil › **Claves de API**.": {
       "localizations": {
@@ -2130,8 +2130,7 @@
             "value": "I need your OCI API key details. You’ll find them in the OCI console › your profile › **API keys**."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Necesito tu ayuda": {
       "localizations": {
@@ -2365,19 +2364,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "New connection"
-          }
-        }
-      }
-    },
-    "OCI Bastion": {
-      "shouldTranslate": false
-    },
-    "OCI Bastion abre túneles hacia tus máquinas privadas de Oracle Cloud a través del servicio **Bastion**, sin que tengas que escribir comandos.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OCI Bastion opens tunnels to your private Oracle Cloud machines through the **Bastion** service, without you having to type commands."
           }
         }
       }
@@ -3095,12 +3081,12 @@
     "Terminal": {
       "shouldTranslate": false
     },
-    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que OCI Bastion controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).": {
+    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que Bastionaut controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Terminal (built into macOS) or **iTerm2** for SSH sessions. The first time, macOS asks for permission for OCI Bastion to control the terminal: allow it (or turn it on in System Settings › Privacy & Security › **Automation**)."
+            "value": "Terminal (built into macOS) or **iTerm2** for SSH sessions. The first time, macOS asks for permission for Bastionaut to control the terminal: allow it (or turn it on in System Settings › Privacy & Security › **Automation**)."
           }
         }
       }
@@ -3325,8 +3311,7 @@
             "value": "An **API key** (RSA) registered on your OCI user. If you don’t have one: OCI console › your profile › **API keys** › Add API key › Generate key pair, and download the private key."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Una sesión por servidor o túnel, creada al abrirlo. Funciona con **cualquier** Bastion. Cada sesión tarda unos segundos en crearse la primera vez; después se reutiliza mientras dure.": {
       "localizations": {
@@ -3517,12 +3502,12 @@
         }
       }
     },
-    "macOS no deja a OCI Bastion controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización.": {
+    "macOS no deja a Bastionaut controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS won’t let OCI Bastion control the terminal. Turn it on in System Settings › Privacy & Security › Automation."
+            "value": "macOS won’t let Bastionaut control the terminal. Turn it on in System Settings › Privacy & Security › Automation."
           }
         }
       }

@@ -28,9 +28,9 @@ version="${VERSION:-0.2.0}"
 
 EDITION=appstore CONFIGURATION=release SIGN_IDENTITY="$app_identity" VERSION="$version" ./Scripts/build-app.sh
 
-pkg="dist/OCIBastion-${version}-appstore.pkg"
+pkg="dist/Bastionaut-${version}-appstore.pkg"
 rm -f "$pkg"
-productbuild --component "dist/OCI Bastion.app" /Applications --sign "$installer_identity" "$pkg"
+productbuild --component "dist/Bastionaut.app" /Applications --sign "$installer_identity" "$pkg"
 
 xcrun altool --validate-app -f "$pkg" -t macos --apiKey "$key_id" --apiIssuer "$issuer_id"
 if [[ "${UPLOAD:-1}" == 1 ]]; then

@@ -29,14 +29,14 @@ export VERSION="$version"
 
 CONFIGURATION=release ./Scripts/build-app.sh
 
-app="dist/OCI Bastion.app"
-dmg="dist/OCIBastion-${version}.dmg"
+app="dist/Bastionaut.app"
+dmg="dist/Bastionaut-${version}.dmg"
 staging="$(mktemp -d)"
 trap 'rm -rf "$staging"' EXIT
 cp -R "$app" "$staging/"
 ln -s /Applications "$staging/Applications"
 rm -f "$dmg"
-hdiutil create -volname "OCI Bastion" -srcfolder "$staging" -fs HFS+ -format UDZO -ov "$dmg"
+hdiutil create -volname "Bastionaut" -srcfolder "$staging" -fs HFS+ -format UDZO -ov "$dmg"
 codesign --force --timestamp --sign "$SIGN_IDENTITY" "$dmg"
 
 xcrun notarytool submit "$dmg" --keychain-profile "$notary_profile" --wait

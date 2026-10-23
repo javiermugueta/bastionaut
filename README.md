@@ -1,10 +1,10 @@
-# OCI Bastion para macOS
+# Bastionaut
 
-Primera versión de una app SwiftUI para crear y mantener una sesión SOCKS5 de OCI Bastion y abrir conexiones SSH a instancias privadas.
+Bastionaut es una app de macOS para abrir túneles SSH a instancias privadas de Oracle Cloud a través del servicio OCI Bastion. Autor original: Israel Gutierrez · Mejoras: Javier Mugueta.
 
 ## Requisitos
 
-La ayuda de la app (menú **Ayuda › Ayuda de OCI Bastion**, ⌘?) los explica con detalle en el tema **Requisitos**.
+La ayuda de la app (menú **Ayuda › Ayuda de Bastionaut**, ⌘?) los explica con detalle en el tema **Requisitos**.
 
 **En tu Mac**
 - macOS 14 Sonoma o posterior.
@@ -36,7 +36,7 @@ Allow group BastionUsers to read instance-family in compartment MiCompartimento
 
 ```sh
 ./Scripts/build-app.sh
-open "dist/OCI Bastion.app"
+open "dist/Bastionaut.app"
 ```
 
 El icono fuente está en `Assets/AppIcon.png`. Si se modifica, ejecuta `Scripts/build-icon.sh` para regenerar `Assets/AppIcon.icns`.
@@ -93,7 +93,7 @@ La app está en **español e inglés** y sigue el idioma del sistema (inglés pa
 ./Scripts/update-strings.sh   # extrae los textos con el compilador y sincroniza el catálogo
 ```
 
-Después traduce las entradas nuevas en el catálogo; `build-app.sh` lo compila en `es.lproj` y `en.lproj`. Para probar otro idioma sin cambiar el del sistema: `open "dist/OCI Bastion.app" --args -AppleLanguages '(en)'`.
+Después traduce las entradas nuevas en el catálogo; `build-app.sh` lo compila en `es.lproj` y `en.lproj`. Para probar otro idioma sin cambiar el del sistema: `open "dist/Bastionaut.app" --args -AppleLanguages '(en)'`.
 
 ## Tests
 

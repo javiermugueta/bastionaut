@@ -104,7 +104,7 @@ enum APIKeyKeychain {
         SecItemDelete(query as CFDictionary)
         var attributes = query
         attributes[kSecValueData] = Data(pem.utf8)
-        attributes[kSecAttrLabel] = "OCI Bastion – clave de API"
+        attributes[kSecAttrLabel] = "Bastionaut – clave de API"
         attributes[kSecAttrAccessible] = kSecAttrAccessibleWhenUnlocked
         let status = SecItemAdd(attributes as CFDictionary, nil)
         guard status == errSecSuccess else {

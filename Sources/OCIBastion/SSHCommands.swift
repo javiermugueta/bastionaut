@@ -127,7 +127,7 @@ enum TerminalLauncher {
             let number = error[NSAppleScript.errorNumber] as? Int ?? 0
             let message = error[NSAppleScript.errorMessage] as? String ?? ""
             if number == -1743 {
-                throw BastionError.terminal(String(localized: "macOS no deja a OCI Bastion controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización."))
+                throw BastionError.terminal(String(localized: "macOS no deja a Bastionaut controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización."))
             }
             throw BastionError.terminal(message.isEmpty ? "AppleScript \(number)" : message)
         }

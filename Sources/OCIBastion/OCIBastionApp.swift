@@ -24,7 +24,7 @@ struct OCIBastionApp: App {
     @State private var manager = TunnelManager()
 
     var body: some Scene {
-        WindowGroup("OCI Bastion", id: "main") {
+        WindowGroup("Bastionaut", id: "main") {
             MainView(manager: manager)
                 .frame(minWidth: 860, minHeight: 640)
                 .onAppear {
@@ -38,7 +38,7 @@ struct OCIBastionApp: App {
         }
         .commands { HelpCommands() }
 
-        Window("Ayuda de OCI Bastion", id: "help") {
+        Window("Ayuda de Bastionaut", id: "help") {
             HelpView()
         }
         .defaultSize(width: 900, height: 640)
@@ -52,7 +52,7 @@ struct OCIBastionApp: App {
                         Circle().fill(.green).frame(width: 5, height: 5)
                     }
                 }
-                .accessibilityLabel("OCI Bastion")
+                .accessibilityLabel("Bastionaut")
         }
     }
 }
@@ -89,7 +89,7 @@ struct StatusMenu: View {
             }
         }
         Divider()
-        Button("Abrir OCI Bastion") {
+        Button("Abrir Bastionaut") {
             openWindow(id: "main")
             NSApp.activate(ignoringOtherApps: true)
         }
