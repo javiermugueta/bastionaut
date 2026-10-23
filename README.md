@@ -18,7 +18,26 @@ open "dist/OCI Bastion.app"
 
 El icono fuente está en `Assets/AppIcon.png`. Si se modifica, ejecuta `Scripts/build-icon.sh` para regenerar `Assets/AppIcon.icns`.
 
-La compilación local genera una firma ad hoc. Para distribuir la app a otros Macs se necesitaría firmarla y notarizarla con una cuenta Apple Developer.
+Por defecto se compila en `release` como binario universal (arm64 + x86_64) con firma ad hoc. Para una compilación de depuración rápida: `CONFIGURATION=debug ./Scripts/build-app.sh`.
+
+## Distribución firmada y notarizada
+
+La app se distribuye fuera del Mac App Store (necesita ejecutar `oci`, `ssh` y controlar Terminal/iTerm2, algo incompatible con App Sandbox). Requisitos, una sola vez:
+
+1. Certificado **Developer ID Application** en el llavero (Xcode › Settings › Accounts › Manage Certificates).
+2. Credenciales de notarización guardadas en el llavero:
+   ```sh
+   xcrun notarytool store-credentials OCIBastion-notary \
+     --apple-id TU_APPLE_ID --team-id TU_TEAM_ID --password CONTRASEÑA_DE_APP
+   ```
+
+Después:
+
+```sh
+BUNDLE_ID=com.tudominio.ocibastion VERSION=0.2.0 ./Scripts/release.sh
+```
+
+Genera `dist/OCIBastion-<versión>.dmg` firmado con Hardened Runtime, notarizado y con el ticket grapado, e imprime su SHA-256 (útil para un cask de Homebrew).
 
 ## Uso
 
