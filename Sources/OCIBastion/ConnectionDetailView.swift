@@ -49,7 +49,7 @@ struct ConnectionDetailView: View {
             }
         }
         .sheet(item: $editingTunnel) { tunnel in
-            TunnelForm(tunnel: tunnel) { result in
+            TunnelForm(tunnel: tunnel, portMode: portMode) { result in
                 var records = manager.settings.tunnels ?? []
                 if let index = records.firstIndex(where: { $0.id == result.id }) { records[index] = result }
                 else { records.append(result) }
@@ -99,7 +99,7 @@ struct ConnectionDetailView: View {
 
     private var tunnelsCard: some View {
         Card(title: "Túneles a puertos", emoji: "🚇", trailing: AnyView(
-            Button { editingTunnel = LocalTunnel(privateKeyPath: SSHKeys.suggestedPrivateKey) } label: {
+            Button { editingTunnel = LocalTunnel(host: "", privateKeyPath: SSHKeys.suggestedPrivateKey, remoteHost: "") } label: {
                 Label("Añadir", systemImage: "plus")
             })) {
             if (manager.settings.tunnels ?? []).isEmpty {
@@ -108,8 +108,8 @@ struct ConnectionDetailView: View {
             ForEach(manager.settings.tunnels ?? []) { tunnel in
                 TargetRow(
                     emoji: "🔌",
-                    title: tunnel.name.isEmpty ? tunnel.host : tunnel.name,
-                    subtitle: "localhost:\(tunnel.localPort) → \(tunnel.remoteHost):\(tunnel.remotePort) \(String(localized: "vía")) \(tunnel.host)",
+                    title: tunnel.name.isEmpty ? (tunnel.isDirect ? tunnel.remoteHost : tunnel.host) : tunnel.name,
+                    subtitle: "localhost:\(tunnel.localPort) → \(tunnel.remoteHost):\(tunnel.remotePort) \(String(localized: "vía")) \(tunnel.isDirect ? "Bastion" : tunnel.host)",
                     runner: portMode ? manager.runner(for: tunnel.id) : nil,
                     primaryTitle: "Abrir túnel",
                     primary: { manager.openLocalTunnel(tunnel) },
@@ -296,7 +296,7 @@ struct SettingsCard: View {
                             Text("Reenvío de puerto (uno por destino)").tag(SessionMode.portForwarding)
                         }
                         if manager.settings.effectiveSessionMode == .socks {
-                            TextField("Puerto SOCKS5 local", value: $manager.settings.socksPort, format: .number.grouping(.never))
+                            PortField(title: "Puerto SOCKS5 local", value: $manager.settings.socksPort)
                         }
                         Stepper("Duración: \(manager.settings.ttlSeconds / 60) min",
                                 value: $manager.settings.ttlSeconds, in: 1800...10800, step: 900)
@@ -355,7 +355,7 @@ struct ProxyPicker: View {
         if settings.effectiveProxyMode == .manual {
             HStack {
                 TextField("Host del proxy", text: $settings.proxyHost)
-                TextField("Puerto", value: $settings.proxyPort, format: .number.grouping(.never)).frame(width: 80)
+                PortField(title: "Puerto", value: $settings.proxyPort).frame(width: 80)
             }
         }
     }
@@ -404,10 +404,15 @@ struct DestinationForm: View {
             Text("🖥️ Servidor").font(.title2.weight(.bold))
             DestinationFields(destination: $destination)
             HStack {
+                if destination.host.isEmpty || destination.user.isEmpty {
+                    Label("Faltan la IP y el usuario del servidor.", systemImage: "info.circle")
+                        .font(.callout).foregroundStyle(.orange)
+                }
                 Spacer()
                 Button("Cancelar") { dismiss() }
                 Button("Guardar") { onSave(destination); dismiss() }
                     .buttonStyle(FunButtonStyle())
+                    .keyboardShortcut(.defaultAction)
                     .disabled(destination.host.isEmpty || destination.user.isEmpty)
             }
         }
@@ -424,7 +429,7 @@ struct DestinationFields: View {
             TextField("Nombre", text: $destination.name, prompt: Text("Mi servidor"))
             TextField("IP privada o DNS", text: $destination.host, prompt: Text("10.0.1.23"))
             TextField("Usuario", text: $destination.user)
-            TextField("Puerto SSH", value: $destination.port, format: .number.grouping(.never))
+            PortField(title: "Puerto SSH", value: $destination.port, prompt: "22")
             LabeledContent("Clave privada") {
                 FileField(placeholder: "~/.ssh/id_rsa", path: $destination.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
             }
@@ -435,41 +440,83 @@ struct DestinationFields: View {
 
 struct TunnelForm: View {
     @State var tunnel: LocalTunnel
+    let portMode: Bool
     let onSave: (LocalTunnel) -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var throughServer: Bool
+
+    init(tunnel: LocalTunnel, portMode: Bool, onSave: @escaping (LocalTunnel) -> Void) {
+        _tunnel = State(initialValue: tunnel)
+        self.portMode = portMode
+        self.onSave = onSave
+        // En SOCKS5 hace falta un servidor SSH; en reenvío de puerto, solo si ya lo tenía.
+        _throughServer = State(initialValue: !portMode || !tunnel.isDirect)
+    }
+
+    /// Qué falta para poder guardar; `nil` si está completo.
+    private var missing: String? {
+        if tunnel.remoteHost.trimmingCharacters(in: .whitespaces).isEmpty { return String(localized: "Falta el host remoto.") }
+        if tunnel.remotePort == 0 { return String(localized: "Falta el puerto remoto.") }
+        if tunnel.localPort == 0 { return String(localized: "Falta el puerto en tu Mac.") }
+        if throughServer && tunnel.host.trimmingCharacters(in: .whitespaces).isEmpty {
+            return String(localized: "Falta la IP del servidor SSH (o desmarca «Pasar por un servidor SSH»).")
+        }
+        if throughServer && tunnel.privateKeyPath.isEmpty { return String(localized: "Falta la clave privada del servidor SSH.") }
+        return nil
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("🚇 Túnel a un puerto").font(.title2.weight(.bold))
-            Text("Entro por SSH en el servidor y llevo su puerto remoto a un puerto de tu Mac.")
+            Text(throughServer
+                 ? "Entro por SSH en el servidor y llevo su puerto remoto a un puerto de tu Mac."
+                 : "El Bastion lleva el puerto remoto directamente a un puerto de tu Mac. Sin servidores intermedios.")
                 .foregroundStyle(.secondary)
             Form {
-                Section("Servidor SSH") {
+                Section("Destino") {
                     TextField("Nombre", text: $tunnel.name, prompt: Text("Base de datos"))
-                    TextField("IP privada o DNS", text: $tunnel.host)
-                    TextField("Usuario", text: $tunnel.user)
-                    TextField("Puerto SSH", value: $tunnel.sshPort, format: .number.grouping(.never))
-                    LabeledContent("Clave privada") {
-                        FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
-                    }
+                    TextField(throughServer ? "Host remoto (visto desde el servidor)" : "IP privada o DNS", text: $tunnel.remoteHost,
+                              prompt: Text("10.0.1.23"))
+                    PortField(title: "Puerto remoto", value: $tunnel.remotePort, prompt: "1521")
+                    PortField(title: "Puerto en tu Mac", value: $tunnel.localPort, prompt: "11521")
                 }
-                Section("Reenvío") {
-                    TextField("Puerto en tu Mac", value: $tunnel.localPort, format: .number.grouping(.never))
-                    TextField("Host remoto (visto desde el servidor)", text: $tunnel.remoteHost)
-                    TextField("Puerto remoto", value: $tunnel.remotePort, format: .number.grouping(.never))
+                Section {
+                    Toggle("Pasar por un servidor SSH", isOn: $throughServer).disabled(!portMode)
+                    if throughServer {
+                        TextField("IP privada o DNS", text: $tunnel.host, prompt: Text("10.0.1.10"))
+                        TextField("Usuario", text: $tunnel.user)
+                        PortField(title: "Puerto SSH", value: $tunnel.sshPort, prompt: "22")
+                        LabeledContent("Clave privada") {
+                            FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
+                        }
+                    }
+                } footer: {
+                    Text(portMode
+                         ? "Útil si el puerto solo escucha dentro del servidor (p. ej. 127.0.0.1)."
+                         : "En modo SOCKS5 el túnel siempre pasa por un servidor SSH.")
+                        .font(.caption).foregroundStyle(.secondary)
                 }
             }
             .formStyle(.grouped)
             HStack {
+                if let missing {
+                    Label(missing, systemImage: "info.circle").font(.callout).foregroundStyle(.orange)
+                }
                 Spacer()
-                Button("Cancelar") { dismiss() }
-                Button("Guardar") { onSave(tunnel); dismiss() }
-                    .buttonStyle(FunButtonStyle())
-                    .disabled(tunnel.host.isEmpty || tunnel.localPort == 0 || tunnel.remotePort == 0)
+                Button("Cancelar") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("Guardar") {
+                    var result = tunnel
+                    if !throughServer { result.host = "" }
+                    onSave(result)
+                    dismiss()
+                }
+                .buttonStyle(FunButtonStyle())
+                .keyboardShortcut(.defaultAction)
+                .disabled(missing != nil)
             }
         }
         .padding(24)
-        .frame(width: 520)
+        .frame(width: 560)
     }
 }
 

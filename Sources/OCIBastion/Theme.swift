@@ -84,15 +84,42 @@ struct FunButtonStyle: ButtonStyle {
     var tint: Color = .accentColor
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 10)
-            .foregroundStyle(.white)
-            .background(tint.gradient, in: Capsule())
-            .shadow(color: tint.opacity(0.35), radius: configuration.isPressed ? 2 : 6, y: configuration.isPressed ? 1 : 3)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.6), value: configuration.isPressed)
+        FunButton(configuration: configuration, tint: tint)
+    }
+
+    private struct FunButton: View {
+        let configuration: Configuration
+        let tint: Color
+        @Environment(\.isEnabled) private var isEnabled
+
+        var body: some View {
+            let color = isEnabled ? tint : Color.gray
+            configuration.label
+                .font(.headline)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .foregroundStyle(.white.opacity(isEnabled ? 1 : 0.8))
+                .background(color.gradient, in: Capsule())
+                .opacity(isEnabled ? 1 : 0.55)
+                .shadow(color: color.opacity(isEnabled ? 0.35 : 0), radius: configuration.isPressed ? 2 : 6,
+                        y: configuration.isPressed ? 1 : 3)
+                .scaleEffect(configuration.isPressed ? 0.96 : 1)
+                .animation(.spring(response: 0.25, dampingFraction: 0.6), value: configuration.isPressed)
+        }
+    }
+}
+
+/// Campo de puerto que actualiza el valor al teclear (los campos con `format:` solo lo hacen al pulsar Intro).
+struct PortField: View {
+    let title: LocalizedStringKey
+    @Binding var value: Int
+    var prompt: String = ""
+
+    var body: some View {
+        TextField(title, text: Binding(
+            get: { value == 0 ? "" : String(value) },
+            set: { value = Int($0.filter(\.isNumber).prefix(5)) ?? 0 }
+        ), prompt: Text(prompt))
     }
 }
 
@@ -143,7 +170,7 @@ struct FileField: View {
 
     var body: some View {
         HStack {
-            TextField(placeholder, text: $path).textFieldStyle(.roundedBorder)
+            TextField("", text: $path, prompt: Text(placeholder)).labelsHidden().textFieldStyle(.roundedBorder)
             Button("Elegir…") { if let value = pickFile(directory: directory) { path = value } }
         }
     }

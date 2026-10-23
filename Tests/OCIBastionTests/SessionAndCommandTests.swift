@@ -144,3 +144,23 @@ final class SessionAndCommandTests: XCTestCase {
         XCTAssertEqual(CountdownRing.format(65), "1:05")
     }
 }
+
+final class TunnelModelTests: XCTestCase {
+    func testDirectTunnelHasNoSSHServer() {
+        var tunnel = LocalTunnel()
+        tunnel.remoteHost = "10.201.0.89"
+        tunnel.remotePort = 3771
+        tunnel.localPort = 43771
+        XCTAssertTrue(tunnel.isDirect)
+        tunnel.host = "  "
+        XCTAssertTrue(tunnel.isDirect)
+        tunnel.host = "10.201.32.14"
+        XCTAssertFalse(tunnel.isDirect)
+    }
+
+    func testOldTunnelsKeepTheirServer() throws {
+        let json = #"{"id":"6F1E3D52-7C7B-4E64-9A0B-3B7E1C9E2A11","name":"Agente","host":"10.0.0.47","user":"opc","sshPort":22,"privateKeyPath":"/k","localPort":19081,"remoteHost":"127.0.0.1","remotePort":9081}"#
+        let tunnel = try JSONDecoder().decode(LocalTunnel.self, from: Data(json.utf8))
+        XCTAssertFalse(tunnel.isDirect)
+    }
+}

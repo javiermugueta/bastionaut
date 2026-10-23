@@ -371,8 +371,10 @@ final class TunnelManager {
 
     // MARK: Túneles
 
-    private func makeRunner(id: UUID, target: SessionTarget, label: String, snapshot: Settings) -> ForwardRunner {
-        let runner = ForwardRunner(id: id, target: target, label: label, preferredPort: lastPorts[id]) { [weak self] in
+    private func makeRunner(id: UUID, target: SessionTarget, label: String, snapshot: Settings,
+                            fixedPort: Int? = nil) -> ForwardRunner {
+        let runner = ForwardRunner(id: id, target: target, label: label, preferredPort: fixedPort ?? lastPorts[id],
+                                   fixedPort: fixedPort != nil) { [weak self] in
             guard let self else { throw CancellationError() }
             await self.startup?.value
             return try await self.context(for: snapshot)
@@ -393,10 +395,14 @@ final class TunnelManager {
             socksRunner = runner
             runner.start()
         case .portForwarding:
-            let targets = settings.destinations.map { ($0.id, $0.host, $0.port, $0.name) } +
-                (settings.tunnels ?? []).map { ($0.id, $0.host, $0.sshPort, $0.name) }
-            guard !targets.isEmpty else { return showToast(String(localized: "Añade algún destino primero 🙂")) }
-            for (id, host, port, name) in targets { _ = ensurePortRunner(id: id, host: host, port: port, name: name) }
+            let tunnels = settings.tunnels ?? []
+            guard !settings.destinations.isEmpty || !tunnels.isEmpty else {
+                return showToast(String(localized: "Añade algún destino primero 🙂"))
+            }
+            for destination in settings.destinations {
+                _ = ensurePortRunner(id: destination.id, host: destination.host, port: destination.port, name: destination.name)
+            }
+            for tunnel in tunnels { _ = ensureTunnelRunner(tunnel) }
         }
         record(String(localized: "🚀 Conectando «\(selectedConnection?.name ?? settings.bastionName ?? "Bastion")»"))
     }
@@ -417,17 +423,28 @@ final class TunnelManager {
         portRunners[id]?.stop()
     }
 
-    private func ensurePortRunner(id: UUID, host rawHost: String, port: Int, name: String) -> ForwardRunner? {
+    /// Sesión de reenvío para un túnel: directa al puerto remoto o hacia su servidor SSH.
+    private func ensureTunnelRunner(_ tunnel: LocalTunnel) -> ForwardRunner? {
+        tunnel.isDirect
+            ? ensurePortRunner(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name,
+                               fixedLocalPort: tunnel.localPort)
+            : ensurePortRunner(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort, name: tunnel.name)
+    }
+
+    private func ensurePortRunner(id: UUID, host rawHost: String, port: Int, name: String,
+                                  fixedLocalPort: Int? = nil) -> ForwardRunner? {
         do {
             let host = try InputCheck.sshToken(rawHost, name: "Host")
             try InputCheck.port(port)
-            if let existing = portRunners[id], existing.target == .portForward(host: host, port: port) {
+            if let fixedLocalPort { try InputCheck.port(fixedLocalPort) }
+            if let existing = portRunners[id], existing.target == .portForward(host: host, port: port),
+               fixedLocalPort == nil || existing.localPort == nil || existing.localPort == fixedLocalPort {
                 existing.start()
                 return existing
             }
             portRunners[id]?.stop()
             let runner = makeRunner(id: id, target: .portForward(host: host, port: port),
-                                    label: name.isEmpty ? host : name, snapshot: settings)
+                                    label: name.isEmpty ? host : name, snapshot: settings, fixedPort: fixedLocalPort)
             portRunners[id] = runner
             runner.start()
             return runner
@@ -470,6 +487,7 @@ final class TunnelManager {
     }
 
     func openLocalTunnel(_ tunnel: LocalTunnel) {
+        if tunnel.isDirect { return openDirectTunnel(tunnel) }
         let terminal = settings.effectiveTerminalApp
         Task {
             do {
@@ -491,7 +509,30 @@ final class TunnelManager {
         }
     }
 
+    /// Túnel sin servidor SSH: basta con la sesión de reenvío del Bastion, sin abrir terminal.
+    private func openDirectTunnel(_ tunnel: LocalTunnel) {
+        guard settings.effectiveSessionMode == .portForwarding else {
+            return report(BastionError.message(String(localized: "Un túnel sin servidor SSH necesita el modo «Reenvío de puerto». Cámbialo en Ajustes o indica un servidor SSH.")))
+        }
+        do { try validate(settings) } catch { return report(error) }
+        guard let runner = ensureTunnelRunner(tunnel) else { return }
+        let name = tunnel.name.isEmpty ? tunnel.remoteHost : tunnel.name
+        Task {
+            do {
+                let port = try await runner.waitUntilConnected()
+                record(String(localized: "🚇 Túnel \(name): localhost:\(port) → \(tunnel.remoteHost):\(tunnel.remotePort)"))
+                showToast(String(localized: "Túnel listo en localhost:\(port) 🎉"))
+            } catch { report(error) }
+        }
+    }
+
     func copyLocalTunnelCommand(_ tunnel: LocalTunnel) {
+        if tunnel.isDirect {
+            guard let command = portRunners[tunnel.id]?.bastionCommand else {
+                return showToast(String(localized: "Abre el túnel primero para obtener su comando 🙂"))
+            }
+            return copy(command, message: "Comando del túnel copiado 📋")
+        }
         Task {
             do {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
@@ -508,10 +549,10 @@ final class TunnelManager {
         copy(command, message: "Comando del Bastion copiado 📋")
     }
 
-    private func copy(_ value: String, message: String) {
+    private func copy(_ value: String, message: String.LocalizationValue) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(value, forType: .string)
-        showToast(message)
+        showToast(String(localized: message))
     }
 
     func removeDestination(_ id: UUID) {

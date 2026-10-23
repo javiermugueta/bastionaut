@@ -43,16 +43,19 @@ final class ForwardRunner {
     @ObservationIgnored var onLog: (String) -> Void = { _ in }
     @ObservationIgnored private let makeContext: () async throws -> RunnerContext
     @ObservationIgnored private let preferredPort: Int?
+    /// El puerto local lo eligió el usuario: no se cambia por otro libre.
+    @ObservationIgnored private let fixedPort: Bool
     @ObservationIgnored private var task: Task<Void, Never>?
     @ObservationIgnored private var process: Process?
     @ObservationIgnored private var record: OwnedTunnelRecord?
 
-    init(id: UUID, target: SessionTarget, label: String, preferredPort: Int?,
+    init(id: UUID, target: SessionTarget, label: String, preferredPort: Int?, fixedPort: Bool = false,
          makeContext: @escaping () async throws -> RunnerContext) {
         self.id = id
         self.target = target
         self.label = label
         self.preferredPort = preferredPort
+        self.fixedPort = fixedPort
         self.makeContext = makeContext
     }
 
@@ -188,6 +191,7 @@ final class ForwardRunner {
             port = settings.socksPort
         case .portForward:
             if let localPort { port = localPort }
+            else if fixedPort, let preferredPort { port = preferredPort }
             else if let preferredPort, await OwnedTunnelRecord.listenerPID(port: preferredPort) == nil { port = preferredPort }
             else if let free = OwnedTunnelRecord.freeLocalPort() { port = free }
             else { throw BastionError.message(String(localized: "No encuentro un puerto local libre.")) }

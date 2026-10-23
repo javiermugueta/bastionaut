@@ -1,6 +1,9 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "": {
+      "shouldTranslate": false
+    },
     " Solo acepta conexiones desde: %@.": {
       "extractionState": "stale",
       "localizations": {
@@ -24,7 +27,6 @@
       "shouldTranslate": false
     },
     "%@ contiene caracteres no admitidos.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -35,7 +37,6 @@
       }
     },
     "%@ no puede estar vacío ni contener saltos de línea.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -44,6 +45,9 @@
           }
         }
       }
+    },
+    "10.0.1.10": {
+      "shouldTranslate": false
     },
     "10.0.1.23": {
       "shouldTranslate": false
@@ -59,8 +63,18 @@
         }
       }
     },
+    "Abre el túnel primero para obtener su comando 🙂": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the tunnel first to get its command 🙂"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Abriendo el túnel 🚇": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -272,7 +286,6 @@
       }
     },
     "Buscando una sesión que reutilizar 🔎": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -303,7 +316,6 @@
       }
     },
     "Calentando motores 🔥": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -395,7 +407,6 @@
       }
     },
     "Clave privada de la instancia": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -406,7 +417,6 @@
       }
     },
     "Clave privada del Bastion": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -417,7 +427,6 @@
       }
     },
     "Clave privada del túnel": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -466,6 +475,39 @@
           }
         }
       }
+    },
+    "Comando SSH copiado 📋": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH command copied 📋"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Comando del Bastion copiado 📋": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion command copied 📋"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Comando del túnel copiado 📋": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel command copied 📋"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Compartimento": {
       "localizations": {
@@ -560,7 +602,6 @@
       }
     },
     "Conexión directa": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -721,8 +762,18 @@
         }
       }
     },
+    "Destino": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destination"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Destino SSH del Bastion no válido.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -753,7 +804,6 @@
       }
     },
     "Echando la siesta": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -774,7 +824,6 @@
       }
     },
     "El Bastion aún está preparando la sesión… (%lld/4)": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -783,6 +832,17 @@
           }
         }
       }
+    },
+    "El Bastion lleva el puerto remoto directamente a un puerto de tu Mac. Sin servidores intermedios.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The bastion brings the remote port straight to a port on your Mac. No servers in between."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "El Bastion «%@» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion.": {
       "extractionState": "stale",
@@ -807,7 +867,6 @@
       }
     },
     "El archivo contiene conexiones duplicadas o sin nombre.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -818,7 +877,6 @@
       }
     },
     "El archivo no contiene ninguna configuración.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -840,7 +898,6 @@
       }
     },
     "El puerto debe estar entre 1 y 65535.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -879,7 +936,6 @@
       }
     },
     "El túnel está abierto. ¡A trabajar!": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -890,7 +946,6 @@
       }
     },
     "Elegir…": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -950,6 +1005,17 @@
           }
         }
       }
+    },
+    "En modo SOCKS5 el túnel siempre pasa por un servidor SSH.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In SOCKS5 mode the tunnel always goes through an SSH server."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Entro por SSH en el servidor y llevo su puerto remoto a un puerto de tu Mac.": {
       "localizations": {
@@ -1021,6 +1087,72 @@
         }
       }
     },
+    "Falta el host remoto.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The remote host is missing."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Falta el puerto en tu Mac.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The port on your Mac is missing."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Falta el puerto remoto.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The remote port is missing."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Falta la IP del servidor SSH (o desmarca «Pasar por un servidor SSH»).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The SSH server IP is missing (or turn off “Go through an SSH server”)."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Falta la clave privada del servidor SSH.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The SSH server private key is missing."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Faltan la IP y el usuario del servidor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server IP and user are missing."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Filtrar por nombre": {
       "localizations": {
         "en": {
@@ -1085,7 +1217,6 @@
       "shouldTranslate": false
     },
     "Host SSH": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1096,7 +1227,6 @@
       }
     },
     "Host del Bastion": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1117,7 +1247,6 @@
       }
     },
     "Host destino del túnel": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1211,7 +1340,6 @@
       }
     },
     "La conexión seleccionada no existe en el archivo.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1274,7 +1402,6 @@
       }
     },
     "Llamando a la puerta del Bastion 🚪": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1295,7 +1422,6 @@
       }
     },
     "Manos a la obra…": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1349,7 +1475,6 @@
       }
     },
     "Necesito tu ayuda": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1419,7 +1544,6 @@
       }
     },
     "No encuentro un puerto local libre.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1590,7 +1714,6 @@
       "shouldTranslate": false
     },
     "OCI está preparando la sesión ☕️ · %lld s": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1658,6 +1781,17 @@
         }
       }
     },
+    "Pasar por un servidor SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go through an SSH server"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Perfil": {
       "localizations": {
         "en": {
@@ -1679,7 +1813,6 @@
       }
     },
     "Pidiendo una sesión nueva a OCI 🛎️": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1690,7 +1823,6 @@
       }
     },
     "Pido una sesión nueva antes de que caduque la actual.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1724,7 +1856,6 @@
       "shouldTranslate": false
     },
     "Proxy del sistema": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1735,7 +1866,6 @@
       }
     },
     "Proxy manual": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1807,7 +1937,6 @@
       }
     },
     "Pulsa conectar cuando quieras salir de paseo.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1828,6 +1957,7 @@
       }
     },
     "Reenvío": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1888,7 +2018,6 @@
       }
     },
     "Renovando la sesión": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1998,7 +2127,6 @@
       }
     },
     "Se cayó, reintentando…": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2019,6 +2147,7 @@
       }
     },
     "Servidor SSH": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2110,7 +2239,6 @@
       }
     },
     "Sin proxy detectado; conexión directa": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2232,6 +2360,17 @@
         }
       }
     },
+    "Túnel listo en localhost:%lld 🎉": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel ready on localhost:%lld 🎉"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Túneles a puertos": {
       "localizations": {
         "en": {
@@ -2280,6 +2419,17 @@
         }
       }
     },
+    "Un túnel sin servidor SSH necesita el modo «Reenvío de puerto». Cámbialo en Ajustes o indica un servidor SSH.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A tunnel without an SSH server needs “Port forwarding” mode. Switch it in Settings or add an SSH server."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Una sesión por servidor. Funciona con cualquier Bastion.": {
       "localizations": {
         "en": {
@@ -2321,7 +2471,6 @@
       }
     },
     "Usuario SSH": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2332,7 +2481,6 @@
       }
     },
     "Usuario de sesión": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2343,7 +2491,6 @@
       }
     },
     "Variable %@": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2354,7 +2501,6 @@
       }
     },
     "Versión de archivo no compatible: %lld.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2383,6 +2529,9 @@
           }
         }
       }
+    },
+    "WPAD": {
+      "shouldTranslate": false
     },
     "Ya existe una conexión llamada «%@».": {
       "localizations": {
@@ -2428,7 +2577,6 @@
       }
     },
     "falta el script de iTerm2 en la aplicación.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2527,7 +2675,6 @@
       }
     },
     "sin respuesta": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2538,7 +2685,6 @@
       }
     },
     "sin respuesta en 30 s": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2596,7 +2742,6 @@
       }
     },
     "¡En órbita!": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2696,11 +2841,21 @@
         }
       }
     },
+    "Útil si el puerto solo escucha dentro del servidor (p. ej. 127.0.0.1).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Handy when the port only listens inside the server (e.g. 127.0.0.1)."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "…ocid1.bastion": {
       "shouldTranslate": false
     },
     "⏱️ %@: la sesión es nueva y todavía no acepta la clave; reintento en 5 s": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2711,7 +2866,6 @@
       }
     },
     "⏳ %@: renovando la sesión antes de que caduque": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2722,7 +2876,6 @@
       }
     },
     "♻️ %@: reutilizo una sesión que ya existía": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2771,7 +2924,6 @@
       }
     },
     "🎉 %@: túnel listo en 127.0.0.1:%lld": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2820,7 +2972,6 @@
       }
     },
     "🔁 %@: no pude renovar todavía (%@); reintento en 1 min": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2837,7 +2988,6 @@
       }
     },
     "🔌 %@: el túnel se cerró": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2903,6 +3053,23 @@
         }
       }
     },
+    "🚇 Túnel %@: localhost:%lld → %@:%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚇 Tunnel %@: localhost:%lld → %@:%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🚇 Túnel %1$@: localhost:%2$lld → %3$@:%4$lld"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "🚇 Túnel a un puerto": {
       "localizations": {
         "en": {
@@ -2914,7 +3081,6 @@
       }
     },
     "🛎️ %@: sesión creada, esperando a OCI": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {

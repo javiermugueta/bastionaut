@@ -19,6 +19,9 @@ struct LocalTunnel: Codable, Identifiable, Equatable {
     var localPort: Int = 0
     var remoteHost: String = "127.0.0.1"
     var remotePort: Int = 0
+
+    /// Sin servidor SSH intermedio: el Bastion lleva el puerto directamente (solo en reenvío de puerto).
+    var isDirect: Bool { host.trimmingCharacters(in: .whitespaces).isEmpty }
 }
 
 struct Settings: Codable {
