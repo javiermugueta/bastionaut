@@ -39,9 +39,9 @@ final class TunnelManager {
         reloadProfiles()
         startup = Task {
             let closed = await OwnedTunnelRegistry.reclaimStale()
-            if closed > 0 { record("🧹 Cerré \(closed) túnel(es) que quedaron de la última vez") }
+            if closed > 0 { record(String(localized: "🧹 Cerré \(closed) túnel(es) que quedaron de la última vez")) }
             let pruned = SessionKeyStore.prune()
-            if pruned > 0 { record("🧹 Borré \(pruned) clave(s) temporal(es) caducada(s)") }
+            if pruned > 0 { record(String(localized: "🧹 Borré \(pruned) clave(s) temporal(es) caducada(s)")) }
         }
     }
 
@@ -130,7 +130,7 @@ final class TunnelManager {
             }
         }
         do { try settings.save() }
-        catch { report(BastionError.message("No se pudo guardar la configuración: \(error.localizedDescription)")) }
+        catch { report(BastionError.message(String(localized: "No se pudo guardar la configuración: \(error.localizedDescription)"))) }
     }
 
     @discardableResult
@@ -138,9 +138,9 @@ final class TunnelManager {
         do {
             let name = try InputCheck.singleLine(rawName, name: "Nombre de conexión")
             guard !savedConnections.contains(where: { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) else {
-                throw BastionError.message("Ya existe una conexión llamada «\(name)».")
+                throw BastionError.message(String(localized: "Ya existe una conexión llamada «\(name)»."))
             }
-            guard !isRunning else { throw BastionError.message("Desconecta antes de cambiar de conexión.") }
+            guard !isRunning else { throw BastionError.message(String(localized: "Desconecta antes de cambiar de conexión.")) }
             let record = SavedConnection(id: UUID(), name: name, snapshot: ConnectionSnapshot(settings: draft), emoji: emoji)
             settings.savedConnections = savedConnections + [record]
             record.snapshot.apply(to: &settings)
@@ -149,7 +149,7 @@ final class TunnelManager {
             contextCache = nil
             reloadProfiles()
             save()
-            self.record("✨ Conexión «\(name)» creada")
+            self.record(String(localized: "✨ Conexión «\(name)» creada"))
             return true
         } catch {
             report(error)
@@ -159,17 +159,17 @@ final class TunnelManager {
 
     /// Sustituye la configuración de la conexión actual con lo que devuelve el asistente en modo edición.
     func applyDraft(_ draft: Settings) {
-        guard !isRunning else { return report(BastionError.message("Desconecta antes de cambiar la configuración.")) }
+        guard !isRunning else { return report(BastionError.message(String(localized: "Desconecta antes de cambiar la configuración."))) }
         ConnectionSnapshot(settings: draft).apply(to: &settings)
         contextCache = nil
         reloadProfiles()
         save()
-        record("🛠️ Configuración actualizada")
+        record(String(localized: "🛠️ Configuración actualizada"))
     }
 
     func selectConnection(_ id: UUID?) {
         guard id != settings.selectedSavedConnectionID else { return }
-        guard !isRunning else { return showToast("Desconecta antes de cambiar de conexión 🙏") }
+        guard !isRunning else { return showToast(String(localized: "Desconecta antes de cambiar de conexión 🙏")) }
         save()
         guard let id, let record = savedConnections.first(where: { $0.id == id }) else {
             settings.selectedSavedConnectionID = nil
@@ -194,7 +194,7 @@ final class TunnelManager {
             var records = savedConnections
             guard let index = records.firstIndex(where: { $0.id == id }) else { return }
             guard !records.contains(where: { $0.id != id && $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) else {
-                throw BastionError.message("Ya existe una conexión llamada «\(name)».")
+                throw BastionError.message(String(localized: "Ya existe una conexión llamada «\(name)»."))
             }
             records[index].name = name
             records[index].emoji = emoji
@@ -224,7 +224,7 @@ final class TunnelManager {
         } else {
             save()
         }
-        record("🗑️ Conexión «\(name)» eliminada")
+        record(String(localized: "🗑️ Conexión «\(name)» eliminada"))
     }
 
     func exportConfiguration(to url: URL, scope: ExportScope) {
@@ -234,13 +234,13 @@ final class TunnelManager {
             let data = try encoder.encode(ConfigurationArchive(settings: settings, scope: scope))
             try data.write(to: url, options: .atomic)
             try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
-            showToast("Exportado a \(url.lastPathComponent) 📦")
-        } catch { report(BastionError.message("No se pudo exportar: \(error.localizedDescription)")) }
+            showToast(String(localized: "Exportado a \(url.lastPathComponent) 📦"))
+        } catch { report(BastionError.message(String(localized: "No se pudo exportar: \(error.localizedDescription)"))) }
     }
 
     func prepareImport(from url: URL) -> ConfigurationImportPlan? {
         guard !isRunning else {
-            showToast("Desconecta antes de importar 🙏")
+            showToast(String(localized: "Desconecta antes de importar 🙏"))
             return nil
         }
         do {
@@ -249,7 +249,7 @@ final class TunnelManager {
             return ConfigurationImportPlan(archive: archive, fileName: url.lastPathComponent,
                                            conflictingNames: archive.conflictingNames(with: settings))
         } catch {
-            report(BastionError.message("No se pudo leer el archivo: \(error.localizedDescription)"))
+            report(BastionError.message(String(localized: "No se pudo leer el archivo: \(error.localizedDescription)")))
             return nil
         }
     }
@@ -268,9 +268,9 @@ final class TunnelManager {
             settings = imported
             contextCache = nil
             reloadProfiles()
-            record("📥 Importadas \(plan.archive.savedConnections.count) conexión(es) de \(plan.fileName)")
-            showToast("¡Importación completada! 📥")
-        } catch { report(BastionError.message("No se pudo importar: \(error.localizedDescription)")) }
+            record(String(localized: "📥 Importadas \(plan.archive.savedConnections.count) conexión(es) de \(plan.fileName)"))
+            showToast(String(localized: "¡Importación completada! 📥"))
+        } catch { report(BastionError.message(String(localized: "No se pudo importar: \(error.localizedDescription)"))) }
     }
 
     // MARK: OCI
@@ -324,7 +324,7 @@ final class TunnelManager {
         }
         try InputCheck.port(value.socksPort)
         guard (1800...10800).contains(value.ttlSeconds) else {
-            throw BastionError.message("La duración de sesión debe estar entre 30 y 180 minutos.")
+            throw BastionError.message(String(localized: "La duración de sesión debe estar entre 30 y 180 minutos."))
         }
         if value.effectiveProxyMode == .manual {
             _ = try InputCheck.sshToken(value.proxyHost, name: "Host del proxy")
@@ -352,16 +352,16 @@ final class TunnelManager {
         switch settings.effectiveSessionMode {
         case .socks:
             if socksRunner?.isActive == true { return }
-            let runner = makeRunner(id: UUID(), target: .dynamic, label: "SOCKS5", snapshot: settings)
+            let runner = makeRunner(id: UUID(), target: .dynamic, label: String(localized: "SOCKS5"), snapshot: settings)
             socksRunner = runner
             runner.start()
         case .portForwarding:
             let targets = settings.destinations.map { ($0.id, $0.host, $0.port, $0.name) } +
                 (settings.tunnels ?? []).map { ($0.id, $0.host, $0.sshPort, $0.name) }
-            guard !targets.isEmpty else { return showToast("Añade algún destino primero 🙂") }
+            guard !targets.isEmpty else { return showToast(String(localized: "Añade algún destino primero 🙂")) }
             for (id, host, port, name) in targets { _ = ensurePortRunner(id: id, host: host, port: port, name: name) }
         }
-        record("🚀 Conectando «\(selectedConnection?.name ?? settings.bastionName ?? "Bastion")»")
+        record(String(localized: "🚀 Conectando «\(selectedConnection?.name ?? settings.bastionName ?? "Bastion")»"))
     }
 
     func disconnect() {
@@ -369,7 +369,7 @@ final class TunnelManager {
             if let port = runner.localPort { lastPorts[runner.id] = port }
             runner.stop()
         }
-        record("👋 Desconectado")
+        record(String(localized: "👋 Desconectado"))
     }
 
     func stopAllNow() {
@@ -413,7 +413,7 @@ final class TunnelManager {
             if let runner = portRunners[id], runner.state.isConnected, let localPort = runner.localPort {
                 return .jump(localPort: localPort)
             }
-            guard connectIfNeeded else { throw BastionError.message("Conecta primero este destino ▶︎") }
+            guard connectIfNeeded else { throw BastionError.message(String(localized: "Conecta primero este destino ▶︎")) }
             try validate(settings)
             guard let runner = ensurePortRunner(id: id, host: host, port: port, name: name) else { throw BastionError.notConnected }
             return .jump(localPort: try await runner.waitUntilConnected())
@@ -427,7 +427,7 @@ final class TunnelManager {
                 let route = try await route(id: destination.id, host: destination.host, port: destination.port,
                                             name: destination.name, connectIfNeeded: true)
                 try await TerminalLauncher.open(command: SSHCommands.destination(destination, route: route), in: terminal)
-                record("🖥️ Abriendo SSH a \(destination.name.isEmpty ? destination.host : destination.name)")
+                record(String(localized: "🖥️ Abriendo SSH a \(destination.name.isEmpty ? destination.host : destination.name)"))
             } catch { report(error) }
         }
     }
@@ -439,7 +439,7 @@ final class TunnelManager {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
                                             name: tunnel.name, connectIfNeeded: true)
                 try await TerminalLauncher.open(command: SSHCommands.localTunnel(tunnel, route: route), in: terminal)
-                record("🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(tunnel.localPort)")
+                record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(tunnel.localPort)"))
             } catch { report(error) }
         }
     }
@@ -466,7 +466,7 @@ final class TunnelManager {
 
     func copyBastionCommand() {
         guard let command = socksRunner?.bastionCommand ?? portRunners.values.compactMap(\.bastionCommand).first else {
-            return showToast("Conecta el Bastion para obtener el comando 🙂")
+            return showToast(String(localized: "Conecta el Bastion para obtener el comando 🙂"))
         }
         copy(command, message: "Comando del Bastion copiado 📋")
     }

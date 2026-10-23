@@ -34,53 +34,53 @@ enum BastionError: LocalizedError, Equatable {
         case .message(let value):
             return value
         case .configNotFound(let path):
-            return "No encuentro el archivo de configuración OCI en \(path)."
+            return String(localized: "No encuentro el archivo de configuración OCI en \(path).")
         case .profileNotFound(let profile):
-            return "El perfil «\(profile)» no existe en la configuración OCI."
+            return String(localized: "El perfil «\(profile)» no existe en la configuración OCI.")
         case .profileMissingField(let profile, let field):
-            return "Al perfil «\(profile)» le falta el campo «\(field)»."
+            return String(localized: "Al perfil «\(profile)» le falta el campo «\(field)».")
         case .unsupportedAPIKey(let detail):
-            return "No puedo usar la clave de API de OCI: \(detail)"
+            return String(localized: "No puedo usar la clave de API de OCI: \(detail)")
         case .apiKeyPassphraseRequired(let path):
-            return "La clave de API \(path) está cifrada. Añade pass_phrase al perfil OCI."
+            return String(localized: "La clave de API \(path) está cifrada. Añade pass_phrase al perfil OCI.")
         case .keyFileMissing(let path):
-            return "No existe la clave: \(path)"
+            return String(localized: "No existe la clave: \(path)")
         case .keyPairMismatch:
-            return "La clave pública y la privada del Bastion no forman pareja."
+            return String(localized: "La clave pública y la privada del Bastion no forman pareja.")
         case .api(let status, let code, let message, let requestID):
             let id = requestID.map { " (opc-request-id: \($0))" } ?? ""
-            return "OCI respondió \(status) \(code): \(message)\(id)"
+            return String(localized: "OCI respondió \(status) \(code): \(message)\(id)")
         case .network(let detail):
-            return "No hay forma de hablar con OCI: \(detail)"
+            return String(localized: "No hay forma de hablar con OCI: \(detail)")
         case .bastionNotFound:
-            return "No encuentro el Bastion. ¿Está en la región elegida?"
+            return String(localized: "No encuentro el Bastion. ¿Está en la región elegida?")
         case .socksNotEnabled(let bastion):
-            return "El Bastion «\(bastion)» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion."
+            return String(localized: "El Bastion «\(bastion)» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion.")
         case .sessionFailed(let detail):
-            return "OCI no pudo crear la sesión: \(detail)"
+            return String(localized: "OCI no pudo crear la sesión: \(detail)")
         case .sessionTimeout:
-            return "La sesión de OCI tardó demasiado en activarse."
+            return String(localized: "La sesión de OCI tardó demasiado en activarse.")
         case .sshAuthenticationFailed(let detail):
-            return "SSH rechazó la clave: \(detail)"
+            return String(localized: "SSH rechazó la clave: \(detail)")
         case .sshHostKeyFailed(let detail):
-            return "La huella del servidor no coincide: \(detail)"
+            return String(localized: "La huella del servidor no coincide: \(detail)")
         case .sshPassphraseRequired:
-            return "La clave privada tiene contraseña. Cárgala antes en ssh-agent."
+            return String(localized: "La clave privada tiene contraseña. Cárgala antes en ssh-agent.")
         case .sshForwardFailed(let detail):
-            return "SSH no pudo abrir el puerto local: \(detail)"
+            return String(localized: "SSH no pudo abrir el puerto local: \(detail)")
         case .bastionUnreachable(let detail, let allowList):
-            let list = allowList.isEmpty ? "" : " Solo acepta conexiones desde: \(allowList.joined(separator: ", "))."
-            return "No consigo conectar con el Bastion por SSH.\(list) (\(detail))"
+            let list = allowList.isEmpty ? "" : String(localized: " Solo acepta conexiones desde: \(allowList.joined(separator: ", ")).")
+            return String(localized: "No consigo conectar con el Bastion por SSH.\(list) (\(detail))")
         case .sshExited(let detail):
-            return detail.isEmpty ? "El túnel SSH terminó." : detail
+            return detail.isEmpty ? String(localized: "El túnel SSH terminó.") : detail
         case .portInUse(let port, let pid):
-            return "El puerto local \(port) lo está usando otro proceso (PID \(pid)). Libéralo o elige otro."
+            return String(localized: "El puerto local \(port) lo está usando otro proceso (PID \(pid)). Libéralo o elige otro.")
         case .ownedTunnelCouldNotStop(let pid):
-            return "El SSH anterior (PID \(pid)) sigue vivo; no abro otro hasta que termine."
+            return String(localized: "El SSH anterior (PID \(pid)) sigue vivo; no abro otro hasta que termine.")
         case .notConnected:
-            return "Conecta primero el Bastion."
+            return String(localized: "Conecta primero el Bastion.")
         case .terminal(let detail):
-            return "No pude abrir la terminal: \(detail)"
+            return String(localized: "No pude abrir la terminal: \(detail)")
         }
     }
 
@@ -88,21 +88,21 @@ enum BastionError: LocalizedError, Equatable {
     var hint: String? {
         switch self {
         case .bastionUnreachable:
-            return "Comprueba que tu IP pública esté en la lista de IPs permitidas del Bastion (consola OCI › Bastion › Editar). Si sales por un proxy o VPN, cuenta la IP de salida."
+            return String(localized: "Comprueba que tu IP pública esté en la lista de IPs permitidas del Bastion (consola OCI › Bastion › Editar). Si sales por un proxy o VPN, cuenta la IP de salida.")
         case .socksNotEnabled:
-            return "Cambia a «Reenvío de puerto» en Ajustes."
+            return String(localized: "Cambia a «Reenvío de puerto» en Ajustes.")
         case .api(let status, _, _, _) where status == 401:
-            return "Revisa la huella y la clave de API del perfil OCI."
+            return String(localized: "Revisa la huella y la clave de API del perfil OCI.")
         case .api(let status, _, _, _) where status == 404:
-            return "Puede faltar un permiso IAM (p. ej. «manage bastion-session») o el recurso no está en esta región."
+            return String(localized: "Puede faltar un permiso IAM (p. ej. «manage bastion-session») o el recurso no está en esta región.")
         case .sshAuthenticationFailed:
-            return "Si usas tus propias claves, comprueba que la privada corresponde a la pública."
+            return String(localized: "Si usas tus propias claves, comprueba que la privada corresponde a la pública.")
         case .sshHostKeyFailed:
-            return "Borra la entrada antigua de ~/.ssh/known_hosts para ese host."
+            return String(localized: "Borra la entrada antigua de ~/.ssh/known_hosts para ese host.")
         case .portInUse, .sshForwardFailed:
-            return "Elige otro puerto local o cierra lo que lo esté usando."
+            return String(localized: "Elige otro puerto local o cierra lo que lo esté usando.")
         case .configNotFound, .profileNotFound, .profileMissingField:
-            return "Abre el asistente ✨ y revisa la cuenta OCI."
+            return String(localized: "Abre el asistente ✨ y revisa la cuenta OCI.")
         default:
             return nil
         }

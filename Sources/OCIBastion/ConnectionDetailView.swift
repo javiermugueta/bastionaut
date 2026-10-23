@@ -24,7 +24,7 @@ struct ConnectionDetailView: View {
             .frame(maxWidth: 900)
             .frame(maxWidth: .infinity)
         }
-        .navigationTitle(manager.selectedConnection.map { "\($0.displayEmoji) \($0.name)" } ?? "Configuración actual")
+        .navigationTitle(manager.selectedConnection.map { "\($0.displayEmoji) \($0.name)" } ?? String(localized: "Configuración actual"))
         .toolbar {
             if manager.selectedConnection != nil {
                 Menu {
@@ -109,7 +109,7 @@ struct ConnectionDetailView: View {
                 TargetRow(
                     emoji: "🔌",
                     title: tunnel.name.isEmpty ? tunnel.host : tunnel.name,
-                    subtitle: "localhost:\(tunnel.localPort) → \(tunnel.remoteHost):\(tunnel.remotePort) vía \(tunnel.host)",
+                    subtitle: "localhost:\(tunnel.localPort) → \(tunnel.remoteHost):\(tunnel.remotePort) \(String(localized: "vía")) \(tunnel.host)",
                     runner: portMode ? manager.runner(for: tunnel.id) : nil,
                     primaryTitle: "Abrir túnel",
                     primary: { manager.openLocalTunnel(tunnel) },
@@ -155,7 +155,7 @@ struct HeroCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 HStack(spacing: 6) {
-                    Chip(text: manager.settings.effectiveSessionMode == .socks ? "SOCKS5" : "Reenvío de puerto", tint: .white)
+                    Chip(text: manager.settings.effectiveSessionMode == .socks ? "SOCKS5" : String(localized: "Reenvío de puerto"), tint: .white)
                     if let name = manager.settings.bastionName { Chip(text: "🏰 \(name)", tint: .white) }
                     if let region = manager.settings.region { Chip(text: "🌍 \(region)", tint: .white) }
                     if state.isConnected, manager.settings.effectiveSessionMode == .socks {
@@ -226,7 +226,7 @@ struct TargetRow: View {
     let title: String
     let subtitle: String
     let runner: ForwardRunner?
-    let primaryTitle: String
+    let primaryTitle: LocalizedStringKey
     let primary: () -> Void
     let copy: () -> Void
     let edit: () -> Void
@@ -243,7 +243,7 @@ struct TargetRow: View {
                     Text(title).font(.headline)
                     if let runner, runner.state.isBusy { ProgressView().controlSize(.mini) }
                     if let runner, runner.state != .idle {
-                        Chip(text: "\(runner.state.emoji) \(runner.state.isConnected ? "127.0.0.1:\(runner.localPort ?? 0)" : runner.state.title)",
+                        Chip(text: String(localized: "\(runner.state.emoji) \(runner.state.isConnected ? "127.0.0.1:\(runner.localPort ?? 0)" : runner.state.title)"),
                              tint: runner.state.tint)
                             .help(runner.state.subtitle)
                     }
@@ -285,7 +285,7 @@ struct SettingsCard: View {
             if expanded {
                 Form {
                     Section {
-                        LabeledContent("Cuenta OCI", value: "\(manager.settings.profile) · \(manager.settings.region ?? "región del perfil")")
+                        LabeledContent("Cuenta OCI", value: "\(manager.settings.profile) · \(manager.settings.region ?? String(localized: "región del perfil"))")
                         LabeledContent("Bastion", value: manager.settings.bastionName ?? manager.settings.bastionID)
                         Button("Cambiar cuenta o Bastion con el asistente ✨", action: editWithWizard)
                     }
@@ -474,7 +474,7 @@ struct TunnelForm: View {
 }
 
 struct NameSheet: View {
-    let title: String
+    let title: LocalizedStringKey
     @State var name: String
     @State var emoji: String
     let onSave: (String, String) -> Void

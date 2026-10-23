@@ -53,6 +53,16 @@ Genera `dist/OCIBastion-<versión>.dmg` firmado con Hardened Runtime, notarizado
 
 El proxy corporativo HTTP CONNECT se detecta automáticamente (`http_proxy`, configuración del sistema o WPAD) y se usa tanto para la API como para el SSH. Al cerrar la app se cierran sus túneles; los `ssh` huérfanos de una ejecución anterior se cierran al arrancar.
 
+## Idiomas
+
+La app está en **español e inglés** y sigue el idioma del sistema (inglés para cualquier otro idioma). Los textos viven en `Assets/Localizable.xcstrings`, que se puede editar en Xcode. Si añades o cambias textos en el código:
+
+```sh
+./Scripts/update-strings.sh   # extrae los textos con el compilador y sincroniza el catálogo
+```
+
+Después traduce las entradas nuevas en el catálogo; `build-app.sh` lo compila en `es.lproj` y `en.lproj`. Para probar otro idioma sin cambiar el del sistema: `open "dist/OCI Bastion.app" --args -AppleLanguages '(en)'`.
+
 ## Tests
 
 ```sh

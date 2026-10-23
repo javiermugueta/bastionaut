@@ -1,0 +1,2861 @@
+{
+  "sourceLanguage": "es",
+  "strings": {
+    " Solo acepta conexiones desde: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " It only accepts connections from: %@."
+          }
+        }
+      }
+    },
+    "%@ %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ %2$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "%@ contiene caracteres no admitidos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ contains characters that aren’t allowed."
+          }
+        }
+      }
+    },
+    "%@ no puede estar vacío ni contener saltos de línea.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ can’t be empty or contain line breaks."
+          }
+        }
+      }
+    },
+    "%@: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@: %2$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "10.0.1.23": {
+      "shouldTranslate": false
+    },
+    "Abre el asistente ✨ y revisa la cuenta OCI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the assistant ✨ and check the OCI account."
+          }
+        }
+      }
+    },
+    "Abriendo el túnel 🚇": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opening the tunnel 🚇"
+          }
+        }
+      }
+    },
+    "Abrir OCI Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open OCI Bastion"
+          }
+        }
+      }
+    },
+    "Abrir SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open SSH"
+          }
+        }
+      }
+    },
+    "Abrir túnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open tunnel"
+          }
+        }
+      }
+    },
+    "Ajustes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Al perfil «%@» le falta el campo «%@».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile “%@” is missing the “%@” field."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Al perfil «%1$@» le falta el campo «%2$@»."
+          }
+        }
+      }
+    },
+    "Al terminar verás la conexión en la barra lateral. Pulsa **Conectar 🚀** y listo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you finish, the connection appears in the sidebar. Hit **Connect 🚀** and you’re in."
+          }
+        }
+      }
+    },
+    "Aquí iré apuntando lo que pase.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I’ll jot down everything that happens here."
+          }
+        }
+      }
+    },
+    "Aquí no hay nadie todavía": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nobody here yet"
+          }
+        }
+      }
+    },
+    "Archivo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        }
+      }
+    },
+    "Atrás": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        }
+      }
+    },
+    "Automático": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic"
+          }
+        }
+      }
+    },
+    "Añade algún destino primero 🙂": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a server first 🙂"
+          }
+        }
+      }
+    },
+    "Añadir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "Base de datos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Database"
+          }
+        }
+      }
+    },
+    "Bastion": {
+      "shouldTranslate": false
+    },
+    "Bastion de ejemplo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample bastion"
+          }
+        }
+      }
+    },
+    "Bitácora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity log"
+          }
+        }
+      }
+    },
+    "Borra la entrada antigua de ~/.ssh/known_hosts para ese host.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove the old entry for that host from ~/.ssh/known_hosts."
+          }
+        }
+      }
+    },
+    "Buscando bastiones en el compartimento… 🔎": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for bastions in the compartment… 🔎"
+          }
+        }
+      }
+    },
+    "Buscando bastiones en toda la tenancy (%@)… 🔎": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching the whole tenancy for bastions (%@)… 🔎"
+          }
+        }
+      }
+    },
+    "Buscando una sesión que reutilizar 🔎": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for a session to reuse 🔎"
+          }
+        }
+      }
+    },
+    "Buscar de nuevo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search again"
+          }
+        }
+      }
+    },
+    "Busco tus Bastiones en toda la tenancy, sin que tengas que saber en qué compartimento están.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I find your bastions across the whole tenancy, so you don’t need to know which compartment they live in."
+          }
+        }
+      }
+    },
+    "Calentando motores 🔥": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warming up the engines 🔥"
+          }
+        }
+      }
+    },
+    "Cambia a «Reenvío de puerto» en Ajustes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to “Port forwarding” in Settings."
+          }
+        }
+      }
+    },
+    "Cambiar cuenta o Bastion con el asistente ✨": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change account or bastion with the assistant ✨"
+          }
+        }
+      }
+    },
+    "Cambiar de conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch connection"
+          }
+        }
+      }
+    },
+    "Cancelar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Cargando compartimentos… 📂": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading compartments… 📂"
+          }
+        }
+      }
+    },
+    "Cargar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Load"
+          }
+        }
+      }
+    },
+    "Cerrar la sesión de este destino": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close this server’s session"
+          }
+        }
+      }
+    },
+    "Clave privada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private key"
+          }
+        }
+      }
+    },
+    "Clave privada de la instancia": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instance private key"
+          }
+        }
+      }
+    },
+    "Clave privada del Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion private key"
+          }
+        }
+      }
+    },
+    "Clave privada del túnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel private key"
+          }
+        }
+      }
+    },
+    "Clave pública": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Public key"
+          }
+        }
+      }
+    },
+    "Clave pública (.pub)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Public key (.pub)"
+          }
+        }
+      }
+    },
+    "Claves": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keys"
+          }
+        }
+      }
+    },
+    "Claves del Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion keys"
+          }
+        }
+      }
+    },
+    "Compartimento": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartment"
+          }
+        }
+      }
+    },
+    "Comprobando…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        }
+      }
+    },
+    "Comprueba que tu IP pública esté en la lista de IPs permitidas del Bastion (consola OCI › Bastion › Editar). Si sales por un proxy o VPN, cuenta la IP de salida.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make sure your public IP is in the bastion’s allowed IP list (OCI console › Bastion › Edit). If you go through a proxy or VPN, its egress IP is what counts."
+          }
+        }
+      }
+    },
+    "Conecta el Bastion para obtener el comando 🙂": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect the bastion to get the command 🙂"
+          }
+        }
+      }
+    },
+    "Conecta primero el Bastion.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect the bastion first."
+          }
+        }
+      }
+    },
+    "Conecta primero este destino ▶︎": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect this server first ▶︎"
+          }
+        }
+      }
+    },
+    "Conectar 🚀": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect 🚀"
+          }
+        }
+      }
+    },
+    "Conexiones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connections"
+          }
+        }
+      }
+    },
+    "Conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection"
+          }
+        }
+      }
+    },
+    "Conexión directa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direct connection"
+          }
+        }
+      }
+    },
+    "Configuración OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI configuration"
+          }
+        }
+      }
+    },
+    "Configuración actual": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current configuration"
+          }
+        }
+      }
+    },
+    "Consultando el Bastion… 🏰": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking the bastion… 🏰"
+          }
+        }
+      }
+    },
+    "Copiar SSH del Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy bastion SSH"
+          }
+        }
+      }
+    },
+    "Copiar comando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy command"
+          }
+        }
+      }
+    },
+    "Creo una clave por sesión, la guardo solo para ti y la borro al caducar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I create one key per session, keep it just for you and delete it when it expires."
+          }
+        }
+      }
+    },
+    "Cuenta OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI account"
+          }
+        }
+      }
+    },
+    "DER truncado.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "truncated DER."
+          }
+        }
+      }
+    },
+    "Desconecta antes de cambiar de conexión 🙏": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect before switching connections 🙏"
+          }
+        }
+      }
+    },
+    "Desconecta antes de cambiar de conexión.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect before switching connections."
+          }
+        }
+      }
+    },
+    "Desconecta antes de cambiar la configuración.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect before changing the configuration."
+          }
+        }
+      }
+    },
+    "Desconecta antes de importar 🙏": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect before importing 🙏"
+          }
+        }
+      }
+    },
+    "Desconecta para cambiar los ajustes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect to change the settings."
+          }
+        }
+      }
+    },
+    "Desconectar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect"
+          }
+        }
+      }
+    },
+    "Destino SSH del Bastion no válido.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid bastion SSH target."
+          }
+        }
+      }
+    },
+    "Duplicar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate"
+          }
+        }
+      }
+    },
+    "Duración: %lld min": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration: %lld min"
+          }
+        }
+      }
+    },
+    "Echando la siesta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taking a nap"
+          }
+        }
+      }
+    },
+    "Editar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "El Bastion aún está preparando la sesión… (%lld/4)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The bastion is still getting the session ready… (%lld/4)"
+          }
+        }
+      }
+    },
+    "El Bastion «%@» no tiene activado SOCKS5. Usa el modo de reenvío de puerto o activa «FQDN y SOCKS5» en el Bastion.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion “%@” doesn’t have SOCKS5 enabled. Use port forwarding mode or enable “FQDN and SOCKS5” on the bastion."
+          }
+        }
+      }
+    },
+    "El SSH anterior (PID %d) sigue vivo; no abro otro hasta que termine.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The previous SSH (PID %d) is still running; I won’t open another until it exits."
+          }
+        }
+      }
+    },
+    "El archivo contiene conexiones duplicadas o sin nombre.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The file has duplicate or unnamed connections."
+          }
+        }
+      }
+    },
+    "El archivo no contiene ninguna configuración.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The file doesn’t contain any configuration."
+          }
+        }
+      }
+    },
+    "El perfil «%@» no existe en la configuración OCI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile “%@” doesn’t exist in the OCI configuration."
+          }
+        }
+      }
+    },
+    "El puerto debe estar entre 1 y 65535.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The port must be between 1 and 65535."
+          }
+        }
+      }
+    },
+    "El puerto local %lld lo está usando otro proceso (PID %d). Libéralo o elige otro.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local port %lld is in use by another process (PID %d). Free it or pick another one."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "El puerto local %1$lld lo está usando otro proceso (PID %2$d). Libéralo o elige otro."
+          }
+        }
+      }
+    },
+    "El túnel SSH terminó.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The SSH tunnel ended."
+          }
+        }
+      }
+    },
+    "El túnel está abierto. ¡A trabajar!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The tunnel is open. Get to work!"
+          }
+        }
+      }
+    },
+    "Elegir…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose…"
+          }
+        }
+      }
+    },
+    "Elige el Bastion 🏰": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick the bastion 🏰"
+          }
+        }
+      }
+    },
+    "Elige otro puerto local o cierra lo que lo esté usando.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick another local port or close whatever is using it."
+          }
+        }
+      }
+    },
+    "Elige un par de claves que ya tengas.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a key pair you already have."
+          }
+        }
+      }
+    },
+    "Eliminar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Eliminar…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete…"
+          }
+        }
+      }
+    },
+    "Entro por SSH en el servidor y llevo su puerto remoto a un puerto de tu Mac.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I SSH into the server and bring its remote port to a port on your Mac."
+          }
+        }
+      }
+    },
+    "Esta acción no se puede deshacer.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This can’t be undone."
+          }
+        }
+      }
+    },
+    "Este Bastion no tiene SOCKS5 activado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This bastion doesn’t have SOCKS5 enabled"
+          }
+        }
+      }
+    },
+    "Este Bastion solo acepta conexiones desde: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This bastion only accepts connections from: %@"
+          }
+        }
+      }
+    },
+    "Exportado a %@ 📦": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exported to %@ 📦"
+          }
+        }
+      }
+    },
+    "Exportar esta conexión…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export this connection…"
+          }
+        }
+      }
+    },
+    "Exportar todo…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export everything…"
+          }
+        }
+      }
+    },
+    "Filtrar por nombre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter by name"
+          }
+        }
+      }
+    },
+    "Guardar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Guardar cambios": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save changes"
+          }
+        }
+      }
+    },
+    "Guardar como conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save as connection"
+          }
+        }
+      }
+    },
+    "Guardar como conexión…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save as connection…"
+          }
+        }
+      }
+    },
+    "Hablando con OCI para comprobar tu cuenta… 🔌": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Talking to OCI to check your account… 🔌"
+          }
+        }
+      }
+    },
+    "Host": {
+      "shouldTranslate": false
+    },
+    "Host SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH host"
+          }
+        }
+      }
+    },
+    "Host del Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion host"
+          }
+        }
+      }
+    },
+    "Host del proxy": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy host"
+          }
+        }
+      }
+    },
+    "Host destino del túnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel destination host"
+          }
+        }
+      }
+    },
+    "Host remoto (visto desde el servidor)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote host (as seen from the server)"
+          }
+        }
+      }
+    },
+    "IP privada o DNS": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private IP or DNS name"
+          }
+        }
+      }
+    },
+    "Importar / Exportar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import / Export"
+          }
+        }
+      }
+    },
+    "Importar y sobrescribir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import and overwrite"
+          }
+        }
+      }
+    },
+    "Importar…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import…"
+          }
+        }
+      }
+    },
+    "La clave de API %@ está cifrada. Añade pass_phrase al perfil OCI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API key %@ is encrypted. Add pass_phrase to the OCI profile."
+          }
+        }
+      }
+    },
+    "La clave privada tiene contraseña. Cárgala antes en ssh-agent.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The private key has a passphrase. Load it into ssh-agent first."
+          }
+        }
+      }
+    },
+    "La clave pública y la privada del Bastion no forman pareja.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The bastion public and private keys don’t match."
+          }
+        }
+      }
+    },
+    "La conexión seleccionada no existe en el archivo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected connection isn’t in the file."
+          }
+        }
+      }
+    },
+    "La duración de sesión debe estar entre 30 y 180 minutos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session length must be between 30 and 180 minutes."
+          }
+        }
+      }
+    },
+    "La huella del servidor no coincide: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server’s host key doesn’t match: %@"
+          }
+        }
+      }
+    },
+    "La sesión de OCI caduca a las %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The OCI session expires at %@"
+          }
+        }
+      }
+    },
+    "La sesión de OCI tardó demasiado en activarse.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The OCI session took too long to become active."
+          }
+        }
+      }
+    },
+    "Limpiar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        }
+      }
+    },
+    "Llamando a la puerta del Bastion 🚪": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knocking on the bastion’s door 🚪"
+          }
+        }
+      }
+    },
+    "Lleva un puerto remoto (una base de datos, una consola web…) a tu Mac.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bring a remote port (a database, a web console…) to your Mac."
+          }
+        }
+      }
+    },
+    "Manos a la obra…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On it…"
+          }
+        }
+      }
+    },
+    "Manual": {
+      "shouldTranslate": false
+    },
+    "Mi servidor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My server"
+          }
+        }
+      }
+    },
+    "Mis propias claves": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My own keys"
+          }
+        }
+      }
+    },
+    "Modo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        }
+      }
+    },
+    "Mostrar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
+          }
+        }
+      }
+    },
+    "Necesito tu ayuda": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I need a hand"
+          }
+        }
+      }
+    },
+    "Necesito un perfil de `~/.oci/config` con una clave de API.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I need a profile in `~/.oci/config` with an API key."
+          }
+        }
+      }
+    },
+    "No consigo conectar con el Bastion por SSH.%@ (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can’t reach the bastion over SSH.%@ (%@)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "No consigo conectar con el Bastion por SSH.%1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "No encontré bastiones en %@. Prueba con otra región o búscalo en un compartimento.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I didn’t find any bastions in %@. Try another region or look in a compartment."
+          }
+        }
+      }
+    },
+    "No encuentro el Bastion. ¿Está en la región elegida?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can’t find the bastion. Is it in the selected region?"
+          }
+        }
+      }
+    },
+    "No encuentro el archivo de configuración OCI en %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can’t find the OCI configuration file at %@."
+          }
+        }
+      }
+    },
+    "No encuentro un puerto local libre.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can’t find a free local port."
+          }
+        }
+      }
+    },
+    "No existe la clave: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key not found: %@"
+          }
+        }
+      }
+    },
+    "No hay forma de hablar con OCI: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can’t talk to OCI: %@"
+          }
+        }
+      }
+    },
+    "No pude abrir la terminal: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t open the terminal: %@"
+          }
+        }
+      }
+    },
+    "No puedo usar la clave de API de OCI: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can’t use the OCI API key: %@"
+          }
+        }
+      }
+    },
+    "No se pudo exportar: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export failed: %@"
+          }
+        }
+      }
+    },
+    "No se pudo generar la clave temporal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t generate the temporary key"
+          }
+        }
+      }
+    },
+    "No se pudo guardar la configuración: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t save the configuration: %@"
+          }
+        }
+      }
+    },
+    "No se pudo importar: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import failed: %@"
+          }
+        }
+      }
+    },
+    "No se pudo leer el archivo: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t read the file: %@"
+          }
+        }
+      }
+    },
+    "No se pudo leer la clave SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t read the SSH key"
+          }
+        }
+      }
+    },
+    "No se pudo obtener la huella de la clave SSH.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t get the SSH key fingerprint."
+          }
+        }
+      }
+    },
+    "Nombre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "Nombre de conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection name"
+          }
+        }
+      }
+    },
+    "Nombre de la conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection name"
+          }
+        }
+      }
+    },
+    "Nueva conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New connection"
+          }
+        }
+      }
+    },
+    "OCI Bastion": {
+      "shouldTranslate": false
+    },
+    "OCI está preparando la sesión ☕️ · %lld s": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI is preparing the session ☕️ · %lld s"
+          }
+        }
+      }
+    },
+    "OCI no pudo crear la sesión: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI couldn’t create the session: %@"
+          }
+        }
+      }
+    },
+    "OCI respondió %lld %@: %@%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI returned %lld %@: %@%@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "OCI respondió %1$lld %2$@: %3$@%4$@"
+          }
+        }
+      }
+    },
+    "OCID del Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastion OCID"
+          }
+        }
+      }
+    },
+    "Ocultar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide"
+          }
+        }
+      }
+    },
+    "Opcional: añade ahora el servidor al que quieres entrar. Puedes añadir más después.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional: add the server you want to reach now. You can add more later."
+          }
+        }
+      }
+    },
+    "Perfil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
+          }
+        }
+      }
+    },
+    "Perfil OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCI profile"
+          }
+        }
+      }
+    },
+    "Pidiendo una sesión nueva a OCI 🛎️": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asking OCI for a new session 🛎️"
+          }
+        }
+      }
+    },
+    "Pido una sesión nueva antes de que caduque la actual.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getting a new session before the current one expires."
+          }
+        }
+      }
+    },
+    "Ponle nombre ✨": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Give it a name ✨"
+          }
+        }
+      }
+    },
+    "Probar conexión 🔌": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test connection 🔌"
+          }
+        }
+      }
+    },
+    "Proxy": {
+      "shouldTranslate": false
+    },
+    "Proxy del sistema": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System proxy"
+          }
+        }
+      }
+    },
+    "Proxy manual": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual proxy"
+          }
+        }
+      }
+    },
+    "Puede faltar un permiso IAM (p. ej. «manage bastion-session») o el recurso no está en esta región.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An IAM permission may be missing (e.g. “manage bastion-session”), or the resource isn’t in this region."
+          }
+        }
+      }
+    },
+    "Puerto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port"
+          }
+        }
+      }
+    },
+    "Puerto SOCKS5 local": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local SOCKS5 port"
+          }
+        }
+      }
+    },
+    "Puerto SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH port"
+          }
+        }
+      }
+    },
+    "Puerto en tu Mac": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port on your Mac"
+          }
+        }
+      }
+    },
+    "Puerto remoto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote port"
+          }
+        }
+      }
+    },
+    "Pulsa conectar cuando quieras salir de paseo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hit connect whenever you’re ready to head out."
+          }
+        }
+      }
+    },
+    "Red y terminal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network and terminal"
+          }
+        }
+      }
+    },
+    "Reenvío": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forwarding"
+          }
+        }
+      }
+    },
+    "Reenvío de puerto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port forwarding"
+          }
+        }
+      }
+    },
+    "Reenvío de puerto (uno por destino)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port forwarding (one per server)"
+          }
+        }
+      }
+    },
+    "Región": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region"
+          }
+        }
+      }
+    },
+    "Renombrar conexión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename connection"
+          }
+        }
+      }
+    },
+    "Renombrar…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename…"
+          }
+        }
+      }
+    },
+    "Renovando la sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renewing the session"
+          }
+        }
+      }
+    },
+    "Renovar %lld min antes de caducar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renew %lld min before it expires"
+          }
+        }
+      }
+    },
+    "Renuevo la sesión antes de que caduque para que no se te corte nada.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I renew the session before it expires so nothing gets cut off."
+          }
+        }
+      }
+    },
+    "Respuesta de OCI inesperada en %@: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unexpected OCI response at %@: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Respuesta de OCI inesperada en %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "Revisa la huella y la clave de API del perfil OCI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the fingerprint and API key of the OCI profile."
+          }
+        }
+      }
+    },
+    "SOCKS5": {
+      "shouldTranslate": false
+    },
+    "SOCKS5 (un túnel para todo)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOCKS5 (one tunnel for everything)"
+          }
+        }
+      }
+    },
+    "SOCKS5 ✅": {
+      "shouldTranslate": false
+    },
+    "SOCKS5 ❌": {
+      "shouldTranslate": false
+    },
+    "SSH no pudo abrir el puerto local: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH couldn’t open the local port: %@"
+          }
+        }
+      }
+    },
+    "SSH rechazó la clave: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH rejected the key: %@"
+          }
+        }
+      }
+    },
+    "Salir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit"
+          }
+        }
+      }
+    },
+    "Se cayó, reintentando…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It dropped, retrying…"
+          }
+        }
+      }
+    },
+    "Selecciona…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select…"
+          }
+        }
+      }
+    },
+    "Servidor SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH server"
+          }
+        }
+      }
+    },
+    "Servidores": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Servers"
+          }
+        }
+      }
+    },
+    "Sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session"
+          }
+        }
+      }
+    },
+    "Sesión hasta las %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session until %@"
+          }
+        }
+      }
+    },
+    "Sesión máx. %lld min": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max session %lld min"
+          }
+        }
+      }
+    },
+    "Si quieres, me encargo de las claves del Bastion: creo una por sesión y la borro al caducar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you like, I’ll handle the bastion keys: one per session, deleted when it expires."
+          }
+        }
+      }
+    },
+    "Si usas tus propias claves, comprueba que la privada corresponde a la pública.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you use your own keys, check that the private key matches the public one."
+          }
+        }
+      }
+    },
+    "Siguiente": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "Sin proxy": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No proxy"
+          }
+        }
+      }
+    },
+    "Sin proxy detectado; conexión directa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No proxy detected; direct connection"
+          }
+        }
+      }
+    },
+    "Sin servidores todavía. Añade uno y ábrelo con un clic.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No servers yet. Add one and open it with a click."
+          }
+        }
+      }
+    },
+    "Te acompaño paso a paso: cuenta OCI, Bastion y tu primer servidor.\nEn un par de minutos estarás dentro.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I’ll walk you through it: OCI account, bastion and your first server.\nYou’ll be in within a couple of minutes."
+          }
+        }
+      }
+    },
+    "Temporales (recomendado)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary (recommended)"
+          }
+        }
+      }
+    },
+    "Temporales, me encargo yo 🔑": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary, I’ll handle them 🔑"
+          }
+        }
+      }
+    },
+    "Tenancy (raíz)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenancy (root)"
+          }
+        }
+      }
+    },
+    "Terminal": {
+      "shouldTranslate": false
+    },
+    "Tipo de sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session type"
+          }
+        }
+      }
+    },
+    "Tu IP pública es %@. Compárala con la lista del Bastion: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your public IP is %@. Compare it with the bastion’s list: %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Tu IP pública es %1$@. Compárala con la lista del Bastion: %2$@."
+          }
+        }
+      }
+    },
+    "Tu IP pública es %@. El Bastion no tiene lista de IPs permitidas.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your public IP is %@. The bastion has no allowed IP list."
+          }
+        }
+      }
+    },
+    "Tu cuenta de OCI ☁️": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your OCI account ☁️"
+          }
+        }
+      }
+    },
+    "Tu primer servidor 🖥️": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your first server 🖥️"
+          }
+        }
+      }
+    },
+    "Túneles a puertos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port tunnels"
+          }
+        }
+      }
+    },
+    "URL de OCI no válida.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid OCI URL."
+          }
+        }
+      }
+    },
+    "URL de OCI no válida: %@%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid OCI URL: %@%@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "URL de OCI no válida: %1$@%2$@"
+          }
+        }
+      }
+    },
+    "Un solo túnel para todos tus servidores. El más cómodo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A single tunnel for all your servers. The easiest option."
+          }
+        }
+      }
+    },
+    "Una sesión por servidor. Funciona con cualquier Bastion.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One session per server. Works with any bastion."
+          }
+        }
+      }
+    },
+    "Uso mis propias claves": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I’ll use my own keys"
+          }
+        }
+      }
+    },
+    "Uso tu `~/.oci/config` para hablar directamente con la API de OCI. No hace falta el OCI CLI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I use your `~/.oci/config` to talk straight to the OCI API. No OCI CLI needed."
+          }
+        }
+      }
+    },
+    "Usuario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User"
+          }
+        }
+      }
+    },
+    "Usuario SSH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH user"
+          }
+        }
+      }
+    },
+    "Usuario de sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session user"
+          }
+        }
+      }
+    },
+    "Variable %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ variable"
+          }
+        }
+      }
+    },
+    "Versión de archivo no compatible: %lld.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported file version: %lld."
+          }
+        }
+      }
+    },
+    "Volver a probar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test again"
+          }
+        }
+      }
+    },
+    "Voy a ayudarte a entrar en tus máquinas privadas de OCI sin pelearte con comandos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I’ll help you get into your private OCI machines without wrestling with commands."
+          }
+        }
+      }
+    },
+    "WPAD": {
+      "shouldTranslate": false
+    },
+    "Ya existe una conexión llamada «%@».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There’s already a connection called “%@”."
+          }
+        }
+      }
+    },
+    "el PEM no contiene base64 válido.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the PEM doesn’t contain valid base64."
+          }
+        }
+      }
+    },
+    "estructura DER inesperada.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "unexpected DER structure."
+          }
+        }
+      }
+    },
+    "falta el bloque BEGIN/END del PEM.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the PEM BEGIN/END block is missing."
+          }
+        }
+      }
+    },
+    "falta el script de iTerm2 en la aplicación.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the iTerm2 script is missing from the app."
+          }
+        }
+      }
+    },
+    "iTerm2": {
+      "shouldTranslate": false
+    },
+    "la región": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the region"
+          }
+        }
+      }
+    },
+    "longitud DER no válida.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "invalid DER length."
+          }
+        }
+      }
+    },
+    "no se pudo descifrar con pass_phrase.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "couldn’t decrypt it with pass_phrase."
+          }
+        }
+      }
+    },
+    "región del perfil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "profile region"
+          }
+        }
+      }
+    },
+    "respuesta inesperada al consultar la IP pública": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "unexpected response while checking the public IP"
+          }
+        }
+      }
+    },
+    "respuesta no HTTP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "non-HTTP response"
+          }
+        }
+      }
+    },
+    "se esperaba una clave RSA en formato PEM.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "expected an RSA key in PEM format."
+          }
+        }
+      }
+    },
+    "sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "session"
+          }
+        }
+      }
+    },
+    "sin respuesta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no response"
+          }
+        }
+      }
+    },
+    "sin respuesta en 30 s": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no response within 30 s"
+          }
+        }
+      }
+    },
+    "solo se admiten claves RSA.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "only RSA keys are supported."
+          }
+        }
+      }
+    },
+    "vía": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "via"
+          }
+        }
+      }
+    },
+    "~/.oci/config": {
+      "shouldTranslate": false
+    },
+    "~/.ssh/id_rsa": {
+      "shouldTranslate": false
+    },
+    "¡Conectado! %lld región(es) disponibles": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected! %lld region(s) available"
+          }
+        }
+      }
+    },
+    "¡Empecemos! 🚀": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let’s go! 🚀"
+          }
+        }
+      }
+    },
+    "¡En órbita!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In orbit!"
+          }
+        }
+      }
+    },
+    "¡Hola! 👋": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi there! 👋"
+          }
+        }
+      }
+    },
+    "¡Importación completada! 📥": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import complete! 📥"
+          }
+        }
+      }
+    },
+    "¡Listo! 🎉": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done! 🎉"
+          }
+        }
+      }
+    },
+    "¿Cómo entramos? 🔑": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How do we get in? 🔑"
+          }
+        }
+      }
+    },
+    "¿Eliminar «%@»?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete “%@”?"
+          }
+        }
+      }
+    },
+    "¿Está permitida mi IP? 🌐": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Is my IP allowed? 🌐"
+          }
+        }
+      }
+    },
+    "¿No aparece? Búscalo en un compartimento o pega su OCID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not listed? Look in a compartment or paste its OCID"
+          }
+        }
+      }
+    },
+    "¿No tienes configuración? Créala con `oci setup config` o desde la consola de OCI › Perfil › Claves de API › Añadir clave de API.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No configuration yet? Create one with `oci setup config` or from the OCI console › Profile › API keys › Add API key."
+          }
+        }
+      }
+    },
+    "¿Sobrescribir?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overwrite?"
+          }
+        }
+      }
+    },
+    "…ocid1.bastion": {
+      "shouldTranslate": false
+    },
+    "⏱️ %@: la sesión es nueva y todavía no acepta la clave; reintento en 5 s": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⏱️ %@: the session is brand new and doesn’t accept the key yet; retrying in 5 s"
+          }
+        }
+      }
+    },
+    "⏳ %@: renovando la sesión antes de que caduque": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⏳ %@: renewing the session before it expires"
+          }
+        }
+      }
+    },
+    "♻️ %@: reutilizo una sesión que ya existía": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "♻️ %@: reusing an existing session"
+          }
+        }
+      }
+    },
+    "✅ Tu IP pública %@ está permitida en el Bastion.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✅ Your public IP %@ is allowed on the bastion."
+          }
+        }
+      }
+    },
+    "✨ Conexión «%@» creada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✨ Connection “%@” created"
+          }
+        }
+      }
+    },
+    "❌ Tu IP pública %@ NO está en la lista del Bastion (%@). Añádela en la consola de OCI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Your public IP %@ is NOT on the bastion’s list (%@). Add it in the OCI console."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "❌ Tu IP pública %1$@ NO está en la lista del Bastion (%2$@). Añádela en la consola de OCI."
+          }
+        }
+      }
+    },
+    "🎉 %@: túnel listo en 127.0.0.1:%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎉 %@: tunnel ready on 127.0.0.1:%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🎉 %1$@: túnel listo en 127.0.0.1:%2$lld"
+          }
+        }
+      }
+    },
+    "🏯": {
+      "shouldTranslate": false
+    },
+    "🏰": {
+      "shouldTranslate": false
+    },
+    "👋 Desconectado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "👋 Disconnected"
+          }
+        }
+      }
+    },
+    "📥 Importadas %lld conexión(es) de %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "📥 Imported %lld connection(s) from %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "📥 Importadas %1$lld conexión(es) de %2$@"
+          }
+        }
+      }
+    },
+    "🔁 %@: no pude renovar todavía (%@); reintento en 1 min": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🔁 %@: couldn’t renew yet (%@); retrying in 1 min"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🔁 %1$@: no pude renovar todavía (%2$@); reintento en 1 min"
+          }
+        }
+      }
+    },
+    "🔌 %@: el túnel se cerró": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🔌 %@: the tunnel closed"
+          }
+        }
+      }
+    },
+    "🖥️ Abriendo SSH a %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🖥️ Opening SSH to %@"
+          }
+        }
+      }
+    },
+    "🖥️ Servidor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🖥️ Server"
+          }
+        }
+      }
+    },
+    "🗑️ Conexión «%@» eliminada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🗑️ Connection “%@” deleted"
+          }
+        }
+      }
+    },
+    "🚀 Conectando «%@»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚀 Connecting “%@”"
+          }
+        }
+      }
+    },
+    "🚇 Túnel %@ → 127.0.0.1:%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚇 Tunnel %@ → 127.0.0.1:%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🚇 Túnel %1$@ → 127.0.0.1:%2$lld"
+          }
+        }
+      }
+    },
+    "🚇 Túnel a un puerto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚇 Port tunnel"
+          }
+        }
+      }
+    },
+    "🛎️ %@: sesión creada, esperando a OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🛎️ %@: session created, waiting for OCI"
+          }
+        }
+      }
+    },
+    "🛠️ Configuración actualizada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🛠️ Configuration updated"
+          }
+        }
+      }
+    },
+    "🧹 Borré %lld clave(s) temporal(es) caducada(s)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧹 Deleted %lld expired temporary key(s)"
+          }
+        }
+      }
+    },
+    "🧹 Cerré %lld túnel(es) que quedaron de la última vez": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧹 Closed %lld tunnel(s) left over from last time"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

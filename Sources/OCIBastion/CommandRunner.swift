@@ -48,7 +48,7 @@ enum CommandRunner {
     static func requireSuccess(_ result: CommandResult, label: String) throws -> String {
         guard result.status == 0 else {
             let detail = result.error.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw BastionError.message("\(label): \(detail.isEmpty ? "salida \(result.status)" : detail)")
+            throw BastionError.message(String(localized: "\(label): \(detail.isEmpty ? "salida \(result.status)" : detail)"))
         }
         return result.output
     }

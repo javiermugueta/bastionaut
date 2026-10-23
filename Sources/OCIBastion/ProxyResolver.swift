@@ -17,19 +17,19 @@ enum ProxyResolver {
     static func resolve(settings: Settings) async throws -> (endpoint: ProxyEndpoint?, source: String) {
         switch settings.effectiveProxyMode {
         case .direct:
-            return (nil, "Conexión directa")
+            return (nil, String(localized: "Conexión directa"))
         case .manual:
-            return (try ProxyEndpoint(host: settings.proxyHost, port: settings.proxyPort), "Proxy manual")
+            return (try ProxyEndpoint(host: settings.proxyHost, port: settings.proxyPort), String(localized: "Proxy manual"))
         case .automatic:
             let environment = ProcessInfo.processInfo.environment
             for key in ["http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY"] {
                 if let value = environment[key], let endpoint = endpoint(fromURL: value) {
-                    return (endpoint, "Variable \(key)")
+                    return (endpoint, String(localized: "Variable \(key)"))
                 }
             }
-            if let endpoint = await systemProxy() { return (endpoint, "Proxy del sistema") }
-            if let endpoint = await wpadProxy() { return (endpoint, "WPAD") }
-            return (nil, "Sin proxy detectado; conexión directa")
+            if let endpoint = await systemProxy() { return (endpoint, String(localized: "Proxy del sistema")) }
+            if let endpoint = await wpadProxy() { return (endpoint, String(localized: "WPAD")) }
+            return (nil, String(localized: "Sin proxy detectado; conexión directa"))
         }
     }
 

@@ -22,7 +22,7 @@ struct OCIRequestSigner {
     func sign(_ request: inout URLRequest, date: Date = Date()) throws {
         guard let url = request.url, let host = url.host,
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            throw BastionError.message("URL de OCI no válida.")
+            throw BastionError.message(String(localized: "URL de OCI no válida."))
         }
         let method = (request.httpMethod ?? "GET").lowercased()
         var target = components.percentEncodedPath
@@ -77,7 +77,7 @@ enum PEMKey {
             let result = try await CommandRunner.run("/usr/bin/openssl",
                 ["pkey", "-in", path, "-passin", "env:OCIBASTION_KEY_PASS"], environment: environment)
             guard result.status == 0 else {
-                throw BastionError.unsupportedAPIKey("no se pudo descifrar con pass_phrase.")
+                throw BastionError.unsupportedAPIKey(String(localized: "no se pudo descifrar con pass_phrase."))
             }
             return try rsaPrivateKey(pem: result.output)
         }
@@ -87,17 +87,17 @@ enum PEMKey {
     static func rsaPrivateKey(pem: String) throws -> SecKey {
         let isPKCS8 = pem.contains("BEGIN PRIVATE KEY")
         guard isPKCS8 || pem.contains("BEGIN RSA PRIVATE KEY") else {
-            throw BastionError.unsupportedAPIKey("se esperaba una clave RSA en formato PEM.")
+            throw BastionError.unsupportedAPIKey(String(localized: "se esperaba una clave RSA en formato PEM."))
         }
         // Solo el bloque BEGIN…END: la consola de OCI añade una línea «OCI_API_KEY» detrás.
         let lines = pem.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
         guard let begin = lines.firstIndex(where: { $0.hasPrefix("-----BEGIN") }),
               let end = lines[begin...].firstIndex(where: { $0.hasPrefix("-----END") }) else {
-            throw BastionError.unsupportedAPIKey("falta el bloque BEGIN/END del PEM.")
+            throw BastionError.unsupportedAPIKey(String(localized: "falta el bloque BEGIN/END del PEM."))
         }
         let base64 = lines[(begin + 1)..<end].filter { !$0.contains(":") }.joined()
         guard let der = Data(base64Encoded: base64) else {
-            throw BastionError.unsupportedAPIKey("el PEM no contiene base64 válido.")
+            throw BastionError.unsupportedAPIKey(String(localized: "el PEM no contiene base64 válido."))
         }
         let pkcs1 = isPKCS8 ? try pkcs1FromPKCS8(der) : der
         let attributes: [CFString: Any] = [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeyClass: kSecAttrKeyClassPrivate]
@@ -116,7 +116,7 @@ enum PEMKey {
         var algorithm = DERReader(try sequence.read(tag: 0x30))
         let oid = try algorithm.read(tag: 0x06)
         guard oid == [0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01] else {
-            throw BastionError.unsupportedAPIKey("solo se admiten claves RSA.")
+            throw BastionError.unsupportedAPIKey(String(localized: "solo se admiten claves RSA."))
         }
         return Data(try sequence.read(tag: 0x04))
     }
@@ -129,18 +129,18 @@ struct DERReader {
     init(_ bytes: [UInt8]) { self.bytes = bytes }
 
     mutating func read(tag: UInt8) throws -> [UInt8] {
-        guard index < bytes.count, bytes[index] == tag else { throw BastionError.unsupportedAPIKey("estructura DER inesperada.") }
+        guard index < bytes.count, bytes[index] == tag else { throw BastionError.unsupportedAPIKey(String(localized: "estructura DER inesperada.")) }
         index += 1
-        guard index < bytes.count else { throw BastionError.unsupportedAPIKey("DER truncado.") }
+        guard index < bytes.count else { throw BastionError.unsupportedAPIKey(String(localized: "DER truncado.")) }
         var length = Int(bytes[index])
         index += 1
         if length & 0x80 != 0 {
             let count = length & 0x7F
-            guard count <= 4, index + count <= bytes.count else { throw BastionError.unsupportedAPIKey("longitud DER no válida.") }
+            guard count <= 4, index + count <= bytes.count else { throw BastionError.unsupportedAPIKey(String(localized: "longitud DER no válida.")) }
             length = bytes[index..<index + count].reduce(0) { $0 << 8 | Int($1) }
             index += count
         }
-        guard index + length <= bytes.count else { throw BastionError.unsupportedAPIKey("DER truncado.") }
+        guard index + length <= bytes.count else { throw BastionError.unsupportedAPIKey(String(localized: "DER truncado.")) }
         defer { index += length }
         return Array(bytes[index..<index + length])
     }

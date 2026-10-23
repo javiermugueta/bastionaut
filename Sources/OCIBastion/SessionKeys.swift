@@ -64,7 +64,7 @@ enum SessionKeyStore {
         let result = try await CommandRunner.run("/usr/bin/ssh-keygen", [
             "-q", "-t", "rsa", "-b", "3072", "-N", "", "-C", "ocibastion-temporal", "-f", url.path
         ])
-        _ = try CommandRunner.requireSuccess(result, label: "No se pudo generar la clave temporal")
+        _ = try CommandRunner.requireSuccess(result, label: String(localized: "No se pudo generar la clave temporal"))
         let publicURL = url.appendingPathExtension("pub")
         let publicKey = try String(contentsOf: publicURL, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
         try? FileManager.default.removeItem(at: publicURL)
@@ -105,9 +105,9 @@ enum KeyValidation {
     static func fingerprint(path: String) async throws -> String {
         guard FileManager.default.fileExists(atPath: path) else { throw BastionError.keyFileMissing(path: path) }
         let result = try await CommandRunner.run("/usr/bin/ssh-keygen", ["-l", "-E", "sha256", "-f", path])
-        let output = try CommandRunner.requireSuccess(result, label: "No se pudo leer la clave SSH")
+        let output = try CommandRunner.requireSuccess(result, label: String(localized: "No se pudo leer la clave SSH"))
         guard let value = output.split(whereSeparator: \.isWhitespace).dropFirst().first else {
-            throw BastionError.message("No se pudo obtener la huella de la clave SSH.")
+            throw BastionError.message(String(localized: "No se pudo obtener la huella de la clave SSH."))
         }
         return String(value)
     }

@@ -7,12 +7,12 @@ struct WizardView: View {
 
         var title: String {
             switch self {
-            case .welcome: return "¡Hola! 👋"
-            case .account: return "Tu cuenta de OCI ☁️"
-            case .bastion: return "Elige el Bastion 🏰"
-            case .keys: return "¿Cómo entramos? 🔑"
-            case .server: return "Tu primer servidor 🖥️"
-            case .name: return "Ponle nombre ✨"
+            case .welcome: return String(localized: "¡Hola! 👋")
+            case .account: return String(localized: "Tu cuenta de OCI ☁️")
+            case .bastion: return String(localized: "Elige el Bastion 🏰")
+            case .keys: return String(localized: "¿Cómo entramos? 🔑")
+            case .server: return String(localized: "Tu primer servidor 🖥️")
+            case .name: return String(localized: "Ponle nombre ✨")
             }
         }
     }
@@ -194,10 +194,26 @@ struct WizardView: View {
                 Button("Buscar de nuevo") { searchBastions() }.disabled(busy)
             }
             if bastions.isEmpty && !busy {
-                Text("No encontré bastiones en \(draft.region ?? "la región"). Prueba con otra región o búscalo en un compartimento.")
+                Text("No encontré bastiones en \(draft.region ?? String(localized: "la región")). Prueba con otra región o búscalo en un compartimento.")
                     .foregroundStyle(.secondary)
             }
             VStack(spacing: 6) {
+                if busy && bastions.isEmpty {
+                    ForEach(0..<3, id: \.self) { _ in
+                        HStack {
+                            Text("🏯").font(.title2)
+                            VStack(alignment: .leading) {
+                                Text("Bastion de ejemplo").font(.headline)
+                                Text("…ocid1.bastion").font(.caption.monospaced())
+                            }
+                            Spacer()
+                        }
+                        .padding(10)
+                        .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                        .redacted(reason: .placeholder)
+                        .modifier(Pulse())
+                    }
+                }
                 ForEach(filteredBastions) { item in
                     Button { selectBastion(item.id, name: item.name) } label: {
                         HStack {
@@ -218,8 +234,8 @@ struct WizardView: View {
             }
             if let bastionDetails {
                 HStack {
-                    Chip(text: bastionDetails.supportsSOCKS ? "SOCKS5 ✅" : "SOCKS5 ❌", tint: bastionDetails.supportsSOCKS ? .green : .orange)
-                    if let ttl = bastionDetails.maxSessionTtlInSeconds { Chip(text: "Sesión máx. \(ttl / 60) min") }
+                    Chip(text: bastionDetails.supportsSOCKS ? String(localized: "SOCKS5 ✅") : String(localized: "SOCKS5 ❌"), tint: bastionDetails.supportsSOCKS ? .green : .orange)
+                    if let ttl = bastionDetails.maxSessionTtlInSeconds { Chip(text: String(localized: "Sesión máx. \(ttl / 60) min")) }
                 }
                 if let cidrs = bastionDetails.clientCidrBlockAllowList, !cidrs.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
@@ -262,22 +278,22 @@ struct WizardView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Tipo de sesión").font(.headline)
             HStack(spacing: 12) {
-                ChoiceCard(emoji: "🧦", title: "SOCKS5", detail: "Un solo túnel para todos tus servidores. El más cómodo.",
+                ChoiceCard(emoji: "🧦", title: String(localized: "SOCKS5"), detail: String(localized: "Un solo túnel para todos tus servidores. El más cómodo."),
                            selected: draft.effectiveSessionMode == .socks,
-                           disabledReason: bastionDetails?.supportsSOCKS == false ? "Este Bastion no tiene SOCKS5 activado" : nil) {
+                           disabledReason: bastionDetails?.supportsSOCKS == false ? String(localized: "Este Bastion no tiene SOCKS5 activado") : nil) {
                     draft.sessionMode = .socks
                 }
-                ChoiceCard(emoji: "🎯", title: "Reenvío de puerto", detail: "Una sesión por servidor. Funciona con cualquier Bastion.",
+                ChoiceCard(emoji: "🎯", title: String(localized: "Reenvío de puerto"), detail: String(localized: "Una sesión por servidor. Funciona con cualquier Bastion."),
                            selected: draft.effectiveSessionMode == .portForwarding) {
                     draft.sessionMode = .portForwarding
                 }
             }
             Text("Claves del Bastion").font(.headline)
             HStack(spacing: 12) {
-                ChoiceCard(emoji: "✨", title: "Temporales (recomendado)",
-                           detail: "Creo una clave por sesión, la guardo solo para ti y la borro al caducar.",
+                ChoiceCard(emoji: "✨", title: String(localized: "Temporales (recomendado)"),
+                           detail: String(localized: "Creo una clave por sesión, la guardo solo para ti y la borro al caducar."),
                            selected: draft.effectiveKeyMode == .ephemeral) { draft.keyMode = .ephemeral }
-                ChoiceCard(emoji: "🗝️", title: "Mis propias claves", detail: "Elige un par de claves que ya tengas.",
+                ChoiceCard(emoji: "🗝️", title: String(localized: "Mis propias claves"), detail: String(localized: "Elige un par de claves que ya tengas."),
                            selected: draft.effectiveKeyMode == .custom) { draft.keyMode = .custom }
             }
             if draft.effectiveKeyMode == .custom {
@@ -348,10 +364,10 @@ struct WizardView: View {
         if manager.addConnection(named: name, emoji: emoji, from: result) { close() }
     }
 
-    private func run(_ message: String, _ work: @escaping () async throws -> Void) {
+    private func run(_ message: String.LocalizationValue, _ work: @escaping () async throws -> Void) {
         busy = true
         problem = nil
-        withAnimation { busyMessage = message }
+        withAnimation { busyMessage = String(localized: message) }
         Task {
             do { try await work() } catch { problem = (error as? BastionError)?.userMessage ?? error.localizedDescription }
             busy = false
@@ -386,7 +402,7 @@ struct WizardView: View {
 
     private func searchBastions() {
         let snapshot = draft
-        run("Buscando bastiones en toda la tenancy (\(snapshot.region ?? "región del perfil"))… 🔎") {
+        run("Buscando bastiones en toda la tenancy (\(snapshot.region ?? String(localized: "región del perfil")))… 🔎") {
             bastions = try await manager.client(for: snapshot).searchBastions()
             if bastions.count == 1, draft.bastionID.isEmpty, let only = bastions.first { selectBastion(only.id, name: only.name) }
         }
@@ -472,5 +488,17 @@ struct ChoiceCard: View {
         .buttonStyle(.plain)
         .disabled(disabledReason != nil)
         .opacity(disabledReason == nil ? 1 : 0.6)
+    }
+}
+
+/// Parpadeo suave para las filas de relleno mientras se carga.
+private struct Pulse: ViewModifier {
+    @State private var dim = false
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(dim ? 0.4 : 1)
+            .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: dim)
+            .onAppear { dim = true }
     }
 }

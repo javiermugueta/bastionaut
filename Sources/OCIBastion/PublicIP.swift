@@ -13,7 +13,7 @@ enum PublicIP {
         let (data, _) = try await URLSession(configuration: configuration)
             .data(from: URL(string: "https://checkip.amazonaws.com")!)
         let value = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard InputCheck.isIPAddress(value) else { throw BastionError.network("respuesta inesperada al consultar la IP pública") }
+        guard InputCheck.isIPAddress(value) else { throw BastionError.network(String(localized: "respuesta inesperada al consultar la IP pública")) }
         return value
     }
 
@@ -42,11 +42,11 @@ enum PublicIP {
 
     /// Texto para el usuario con el resultado.
     static func report(ip: String, allowList: [String]) -> String {
-        guard !allowList.isEmpty else { return "Tu IP pública es \(ip). El Bastion no tiene lista de IPs permitidas." }
+        guard !allowList.isEmpty else { return String(localized: "Tu IP pública es \(ip). El Bastion no tiene lista de IPs permitidas.") }
         switch isAllowed(ip, by: allowList) {
-        case true?: return "✅ Tu IP pública \(ip) está permitida en el Bastion."
-        case false?: return "❌ Tu IP pública \(ip) NO está en la lista del Bastion (\(allowList.joined(separator: ", "))). Añádela en la consola de OCI."
-        case nil: return "Tu IP pública es \(ip). Compárala con la lista del Bastion: \(allowList.joined(separator: ", "))."
+        case true?: return String(localized: "✅ Tu IP pública \(ip) está permitida en el Bastion.")
+        case false?: return String(localized: "❌ Tu IP pública \(ip) NO está en la lista del Bastion (\(allowList.joined(separator: ", "))). Añádela en la consola de OCI.")
+        case nil: return String(localized: "Tu IP pública es \(ip). Compárala con la lista del Bastion: \(allowList.joined(separator: ", ")).")
         }
     }
 }

@@ -97,7 +97,7 @@ enum SSHCommands {
         let key = try InputCheck.singleLine(privateKeyPath, name: "Clave privada del Bastion")
         try InputCheck.port(forward.localPort)
         let parts = target.split(separator: "@")
-        guard parts.count == 2 else { throw BastionError.message("Destino SSH del Bastion no válido.") }
+        guard parts.count == 2 else { throw BastionError.message(String(localized: "Destino SSH del Bastion no válido.")) }
         _ = try InputCheck.sshToken(String(parts[0]), name: "Usuario de sesión")
         _ = try InputCheck.sshToken(String(parts[1]), name: "Host del Bastion")
         var arguments = ["ssh", "-i", quote(key), "-N", forward.arguments[0], quote(forward.arguments[1])] + [
@@ -127,7 +127,7 @@ enum TerminalLauncher {
             arguments = ["-e", script, command]
         case .iterm:
             guard let script = Bundle.main.url(forResource: "LaunchITerm", withExtension: "applescript") else {
-                throw BastionError.terminal("falta el script de iTerm2 en la aplicación.")
+                throw BastionError.terminal(String(localized: "falta el script de iTerm2 en la aplicación."))
             }
             arguments = [script.path, command]
         }

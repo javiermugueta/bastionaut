@@ -38,6 +38,9 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary" "$app/Contents/MacOS/OCIBastion"
 cp Assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 cp Assets/LaunchITerm.applescript "$app/Contents/Resources/LaunchITerm.applescript"
+# Español e inglés desde el catálogo de textos (editable en Xcode).
+xcrun xcstringstool compile Assets/Localizable.xcstrings --output-directory "$app/Contents/Resources" --language es --language en
+for lang in es en; do mkdir -p "$app/Contents/Resources/$lang.lproj"; cp "Assets/$lang.lproj/InfoPlist.strings" "$app/Contents/Resources/$lang.lproj/"; done
 cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -50,12 +53,13 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>${version}</string>
 <key>CFBundleVersion</key><string>${build_number}</string>
-<key>CFBundleDevelopmentRegion</key><string>es</string>
+<key>CFBundleDevelopmentRegion</key><string>en</string>
+<key>CFBundleLocalizations</key><array><string>en</string><string>es</string></array>
 <key>LSApplicationCategoryType</key><string>public.app-category.developer-tools</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSHighResolutionCapable</key><true/>
 <key>NSHumanReadableCopyright</key><string>© $(date +%Y) OCI Bastion</string>
-<key>NSAppleEventsUsageDescription</key><string>OCI Bastion abre conexiones SSH en la aplicación de terminal seleccionada.</string>
+<key>NSAppleEventsUsageDescription</key><string>OCI Bastion opens SSH connections in the terminal app you choose.</string>
 </dict></plist>
 PLIST
 

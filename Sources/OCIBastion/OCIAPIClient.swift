@@ -153,7 +153,7 @@ struct OCIAPIClient {
         }
         let children = records.map { CompartmentItem(id: $0.id, label: label(for: $0)) }
             .sorted { $0.label.localizedStandardCompare($1.label) == .orderedAscending }
-        return [CompartmentItem(id: tenancyID, label: "Tenancy (raíz)")] + children
+        return [CompartmentItem(id: tenancyID, label: String(localized: "Tenancy (raíz)"))] + children
     }
 
     // MARK: Search
@@ -228,7 +228,7 @@ struct OCIAPIClient {
     private func get<T: Decodable>(_ host: String, _ path: String, query: [URLQueryItem] = []) async throws -> T {
         let (data, _) = try await send("GET", host, path, query: query, body: Optional<String>.none)
         do { return try Self.decoder.decode(T.self, from: data) }
-        catch { throw BastionError.message("Respuesta de OCI inesperada en \(path): \(error.localizedDescription)") }
+        catch { throw BastionError.message(String(localized: "Respuesta de OCI inesperada en \(path): \(error.localizedDescription)")) }
     }
 
     private func getAll<T: Decodable>(_ host: String, _ path: String, query: [URLQueryItem]) async throws -> [T] {
@@ -250,7 +250,7 @@ struct OCIAPIClient {
         components.host = host
         components.path = path
         if !query.isEmpty { components.queryItems = query }
-        guard let url = components.url else { throw BastionError.message("URL de OCI no válida: \(host)\(path)") }
+        guard let url = components.url else { throw BastionError.message(String(localized: "URL de OCI no válida: \(host)\(path)")) }
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "accept")
@@ -264,7 +264,7 @@ struct OCIAPIClient {
         let response: URLResponse
         do { (data, response) = try await session.data(for: request) }
         catch { throw BastionError.network(error.localizedDescription) }
-        guard let http = response as? HTTPURLResponse else { throw BastionError.network("respuesta no HTTP") }
+        guard let http = response as? HTTPURLResponse else { throw BastionError.network(String(localized: "respuesta no HTTP")) }
         guard (200..<300).contains(http.statusCode) else {
             let failure = try? JSONDecoder().decode(APIFailure.self, from: data)
             throw BastionError.api(status: http.statusCode, code: failure?.code ?? "Error",

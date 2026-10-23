@@ -14,21 +14,21 @@ extension TunnelState {
 
     var title: String {
         switch self {
-        case .idle: return "Echando la siesta"
-        case .working: return "Manos a la obra…"
-        case .connected: return "¡En órbita!"
-        case .renewing: return "Renovando la sesión"
-        case .reconnecting: return "Se cayó, reintentando…"
-        case .needsAttention: return "Necesito tu ayuda"
+        case .idle: return String(localized: "Echando la siesta")
+        case .working: return String(localized: "Manos a la obra…")
+        case .connected: return String(localized: "¡En órbita!")
+        case .renewing: return String(localized: "Renovando la sesión")
+        case .reconnecting: return String(localized: "Se cayó, reintentando…")
+        case .needsAttention: return String(localized: "Necesito tu ayuda")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .idle: return "Pulsa conectar cuando quieras salir de paseo."
+        case .idle: return String(localized: "Pulsa conectar cuando quieras salir de paseo.")
         case .working(let step): return step
-        case .connected: return "El túnel está abierto. ¡A trabajar!"
-        case .renewing: return "Pido una sesión nueva antes de que caduque la actual."
+        case .connected: return String(localized: "El túnel está abierto. ¡A trabajar!")
+        case .renewing: return String(localized: "Pido una sesión nueva antes de que caduque la actual.")
         case .reconnecting(let reason): return reason
         case .needsAttention(let reason): return reason
         }
@@ -59,7 +59,7 @@ enum Palette {
 }
 
 struct Card<Content: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     let emoji: String
     var trailing: AnyView? = nil
     @ViewBuilder let content: Content
@@ -137,7 +137,7 @@ func pickFile(showHidden: Bool = true, directory: String? = nil) -> String? {
 }
 
 struct FileField: View {
-    let placeholder: String
+    let placeholder: LocalizedStringKey
     @Binding var path: String
     var directory: String? = nil
 

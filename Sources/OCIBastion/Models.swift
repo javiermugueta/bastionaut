@@ -211,19 +211,19 @@ struct ConfigurationArchive: Codable {
 
     func validate() throws {
         guard formatVersion == 1 || formatVersion == 2 else {
-            throw BastionError.message("Versión de archivo no compatible: \(formatVersion).")
+            throw BastionError.message(String(localized: "Versión de archivo no compatible: \(formatVersion)."))
         }
         guard current != nil || !savedConnections.isEmpty else {
-            throw BastionError.message("El archivo no contiene ninguna configuración.")
+            throw BastionError.message(String(localized: "El archivo no contiene ninguna configuración."))
         }
         let ids = Set(savedConnections.map(\.id))
         let names = Set(savedConnections.map { Self.normalizedName($0.name) })
         guard ids.count == savedConnections.count, names.count == savedConnections.count,
               savedConnections.allSatisfy({ !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
-            throw BastionError.message("El archivo contiene conexiones duplicadas o sin nombre.")
+            throw BastionError.message(String(localized: "El archivo contiene conexiones duplicadas o sin nombre."))
         }
         if let selectedSavedConnectionID, !ids.contains(selectedSavedConnectionID) {
-            throw BastionError.message("La conexión seleccionada no existe en el archivo.")
+            throw BastionError.message(String(localized: "La conexión seleccionada no existe en el archivo."))
         }
     }
 
@@ -271,25 +271,27 @@ struct ConfigurationImportPlan {
 }
 
 enum InputCheck {
-    static func singleLine(_ value: String, name: String) throws -> String {
+    static func singleLine(_ value: String, name: String.LocalizationValue) throws -> String {
+        let name = String(localized: name)
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !trimmed.contains("\n"), !trimmed.contains("\r") else {
-            throw BastionError.message("\(name) no puede estar vacío ni contener saltos de línea.")
+            throw BastionError.message(String(localized: "\(name) no puede estar vacío ni contener saltos de línea."))
         }
         return trimmed
     }
 
-    static func sshToken(_ value: String, name: String) throws -> String {
+    static func sshToken(_ value: String, name: String.LocalizationValue) throws -> String {
         let checked = try singleLine(value, name: name)
+        let name = String(localized: name)
         let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._:-")
         guard !checked.hasPrefix("-"), checked.unicodeScalars.allSatisfy({ allowed.contains($0) }) else {
-            throw BastionError.message("\(name) contiene caracteres no admitidos.")
+            throw BastionError.message(String(localized: "\(name) contiene caracteres no admitidos."))
         }
         return checked
     }
 
     static func port(_ value: Int) throws {
-        guard (1...65535).contains(value) else { throw BastionError.message("El puerto debe estar entre 1 y 65535.") }
+        guard (1...65535).contains(value) else { throw BastionError.message(String(localized: "El puerto debe estar entre 1 y 65535.")) }
     }
 
     static func isIPAddress(_ value: String) -> Bool {

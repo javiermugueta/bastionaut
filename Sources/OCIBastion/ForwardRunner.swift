@@ -60,7 +60,7 @@ final class ForwardRunner {
 
     func start() {
         guard task == nil else { return }
-        state = .working("Calentando motores 🔥")
+        state = .working(String(localized: "Calentando motores 🔥"))
         task = Task { await run() }
     }
 
@@ -130,8 +130,8 @@ final class ForwardRunner {
                 // Igual que el script original: recién creada, el Bastion tarda unos segundos en aceptar la clave.
                 freshAuthRetries += 1
                 delayOverride = 5
-                state = .reconnecting("El Bastion aún está preparando la sesión… (\(freshAuthRetries)/4)")
-                onLog("⏱️ \(label): la sesión es nueva y todavía no acepta la clave; reintento en 5 s")
+                state = .reconnecting(String(localized: "El Bastion aún está preparando la sesión… (\(freshAuthRetries)/4)"))
+                onLog(String(localized: "⏱️ \(label): la sesión es nueva y todavía no acepta la clave; reintento en 5 s"))
             } catch let error as BastionError where error.requiresIntervention {
                 state = .needsAttention(error.userMessage)
                 onLog("🆘 \(label): \(error.localizedDescription)")
@@ -165,16 +165,16 @@ final class ForwardRunner {
             }
             if let process, !process.isRunning {
                 let output = Self.stderr(of: process)
-                onLog("🔌 \(label): el túnel se cerró")
+                onLog(String(localized: "🔌 \(label): el túnel se cerró"))
                 throw BastionError.fromSSH(output)
             }
             state = .renewing
-            onLog("⏳ \(label): renovando la sesión antes de que caduque")
+            onLog(String(localized: "⏳ \(label): renovando la sesión antes de que caduque"))
             do {
                 return try await obtainLease(context, excluding: excluding.union([lease.session.id]), quiet: true)
             } catch let error as BastionError where !error.requiresIntervention &&
                         (lease.expiresAt ?? .distantFuture) > Date().addingTimeInterval(90) {
-                onLog("🔁 \(label): no pude renovar todavía (\(error.localizedDescription)); reintento en 1 min")
+                onLog(String(localized: "🔁 \(label): no pude renovar todavía (\(error.localizedDescription)); reintento en 1 min"))
                 state = .connected
                 renewAt = Date().addingTimeInterval(60)
             }
@@ -190,7 +190,7 @@ final class ForwardRunner {
             if let localPort { port = localPort }
             else if let preferredPort, await OwnedTunnelRecord.listenerPID(port: preferredPort) == nil { port = preferredPort }
             else if let free = OwnedTunnelRecord.freeLocalPort() { port = free }
-            else { throw BastionError.message("No encuentro un puerto local libre.") }
+            else { throw BastionError.message(String(localized: "No encuentro un puerto local libre.")) }
         }
         try InputCheck.port(port)
         return port
@@ -203,7 +203,7 @@ final class ForwardRunner {
             : nil
         let keys = custom.map { [$0] } ?? SessionKeyStore.validKeys()
         let minimum = settings.effectiveRenewMargin + 60
-        if !quiet { state = .working("Buscando una sesión que reutilizar 🔎") }
+        if !quiet { state = .working(String(localized: "Buscando una sesión que reutilizar 🔎")) }
         if !keys.isEmpty, let sessions = try? await context.client.listActiveSessions(bastionID: context.bastion.id) {
             for candidate in SessionPlanner.candidates(sessions, target: target, minimumRemaining: minimum, excluding: excluding).prefix(5) {
                 guard let full = try? await context.client.getSession(id: candidate.id),
@@ -211,12 +211,12 @@ final class ForwardRunner {
                       let key = SessionPlanner.key(for: full, among: keys),
                       let sshTarget = full.sshTarget else { continue }
                 SessionKeyStore.attach(key, sessionID: full.id, expiresAt: full.expiresAt)
-                onLog("♻️ \(label): reutilizo una sesión que ya existía")
+                onLog(String(localized: "♻️ \(label): reutilizo una sesión que ya existía"))
                 return SessionLease(session: full, key: key, sshTarget: sshTarget)
             }
         }
 
-        if !quiet { state = .working("Pidiendo una sesión nueva a OCI 🛎️") }
+        if !quiet { state = .working(String(localized: "Pidiendo una sesión nueva a OCI 🛎️")) }
         let key: BastionKey
         if let custom { key = custom } else { key = try await SessionKeyStore.generate() }
         let ttl = min(settings.ttlSeconds, context.bastion.maxSessionTtlInSeconds ?? 10800)
@@ -224,10 +224,10 @@ final class ForwardRunner {
             bastionID: context.bastion.id, displayName: Self.displayName(label), publicKey: key.publicKey,
             target: target.ociDetails, ttlSeconds: ttl)
         SessionKeyStore.attach(key, sessionID: session.id, expiresAt: Date().addingTimeInterval(TimeInterval(ttl)))
-        onLog("🛎️ \(label): sesión creada, esperando a OCI")
+        onLog(String(localized: "🛎️ \(label): sesión creada, esperando a OCI"))
         let started = Date()
         for _ in 0..<90 {
-            if !quiet { state = .working("OCI está preparando la sesión ☕️ · \(Int(Date().timeIntervalSince(started))) s") }
+            if !quiet { state = .working(String(localized: "OCI está preparando la sesión ☕️ · \(Int(Date().timeIntervalSince(started))) s")) }
             switch session.lifecycleState {
             case "ACTIVE":
                 if let sshTarget = session.sshTarget {
@@ -246,7 +246,7 @@ final class ForwardRunner {
     }
 
     private func startForward(_ lease: SessionLease, context: RunnerContext, port: Int) async throws {
-        state = .working("Abriendo el túnel 🚇")
+        state = .working(String(localized: "Abriendo el túnel 🚇"))
         if let pid = await OwnedTunnelRecord.listenerPID(port: port) { throw BastionError.portInUse(port: port, pid: pid) }
         let forward: BastionForward
         switch target {
@@ -271,17 +271,17 @@ final class ForwardRunner {
         do {
             try await waitUntilListening(process: process, port: port)
         } catch BastionError.sshExited(let detail) where BastionError.isConnectionFailure(detail) || detail.isEmpty {
-            throw BastionError.bastionUnreachable(detail: detail.isEmpty ? "sin respuesta" : detail,
+            throw BastionError.bastionUnreachable(detail: detail.isEmpty ? String(localized: "sin respuesta") : detail,
                                                   allowList: context.bastion.clientCidrBlockAllowList ?? [])
         } catch BastionError.sshExited(Self.listenTimeoutMessage) {
-            throw BastionError.bastionUnreachable(detail: "sin respuesta en 30 s",
+            throw BastionError.bastionUnreachable(detail: String(localized: "sin respuesta en 30 s"),
                                                   allowList: context.bastion.clientCidrBlockAllowList ?? [])
         }
         sessionExpiresAt = lease.expiresAt
         bastionCommand = try? SSHCommands.bastion(target: lease.sshTarget, privateKeyPath: lease.key.privateKeyPath,
                                                   forward: forward, proxy: context.proxy)
         state = .connected
-        onLog("🎉 \(label): túnel listo en 127.0.0.1:\(port)")
+        onLog(String(localized: "🎉 \(label): túnel listo en 127.0.0.1:\(port)"))
     }
 
     static let listenTimeoutMessage = "SSH no abrió el puerto local a tiempo."
@@ -292,7 +292,7 @@ final class ForwardRunner {
     }
 
     private func waitUntilListening(process: Process, port: Int) async throws {
-        state = .working("Llamando a la puerta del Bastion 🚪")
+        state = .working(String(localized: "Llamando a la puerta del Bastion 🚪"))
         for _ in 0..<120 {
             try Task.checkCancellation()
             guard process.isRunning else { throw BastionError.fromSSH(Self.stderr(of: process)) }
