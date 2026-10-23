@@ -61,7 +61,9 @@ struct Settings: Codable {
     /// Las configuraciones antiguas que ya tenían claves siguen usándolas.
     var effectiveKeyMode: KeyMode { keyMode ?? (publicKeyPath.isEmpty ? .ephemeral : .custom) }
     var effectiveRenewMargin: TimeInterval {
-        let configured = TimeInterval((renewMarginMinutes ?? 30) * 60)
+        // Se limita antes de multiplicar: un valor enorme (p. ej. de un archivo importado) desbordaría.
+        let minutes = min(max(renewMarginMinutes ?? 30, 1), 180)
+        let configured = TimeInterval(minutes * 60)
         return max(120, min(configured, TimeInterval(ttlSeconds) / 3))
     }
 
@@ -179,6 +181,22 @@ struct ConnectionSnapshot: Codable, Equatable {
     }
 }
 
+extension ConnectionSnapshot {
+    /// Primer campo numérico fuera de los rangos que admite la app, si lo hay.
+    var outOfRangeField: String? {
+        let port = 0...65535
+        if !port.contains(socksPort) { return "socksPort" }
+        if !port.contains(proxyPort) { return "proxyPort" }
+        if !(0...86_400).contains(ttlSeconds) { return "ttlSeconds" }
+        if let renewMarginMinutes, !(1...180).contains(renewMarginMinutes) { return "renewMarginMinutes" }
+        if destinations.contains(where: { !port.contains($0.port) }) { return "destinations.port" }
+        if (tunnels ?? []).contains(where: { !port.contains($0.sshPort) || !port.contains($0.localPort) || !port.contains($0.remotePort) }) {
+            return "tunnels.port"
+        }
+        return nil
+    }
+}
+
 struct SavedConnection: Codable, Identifiable, Equatable {
     var id: UUID
     var name: String
@@ -234,6 +252,11 @@ struct ConfigurationArchive: Codable {
         }
         if let selectedSavedConnectionID, !ids.contains(selectedSavedConnectionID) {
             throw BastionError.message(String(localized: "La conexión seleccionada no existe en el archivo."))
+        }
+        for snapshot in [current].compactMap({ $0 }) + savedConnections.map(\.snapshot) {
+            if let field = snapshot.outOfRangeField {
+                throw BastionError.message(String(localized: "El archivo tiene un valor fuera de rango en «\(field)»."))
+            }
         }
     }
 

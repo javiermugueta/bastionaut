@@ -21,16 +21,49 @@ enum ProxyResolver {
         case .manual:
             return (try ProxyEndpoint(host: settings.proxyHost, port: settings.proxyPort), String(localized: "Proxy manual"))
         case .automatic:
-            let environment = ProcessInfo.processInfo.environment
-            for key in ["http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY"] {
-                if let value = environment[key], let endpoint = endpoint(fromURL: value) {
-                    return (endpoint, String(localized: "Variable \(key)"))
+            let system = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any] ?? [:]
+            switch automaticPlan(environment: ProcessInfo.processInfo.environment, system: system) {
+            case .endpoint(let endpoint, let source):
+                return (endpoint, source)
+            case .pac(let url):
+                if let endpoint = await proxy(fromScriptAt: url) { return (endpoint, String(localized: "PAC del sistema")) }
+            case .wpad:
+                if let endpoint = await proxy(fromScriptAt: URL(string: "http://wpad/wpad.dat")!) {
+                    return (endpoint, String(localized: "WPAD (activado en macOS)"))
                 }
+            case .direct:
+                break
             }
-            if let endpoint = await systemProxy() { return (endpoint, String(localized: "Proxy del sistema")) }
-            if let endpoint = await wpadProxy() { return (endpoint, String(localized: "WPAD")) }
             return (nil, String(localized: "Sin proxy detectado; conexión directa"))
         }
+    }
+
+    /// Qué hacer en modo automático. Solo se sigue lo configurado de forma explícita: variables de entorno,
+    /// el proxy del sistema o su PAC, y WPAD únicamente si está activado en los ajustes de red de macOS.
+    /// (Consultar http://wpad/wpad.dat siempre dejaría que cualquier red impusiera su proxy.)
+    enum AutomaticPlan: Equatable {
+        case endpoint(ProxyEndpoint, source: String)
+        case pac(URL)
+        case wpad
+        case direct
+    }
+
+    static func automaticPlan(environment: [String: String], system: [String: Any]) -> AutomaticPlan {
+        for key in ["http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY"] {
+            if let value = environment[key], let endpoint = endpoint(fromURL: value) {
+                return .endpoint(endpoint, source: String(localized: "Variable \(key)"))
+            }
+        }
+        if let endpoint = endpoint(fromSystemSettings: system) {
+            return .endpoint(endpoint, source: String(localized: "Proxy del sistema"))
+        }
+        if (system["ProxyAutoConfigEnable"] as? Int) == 1,
+           let value = system["ProxyAutoConfigURLString"] as? String, let url = URL(string: value),
+           ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") {
+            return .pac(url)
+        }
+        if (system["ProxyAutoDiscoveryEnable"] as? Int) == 1 { return .wpad }
+        return .direct
     }
 
     static func endpoint(fromURL value: String) -> ProxyEndpoint? {
@@ -69,11 +102,6 @@ enum ProxyResolver {
         return try? ProxyEndpoint(host: String(value[hostRange]), port: port)
     }
 
-    private static func systemProxy() async -> ProxyEndpoint? {
-        guard let values = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any] else { return nil }
-        return endpoint(fromSystemSettings: values)
-    }
-
     static func endpoint(fromSystemSettings values: [String: Any]) -> ProxyEndpoint? {
         for prefix in ["HTTP", "HTTPS"] {
             guard (values[prefix + "Enable"] as? Int) == 1,
@@ -84,13 +112,13 @@ enum ProxyResolver {
         return nil
     }
 
-    private static func wpadProxy() async -> ProxyEndpoint? {
+    /// Descarga un script PAC/WPAD (solo de una URL configurada en el sistema) y toma su primer proxy.
+    private static func proxy(fromScriptAt url: URL) async -> ProxyEndpoint? {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.connectionProxyDictionary = [:]
         configuration.timeoutIntervalForRequest = 5
-        guard let (data, response) = try? await URLSession(configuration: configuration)
-                .data(from: URL(string: "http://wpad/wpad.dat")!),
-              (response as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+        guard let (data, response) = try? await URLSession(configuration: configuration).data(from: url) else { return nil }
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 { return nil }
         return endpoint(fromWPAD: String(decoding: data, as: UTF8.self))
     }
 }

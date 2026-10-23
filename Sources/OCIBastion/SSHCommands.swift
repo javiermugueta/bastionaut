@@ -88,10 +88,31 @@ enum SSHCommands {
             "-o", "SetEnv=OCIBASTION_TUNNEL_ID=\(token.uuidString)"
         ]
         // En sandbox no se puede leer ~/.ssh/config ni escribir ~/.ssh/known_hosts: usamos uno propio del contenedor.
-        arguments += ["-F", "/dev/null", "-o", "UserKnownHostsFile=\(Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts").path)"]
+        // Entre comillas: OpenSSH separa por espacios varios archivos en esta opción, y la ruta lleva «Application Support».
+        arguments += ["-F", "/dev/null", "-o", knownHostsOption(knownHostsURL.path)]
         if let proxy { arguments += ["-o", "ProxyCommand=/usr/bin/nc -X connect -x \(proxy.address) %h %p"] }
         arguments.append(target)
         return arguments
+    }
+
+    static func knownHostsOption(_ path: String) -> String {
+        "UserKnownHostsFile=\"\(path)\""
+    }
+
+    static var knownHostsURL: URL {
+        Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts")
+    }
+
+    /// Las versiones anteriores, por la ruta sin comillas, guardaban las huellas en «Library/Application».
+    /// Se borra: la siguiente conexión vuelve a registrar la del Bastion en el archivo correcto.
+    static func removeMisplacedKnownHosts() {
+        let stray = Settings.fileURL.deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().appendingPathComponent("Application")
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: stray.path, isDirectory: &isDirectory), !isDirectory.boolValue,
+              let contents = try? String(contentsOf: stray, encoding: .utf8),
+              contents.split(whereSeparator: \.isNewline).allSatisfy({ $0.contains(" ssh-") || $0.contains(" ecdsa-") }) else { return }
+        try? FileManager.default.removeItem(at: stray)
     }
 
     /// Versión para copiar y pegar del túnel con el Bastion.

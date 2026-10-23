@@ -60,6 +60,11 @@ final class ForwardRunner {
     }
 
     var isActive: Bool { task != nil || showcaseActive }
+
+    /// Solo se reutiliza un túnel en marcha hacia el mismo destino; uno parado se recrea con la configuración actual.
+    func isReusable(for target: SessionTarget, fixedLocalPort: Int?) -> Bool {
+        isActive && self.target == target && (fixedLocalPort == nil || localPort == fixedLocalPort)
+    }
     @ObservationIgnored private var showcaseActive = false
 
     func applyShowcase(state: TunnelState, localPort: Int?, expiresAt: Date?, command: String?) {

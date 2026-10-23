@@ -28,7 +28,7 @@ The in-app help (**Help › Bastionaut Help**, ⌘?) covers them in detail under
 **On your Mac**
 - macOS 14 Sonoma or later.
 - Terminal or iTerm2. The first time, allow the **Automation** permission so the app can open SSH sessions.
-- Optional corporate HTTP CONNECT proxy (auto-detected from `http_proxy`, system settings or WPAD, or set by hand).
+- Optional corporate HTTP CONNECT proxy: taken from `http_proxy`/`https_proxy` or from macOS network settings (explicit proxy, PAC file, or WPAD only if "Auto proxy discovery" is enabled there), or set by hand.
 
 **OCI account**
 - An RSA API key registered on your user (OCI console › your profile › API keys). The assistant asks for tenancy, user, region and the private key (`.pem` file or pasted). The fingerprint is computed for you and the key is stored in the Keychain.
@@ -127,7 +127,7 @@ La ayuda de la app (**Ayuda › Ayuda de Bastionaut**, ⌘?) los explica con det
 **En tu Mac**
 - macOS 14 Sonoma o posterior.
 - Terminal o iTerm2. La primera vez, acepta el permiso de **Automatización** para que la app abra las sesiones SSH.
-- Proxy corporativo HTTP CONNECT opcional (se detecta solo a partir de `http_proxy`, los ajustes del sistema o WPAD, o se indica a mano).
+- Proxy corporativo HTTP CONNECT opcional: se toma de `http_proxy`/`https_proxy` o de los ajustes de red de macOS (proxy explícito, archivo PAC, o WPAD solo si «Detección automática de proxy» está activada allí), o se indica a mano.
 
 **Cuenta de OCI**
 - Una clave de API RSA registrada en tu usuario (consola de OCI › tu perfil › Claves de API). El asistente pide tenancy, usuario, región y la clave privada (archivo `.pem` o pegada). La huella se calcula sola y la clave se guarda en el Llavero.

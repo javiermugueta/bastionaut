@@ -98,7 +98,7 @@ final class AccountAndSandboxTests: XCTestCase {
         let arguments = SSHCommands.bastionArguments(target: "a@b", privateKeyPath: "/k", forward: .socks(localPort: 2222),
                                                      proxy: nil, token: UUID())
         XCTAssertTrue(arguments.contains("-F"))
-        XCTAssertTrue(arguments.contains { $0.hasPrefix("UserKnownHostsFile=") && $0.hasSuffix("/OCIBastion/known_hosts") })
+        XCTAssertTrue(arguments.contains { $0.hasPrefix("UserKnownHostsFile=\"") && $0.hasSuffix("/OCIBastion/known_hosts\"") })
     }
 
     func testAppleScriptEscaping() {

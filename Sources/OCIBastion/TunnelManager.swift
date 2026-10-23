@@ -23,7 +23,8 @@ final class TunnelManager {
     private(set) var socksRunner: ForwardRunner?
     private(set) var portRunners: [UUID: ForwardRunner] = [:]
 
-    @ObservationIgnored private var contextCache: (key: String, task: Task<RunnerContext, Error>)?
+    /// Solo lo costoso de obtener (cliente de OCI, Bastion, proxy). La configuración se toma nueva en cada conexión.
+    @ObservationIgnored private var contextCache: (key: String, task: Task<SharedContext, Error>)?
     @ObservationIgnored private var cachedProxy: (key: String, endpoint: ProxyEndpoint?, source: String)?
     @ObservationIgnored private var startup: Task<Void, Never>?
     @ObservationIgnored private var toastTask: Task<Void, Never>?
@@ -41,6 +42,7 @@ final class TunnelManager {
             settings.selectedSavedConnectionID = nil
         }
         guard startServices else { return }
+        SSHCommands.removeMisplacedKnownHosts()
         startup = Task {
             let closed = await OwnedTunnelRegistry.reclaimStale()
             if closed > 0 { record(String(localized: "🧹 Cerré \(closed) túnel(es) que quedaron de la última vez")) }
@@ -467,6 +469,7 @@ final class TunnelManager {
     /// Guarda (o actualiza) una cuenta y, si viene, su clave privada en el Llavero.
     func saveAccount(_ account: OCIAccount, key: ImportedAPIKey?) throws {
         if let key { try APIKeyKeychain.save(key.pem, for: account.id) }
+        contextCache = nil
         var all = accounts
         if let index = all.firstIndex(where: { $0.id == account.id }) { all[index] = account } else { all.append(account) }
         settings.accounts = all
@@ -480,9 +483,25 @@ final class TunnelManager {
         return try await OCIAPIClient.make(profile: profile, region: value.region, proxy: proxy)
     }
 
-    private func context(for snapshot: Settings) async throws -> RunnerContext {
-        let key = [snapshot.accountID?.uuidString ?? "", snapshot.region ?? "", snapshot.bastionID,
-                   snapshot.effectiveProxyMode.rawValue, snapshot.proxyHost, String(snapshot.proxyPort)].joined(separator: "|")
+    struct SharedContext {
+        let client: OCIAPIClient
+        let bastion: BastionDetails
+        let proxy: ProxyEndpoint?
+    }
+
+    /// Identifica lo que depende de la cuenta, la región, el Bastion y el proxy; el resto de ajustes no se cachea.
+    nonisolated static func sharedContextKey(for snapshot: Settings) -> String {
+        [snapshot.accountID?.uuidString ?? "", snapshot.region ?? "", snapshot.bastionID,
+         snapshot.effectiveProxyMode.rawValue, snapshot.proxyHost, String(snapshot.proxyPort)].joined(separator: "|")
+    }
+
+    func context(for snapshot: Settings) async throws -> RunnerContext {
+        let shared = try await sharedContext(for: snapshot)
+        return RunnerContext(settings: snapshot, client: shared.client, bastion: shared.bastion, proxy: shared.proxy)
+    }
+
+    private func sharedContext(for snapshot: Settings) async throws -> SharedContext {
+        let key = Self.sharedContextKey(for: snapshot)
         if let contextCache, contextCache.key == key {
             do { return try await contextCache.task.value } catch { self.contextCache = nil; throw error }
         }
@@ -493,10 +512,15 @@ final class TunnelManager {
             let client = try await OCIAPIClient.make(profile: profile, region: snapshot.region, proxy: proxy)
             let bastion = try await client.getBastion(id: snapshot.bastionID)
             bastionDetails = bastion
-            return RunnerContext(settings: snapshot, client: client, bastion: bastion, proxy: proxy)
+            return SharedContext(client: client, bastion: bastion, proxy: proxy)
         }
         contextCache = (key, task)
         do { return try await task.value } catch { contextCache = nil; throw error }
+    }
+
+    /// Solo para tests: deja preparado lo costoso sin llamar a OCI.
+    func primeSharedContext(_ shared: SharedContext, for snapshot: Settings) {
+        contextCache = (Self.sharedContextKey(for: snapshot), Task { shared })
     }
 
     private func validate(_ value: Settings) throws {
@@ -589,9 +613,8 @@ final class TunnelManager {
             let host = try InputCheck.sshToken(rawHost, name: "Host")
             try InputCheck.port(port)
             if let fixedLocalPort { try InputCheck.port(fixedLocalPort) }
-            if let existing = portRunners[id], existing.target == .portForward(host: host, port: port),
-               fixedLocalPort == nil || existing.localPort == nil || existing.localPort == fixedLocalPort {
-                existing.start()
+            // Solo se reutiliza un túnel en marcha; uno parado se recrea para que tome la configuración actual.
+            if let existing = portRunners[id], existing.isReusable(for: .portForward(host: host, port: port), fixedLocalPort: fixedLocalPort) {
                 return existing
             }
             portRunners[id]?.stop()

@@ -1194,6 +1194,17 @@
         }
       }
     },
+    "El archivo tiene un valor fuera de rango en «%@».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The file has an out-of-range value in “%@”."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "El asistente consulta el Bastion y te propone el modo adecuado. Puedes cambiarlo en **Ajustes ⚙️**.": {
       "localizations": {
         "en": {
@@ -2484,6 +2495,17 @@
         }
       }
     },
+    "PAC del sistema": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System PAC"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Para el modo SOCKS5, **FQDN y SOCKS5** activado en el Bastion. El modo reenvío de puerto no lo necesita.": {
       "localizations": {
         "en": {
@@ -3513,8 +3535,16 @@
         }
       }
     },
-    "WPAD": {
-      "shouldTranslate": false
+    "WPAD (activado en macOS)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WPAD (enabled in macOS)"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Ya existe una conexión llamada «%@».": {
       "localizations": {
