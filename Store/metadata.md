@@ -180,7 +180,15 @@ First release of Bastionaut. 🚀
 En inglés, que es lo que lee el equipo de revisión:
 
 ```
-Bastionaut is a client for the Oracle Cloud Infrastructure (OCI) Bastion service. It needs an OCI tenancy with an API key and a Bastion resource, so it cannot be fully exercised without an Oracle Cloud account. All OCI calls go directly to the official OCI REST API with the user's own API key, which is stored in the macOS Keychain. The app collects no data.
+Bastionaut is a client for the Oracle Cloud Infrastructure (OCI) Bastion service. Using it for real requires an OCI tenancy with an API key and a Bastion resource.
+
+TO REVIEW WITHOUT AN OCI ACCOUNT, use the built-in demo mode:
+1. On first launch, the welcome assistant shows "Try with sample data" (also on the empty screen and in Help › Try with sample data).
+2. The app loads sample connections, servers and tunnels in memory. A purple "Demo mode" banner is always visible.
+3. Press "Connect 🚀": the app walks through the real steps (session request, OCI preparing it, tunnel ready with its countdown) in a simulated way. "Open SSH" / "Open tunnel" explain what they would do; "Copy" copies the real command; Help and Settings work normally.
+4. "Exit demo" restores the user's real configuration. Nothing is saved, no network connection is made and no process is launched in demo mode.
+
+All real OCI calls go directly to the official OCI REST API with the user's own API key, which is stored in the macOS Keychain. The app collects no data.
 
 Entitlements:
 - com.apple.security.network.client: OCI REST API and SSH connections to the Bastion.
@@ -190,7 +198,7 @@ Entitlements:
 ```
 
 **Información de contacto para la revisión**: nombre, teléfono y email de contacto (los pide App Store Connect).
-**Cuenta de demostración**: no aplica (requiere una tenancy de OCI propia); explicado en las notas.
+**Cuenta de demostración**: no hace falta; la app trae un **modo demostración** («Probar con datos de ejemplo») explicado en las notas.
 
 ---
 

@@ -23,7 +23,7 @@ struct MainView: View {
             if manager.selectedConnection != nil || !manager.settings.bastionID.isEmpty {
                 ConnectionDetailView(manager: manager, editWithWizard: { wizard = .edit })
             } else {
-                EmptyStateView { wizard = .create }
+                EmptyStateView(start: { wizard = .create }, tryDemo: { manager.enterDemo() })
             }
         }
         .fontDesign(.rounded)
@@ -50,9 +50,10 @@ struct MainView: View {
         .sheet(item: $wizard) { mode in
             WizardView(manager: manager, mode: mode, firstRun: manager.needsOnboarding) { wizard = nil }
         }
+        .onChange(of: manager.isDemo) { if !manager.isDemo && manager.needsOnboarding { wizard = .create } }
         .onAppear {
-            if manager.needsOnboarding { wizard = .create }
-            if Showcase.isActive && Showcase.scene == "help" {
+            if manager.needsOnboarding && !manager.isDemo { wizard = .create }
+            if Showcase.launchedForScreenshots && Showcase.scene == "help" {
                 HelpRouter.shared.topic = .targets
                 openHelp(id: "help")
             }
@@ -111,11 +112,15 @@ struct MainView: View {
         .navigationSplitViewColumnWidth(min: 200, ideal: 230)
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 8) {
-                Button { wizard = .create } label: {
+                Button {
+                    // Desde la demo, crear una conexión de verdad empieza por salir de ella.
+                    if manager.isDemo { manager.exitDemo() }
+                    wizard = .create
+                } label: {
                     Label("Nueva conexión", systemImage: "sparkles").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FunButtonStyle())
-                .disabled(manager.isRunning && !Showcase.isActive)
+                .disabled(manager.isRunning && !manager.isDemo)
                 Menu {
                     Button("Importar…") { importConfiguration() }
                     Divider()
@@ -125,7 +130,7 @@ struct MainView: View {
                     Label("Importar / Exportar", systemImage: "shippingbox")
                 }
                 .menuStyle(.borderlessButton)
-                .disabled(manager.isRunning)
+                .disabled(manager.isRunning || manager.isDemo)
             }
             .padding(12)
         }
@@ -163,6 +168,7 @@ struct MainView: View {
 
 struct EmptyStateView: View {
     let start: () -> Void
+    let tryDemo: () -> Void
 
     var body: some View {
         VStack(spacing: 18) {
@@ -172,6 +178,8 @@ struct EmptyStateView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
             Button("¡Empecemos! 🚀", action: start).buttonStyle(FunButtonStyle())
+            Button("¿Sin cuenta de OCI a mano? Probar con datos de ejemplo 🎮", action: tryDemo)
+                .buttonStyle(SoftButtonStyle())
         }
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

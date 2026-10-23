@@ -152,6 +152,8 @@ struct WizardView: View {
             Bullet("🏰", "Busco tus Bastiones en toda la tenancy, sin que tengas que saber en qué compartimento están.")
             Bullet("🔑", "Si quieres, me encargo de las claves del Bastion: creo una por sesión y la borro al caducar.")
             Bullet("⏳", "Renuevo la sesión antes de que caduque para que no se te corte nada.")
+            DemoOffer { manager.enterDemo(); close() }
+                .padding(.top, 6)
         }
     }
 
@@ -159,6 +161,9 @@ struct WizardView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Necesito los datos de tu clave de API de OCI. Los encuentras en la consola de OCI › tu perfil › **Claves de API**.")
                 .foregroundStyle(.secondary)
+            if manager.accounts.isEmpty && mode == .create {
+                DemoOffer { manager.enterDemo(); close() }
+            }
             appAccount
             Form {
                 ProxyPicker(settings: $draft)
@@ -619,5 +624,24 @@ struct AccountFields: View {
             Text("🔐 La clave privada se guarda cifrada en tu Llavero de macOS, solo para esta app.")
                 .font(.caption).foregroundStyle(.secondary)
         }
+    }
+}
+
+/// Invitación a probar la app con datos de ejemplo, sin cuenta de OCI.
+struct DemoOffer: View {
+    let action: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text("🎮").font(.title)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("¿Sin cuenta de OCI a mano?").font(.headline)
+                Text("Prueba la app con datos de ejemplo. No se conecta nada de verdad.").font(.callout).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button("Probar con datos de ejemplo", action: action).buttonStyle(SoftButtonStyle(tint: .purple))
+        }
+        .padding(12)
+        .background(Color.purple.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
     }
 }

@@ -8,7 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #if DEBUG
         MainActor.assumeIsolated { SandboxSelfTest.runIfRequested() }
         #endif
-        if Showcase.isActive { MainActor.assumeIsolated { Showcase.arrangeWindows() } }
+        if Showcase.launchedForScreenshots { MainActor.assumeIsolated { Showcase.arrangeWindows() } }
         guard let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
               let icon = NSImage(contentsOf: iconURL) else { return }
         NSApplication.shared.applicationIconImage = icon
@@ -38,7 +38,7 @@ struct OCIBastionApp: App {
                 }
         }
         .defaultSize(width: 1180, height: 780)
-        .commands { HelpCommands() }
+        .commands { HelpCommands(manager: manager) }
 
         Window("Ayuda de Bastionaut", id: "help") {
             HelpView()

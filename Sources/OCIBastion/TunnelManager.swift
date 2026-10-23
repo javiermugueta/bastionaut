@@ -29,15 +29,18 @@ final class TunnelManager {
     @ObservationIgnored private var toastTask: Task<Void, Never>?
     @ObservationIgnored private var lastPorts: [UUID: Int] = [:]
 
-    init() {
-        if Showcase.isActive {
-            loadShowcase()
+    /// `startServices: false` (tests) no cierra túneles antiguos ni limpia claves al arrancar.
+    init(settings initial: Settings? = nil, startServices: Bool = true) {
+        if let initial { settings = initial }
+        if Showcase.launchedForScreenshots {
+            enterDemo(scene: Showcase.scene)
             return
         }
         if let selected = settings.selectedSavedConnectionID,
            !(settings.savedConnections ?? []).contains(where: { $0.id == selected }) {
             settings.selectedSavedConnectionID = nil
         }
+        guard startServices else { return }
         startup = Task {
             let closed = await OwnedTunnelRegistry.reclaimStale()
             if closed > 0 { record(String(localized: "🧹 Cerré \(closed) túnel(es) que quedaron de la última vez")) }
@@ -46,36 +49,130 @@ final class TunnelManager {
         }
     }
 
-    /// Datos de demostración para las capturas: nada se guarda ni se ejecuta.
-    private func loadShowcase() {
+    // MARK: Modo demostración
+
+    /// Datos de ejemplo en memoria (para probar la app sin cuenta de OCI y para la revisión de Apple).
+    /// La configuración real queda apartada: no se guarda nada ni se lanza ningún proceso.
+    private(set) var isDemo = false
+    @ObservationIgnored private var realSettings: Settings?
+    @ObservationIgnored private var demoTasks: [UUID: Task<Void, Never>] = [:]
+
+    func enterDemo(scene: String? = nil) {
+        guard !isDemo, !isRunning else { return }
+        realSettings = settings
+        isDemo = true
+        socksRunner = nil
+        portRunners = [:]
+        contextCache = nil
+        publicIPReport = nil
+        log.removeAll()
         settings = Showcase.settings()
         bastionDetails = Showcase.bastion
-        for line in Showcase.logLines { record(line) }
-        let expires = Date().addingTimeInterval(2 * 3600 + 14 * 60 + 37)
-        let command = "ssh -i … -N -L 127.0.0.1:52211:10.0.1.23:22 -p 22 ocid1.bastionsession…@host.bastion.eu-madrid-1.oci.oraclecloud.com"
-        func runner(_ id: UUID, _ host: String, _ port: Int, _ name: String) -> ForwardRunner {
-            let value = ForwardRunner(id: id, target: .portForward(host: host, port: port), label: name, preferredPort: nil) {
-                throw CancellationError()
-            }
-            portRunners[id] = value
-            return value
-        }
-        let destinations = settings.destinations
-        let tunnels = settings.tunnels ?? []
-        if Showcase.scene == "attention" {
-            let failing = runner(destinations[0].id, destinations[0].host, 22, destinations[0].name)
+        switch scene {
+        case "attention":
+            let destination = settings.destinations[0]
             let error = BastionError.bastionUnreachable(detail: "Operation timed out", allowList: Showcase.bastion.clientCidrBlockAllowList ?? [])
-            failing.showcase(state: .needsAttention(error.userMessage), localPort: nil, expiresAt: nil, command: nil)
+            demoRunner(id: destination.id, host: destination.host, port: destination.port, name: destination.name)
+                .showcase(state: .needsAttention(error.userMessage), localPort: nil, expiresAt: nil, command: nil)
             publicIPReport = PublicIP.report(ip: "88.12.200.7", allowList: Showcase.bastion.clientCidrBlockAllowList ?? [])
-            record(String(localized: "🆘 \(destinations[0].name): \(error.localizedDescription)"))
-            return
+            record(String(localized: "🆘 \(destination.name): \(error.localizedDescription)"))
+        case "main", "dark", "help":
+            for line in Showcase.logLines { record(line) }
+            let expires = Date().addingTimeInterval(2 * 3600 + 14 * 60 + 37)
+            let destinations = settings.destinations
+            let tunnel = (settings.tunnels ?? [])[0]
+            demoRunner(id: destinations[0].id, host: destinations[0].host, port: 22, name: destinations[0].name)
+                .showcase(state: .connected, localPort: 52211, expiresAt: expires, command: Showcase.command(port: 52211, host: destinations[0].host, remotePort: 22))
+            demoRunner(id: destinations[1].id, host: destinations[1].host, port: 22, name: destinations[1].name)
+                .showcase(state: .connected, localPort: 52214, expiresAt: expires.addingTimeInterval(600), command: Showcase.command(port: 52214, host: destinations[1].host, remotePort: 22))
+            demoRunner(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name)
+                .showcase(state: .connected, localPort: tunnel.localPort, expiresAt: expires.addingTimeInterval(900), command: Showcase.command(port: tunnel.localPort, host: tunnel.remoteHost, remotePort: tunnel.remotePort))
+        default:
+            record(String(localized: "🎮 Modo demostración: datos de ejemplo, nada se conecta de verdad"))
         }
-        runner(destinations[0].id, destinations[0].host, 22, destinations[0].name)
-            .showcase(state: .connected, localPort: 52211, expiresAt: expires, command: command)
-        runner(destinations[1].id, destinations[1].host, 22, destinations[1].name)
-            .showcase(state: .connected, localPort: 52214, expiresAt: expires.addingTimeInterval(600), command: command)
-        runner(tunnels[0].id, tunnels[0].remoteHost, tunnels[0].remotePort, tunnels[0].name)
-            .showcase(state: .connected, localPort: 11521, expiresAt: expires.addingTimeInterval(900), command: command)
+    }
+
+    func exitDemo() {
+        guard isDemo else { return }
+        demoTasks.values.forEach { $0.cancel() }
+        demoTasks = [:]
+        portRunners = [:]
+        socksRunner = nil
+        bastionDetails = nil
+        publicIPReport = nil
+        log.removeAll()
+        if let realSettings { settings = realSettings }
+        realSettings = nil
+        isDemo = false
+        record(String(localized: "👋 Has salido de la demo"))
+    }
+
+    @discardableResult
+    private func demoRunner(id: UUID, host: String, port: Int, name: String) -> ForwardRunner {
+        if let existing = portRunners[id] { return existing }
+        let runner = ForwardRunner(id: id, target: .portForward(host: host, port: port), label: name, preferredPort: nil) {
+            throw CancellationError()
+        }
+        portRunners[id] = runner
+        return runner
+    }
+
+    /// Recorre los mismos pasos que una conexión real, sin red, y deja el túnel «conectado».
+    private func demoConnect(id: UUID, host: String, port: Int, name: String, localPort: Int?) -> Task<Void, Never> {
+        if let running = demoTasks[id] { return running }
+        let runner = demoRunner(id: id, host: host, port: port, name: name)
+        runner.showcase(state: .working(String(localized: "Calentando motores 🔥")), localPort: nil, expiresAt: nil, command: nil)
+        let local = localPort ?? Int.random(in: 52000...52999)
+        let task = Task { @MainActor [weak self] in
+            @MainActor func step(_ state: TunnelState, _ seconds: Double) async -> Bool {
+                runner.showcase(state: state, localPort: nil, expiresAt: nil, command: nil)
+                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                return !Task.isCancelled
+            }
+            guard await step(.working(String(localized: "Buscando una sesión que reutilizar 🔎")), 0.6),
+                  await step(.working(String(localized: "Pidiendo una sesión nueva a OCI 🛎️")), 0.8) else { return }
+            self?.record(String(localized: "🛎️ \(name): sesión creada, esperando a OCI"))
+            for elapsed in [1, 3, 5] {
+                guard await step(.working(String(localized: "OCI está preparando la sesión ☕️ · \(elapsed) s")), 0.5) else { return }
+            }
+            guard await step(.working(String(localized: "Llamando a la puerta del Bastion 🚪")), 0.6) else { return }
+            runner.showcase(state: .connected, localPort: local, expiresAt: Date().addingTimeInterval(3 * 3600),
+                            command: Showcase.command(port: local, host: host, remotePort: port))
+            self?.record(String(localized: "🎉 \(name): túnel listo en 127.0.0.1:\(String(local))"))
+            self?.demoTasks[id] = nil
+        }
+        demoTasks[id] = task
+        return task
+    }
+
+    private func demoConnectAll() {
+        record(String(localized: "🚀 Conectando «\(selectedConnection?.name ?? settings.bastionName ?? "Bastion")»"))
+        for destination in settings.destinations {
+            _ = demoConnect(id: destination.id, host: destination.host, port: destination.port, name: destination.name, localPort: nil)
+        }
+        for tunnel in settings.tunnels ?? [] {
+            _ = tunnel.isDirect
+                ? demoConnect(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name, localPort: tunnel.localPort)
+                : demoConnect(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort, name: tunnel.name, localPort: nil)
+        }
+    }
+
+    private func demoDisconnect(_ id: UUID? = nil) {
+        let targets = id.map { [$0] } ?? Array(portRunners.keys)
+        for target in targets {
+            demoTasks.removeValue(forKey: target)?.cancel()
+            portRunners[target]?.showcase(state: .idle, localPort: nil, expiresAt: nil, command: nil)
+        }
+        if id == nil { record(String(localized: "👋 Desconectado")) }
+    }
+
+    private func demoOpen(id: UUID, host: String, port: Int, name: String, localPort: Int?, message: @escaping (Int) -> String) {
+        let task = portRunners[id]?.state.isConnected == true ? nil : demoConnect(id: id, host: host, port: port, name: name, localPort: localPort)
+        Task {
+            await task?.value
+            guard let local = portRunners[id]?.localPort, portRunners[id]?.state.isConnected == true else { return }
+            showToast(message(local))
+        }
     }
 
     // MARK: Estado
@@ -129,6 +226,10 @@ final class TunnelManager {
 
     /// Consulta la IP pública (solo cuando el usuario lo pide) y la compara con la lista del Bastion.
     func checkPublicIP(allowList: [String]? = nil, settings value: Settings? = nil) {
+        if isDemo {
+            publicIPReport = PublicIP.report(ip: "83.45.10.23", allowList: allowList ?? bastionDetails?.clientCidrBlockAllowList ?? [])
+            return
+        }
         let snapshot = value ?? settings
         isCheckingPublicIP = true
         Task {
@@ -153,7 +254,7 @@ final class TunnelManager {
 
     /// Guarda en disco y vuelca los cambios en la conexión seleccionada.
     func save() {
-        guard !Showcase.isActive else { return }
+        guard !isDemo else { return }
         if let id = settings.selectedSavedConnectionID,
            var records = settings.savedConnections,
            let index = records.firstIndex(where: { $0.id == id }) {
@@ -433,6 +534,7 @@ final class TunnelManager {
 
     /// Conecta: en SOCKS5 abre el túnel común; en reenvío de puerto, uno por destino y túnel.
     func connect() {
+        if isDemo { return demoConnectAll() }
         do { try validate(settings) } catch { return report(error) }
         publicIPReport = nil
         save()
@@ -456,6 +558,7 @@ final class TunnelManager {
     }
 
     func disconnect() {
+        if isDemo { return demoDisconnect() }
         for runner in allRunners {
             if let port = runner.localPort { lastPorts[runner.id] = port }
             runner.stop()
@@ -468,6 +571,7 @@ final class TunnelManager {
     }
 
     func disconnect(target id: UUID) {
+        if isDemo { return demoDisconnect(id) }
         portRunners[id]?.stop()
     }
 
@@ -523,6 +627,12 @@ final class TunnelManager {
     }
 
     func openDestination(_ destination: Destination) {
+        if isDemo {
+            let name = destination.name.isEmpty ? destination.host : destination.name
+            return demoOpen(id: destination.id, host: destination.host, port: destination.port, name: destination.name, localPort: nil) { _ in
+                String(localized: "🎮 Demo: aquí se abriría Terminal ya conectado a «\(name)»")
+            }
+        }
         let terminal = settings.effectiveTerminalApp
         Task {
             do {
@@ -535,6 +645,13 @@ final class TunnelManager {
     }
 
     func openLocalTunnel(_ tunnel: LocalTunnel) {
+        if isDemo {
+            let direct = tunnel.isDirect
+            return demoOpen(id: tunnel.id, host: direct ? tunnel.remoteHost : tunnel.host, port: direct ? tunnel.remotePort : tunnel.sshPort,
+                            name: tunnel.name, localPort: direct ? tunnel.localPort : nil) { _ in
+                String(localized: "🎮 Demo: aquí tendrías localhost:\(String(tunnel.localPort)) → \(tunnel.remoteHost):\(String(tunnel.remotePort))")
+            }
+        }
         if tunnel.isDirect { return openDirectTunnel(tunnel) }
         let terminal = settings.effectiveTerminalApp
         Task {

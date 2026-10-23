@@ -1,11 +1,13 @@
 import AppKit
 import Foundation
 
-/// Modo demostración para las capturas de la App Store: datos inventados, sin guardar nada ni lanzar procesos.
-/// Se activa con `-BastionautDemo YES` y la escena con `-BastionautDemoScene main|dark|attention|help`.
+/// Datos del modo demostración. Desde la app se entra con «Probar con datos de ejemplo»; para las capturas
+/// de la App Store se arranca con `-BastionautDemo YES -BastionautDemoScene main|dark|attention|help`.
 enum Showcase {
-    static let isActive = UserDefaults.standard.bool(forKey: "BastionautDemo")
+    static let launchedForScreenshots = UserDefaults.standard.bool(forKey: "BastionautDemo")
     static var scene: String { UserDefaults.standard.string(forKey: "BastionautDemoScene") ?? "main" }
+    /// En las capturas de la tienda no se muestra la franja de «Modo demostración» (salvo en la escena `tour`).
+    static var hidesDemoBanner: Bool { launchedForScreenshots && scene != "tour" }
 
     static func settings() -> Settings {
         let account = OCIAccount(name: String(localized: "Producción"), tenancy: "ocid1.tenancy.oc1..aaaademo",
@@ -41,6 +43,10 @@ enum Showcase {
         value.savedConnections = [current] + others
         value.selectedSavedConnectionID = current.id
         return value
+    }
+
+    static func command(port: Int, host: String, remotePort: Int) -> String {
+        "ssh -i … -N -L 127.0.0.1:\(port):\(host):\(remotePort) -p 22 ocid1.bastionsession.oc1.eu-madrid-1.demo@host.bastion.eu-madrid-1.oci.oraclecloud.com"
     }
 
     static let bastion = BastionDetails(id: "ocid1.bastion.oc1.eu-madrid-1.demo", name: "bastion-prod", compartmentId: "c",

@@ -67,6 +67,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                     "**Abrir SSH** en un servidor o **Abrir túnel** en un puerto. ¡Listo!",
                 ]),
                 .tip("Puedes tener varias conexiones (por ejemplo, una por región o por cliente) y cambiar entre ellas desde la barra lateral o desde el icono de la barra de menús."),
+                .tip("¿Quieres verla funcionar antes de configurar nada? Menú **Ayuda › Probar con datos de ejemplo 🎮**."),
             ]
         case .modes:
             return [
@@ -275,6 +276,7 @@ struct HelpButton: View {
 }
 
 struct HelpCommands: Commands {
+    let manager: TunnelManager
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
@@ -290,6 +292,16 @@ struct HelpCommands: Commands {
             Button("Problemas frecuentes") {
                 HelpRouter.shared.topic = .troubleshooting
                 openWindow(id: "help")
+            }
+            Divider()
+            if manager.isDemo {
+                Button("Salir de la demo") { manager.exitDemo() }
+            } else {
+                Button("Probar con datos de ejemplo 🎮") {
+                    manager.enterDemo()
+                    openWindow(id: "main")
+                }
+                .disabled(manager.isRunning)
             }
         }
     }

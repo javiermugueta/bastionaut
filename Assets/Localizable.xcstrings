@@ -722,8 +722,7 @@
             "value": "ACME customer"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Comando SSH copiado 📋": {
       "localizations": {
@@ -2113,6 +2112,16 @@
         }
       }
     },
+    "Modo demostración 🎮": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo mode 🎮"
+          }
+        }
+      }
+    },
     "Mostrar": {
       "localizations": {
         "en": {
@@ -2565,6 +2574,26 @@
         }
       }
     },
+    "Probar con datos de ejemplo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try with sample data"
+          }
+        }
+      }
+    },
+    "Probar con datos de ejemplo 🎮": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try with sample data 🎮"
+          }
+        }
+      }
+    },
     "Probar conexión 🔌": {
       "localizations": {
         "en": {
@@ -2593,8 +2622,7 @@
             "value": "Production"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Proxy": {
       "shouldTranslate": false
@@ -2615,6 +2643,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Manual proxy"
+          }
+        }
+      }
+    },
+    "Prueba la app con datos de ejemplo. No se conecta nada de verdad.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try the app with sample data. Nothing really connects."
           }
         }
       }
@@ -2884,6 +2922,16 @@
         }
       }
     },
+    "Salir de la demo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exit demo"
+          }
+        }
+      }
+    },
     "Se cayó, reintentando…": {
       "localizations": {
         "en": {
@@ -2912,8 +2960,7 @@
             "value": "App server"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Servidores": {
       "localizations": {
@@ -3051,6 +3098,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No servers yet. Add one and open it with a click."
+          }
+        }
+      }
+    },
+    "Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda, pero nada se conecta de verdad ni se guarda.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is sample data: you can connect, open servers and tunnels and browse the help, but nothing really connects or gets saved."
           }
         }
       }
@@ -3844,12 +3901,42 @@
         }
       }
     },
+    "¿Quieres verla funcionar antes de configurar nada? Menú **Ayuda › Probar con datos de ejemplo 🎮**.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Want to see it in action before setting anything up? **Help › Try with sample data 🎮**."
+          }
+        }
+      }
+    },
     "¿Qué pasa? 📖": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "What’s wrong? 📖"
+          }
+        }
+      }
+    },
+    "¿Sin cuenta de OCI a mano?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No OCI account at hand?"
+          }
+        }
+      }
+    },
+    "¿Sin cuenta de OCI a mano? Probar con datos de ejemplo 🎮": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No OCI account at hand? Try with sample data 🎮"
           }
         }
       }
@@ -3921,8 +4008,7 @@
             "value": "♻️ App server: reusing an existing session"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "✅ Tu IP pública %@ está permitida en el Bastion.": {
       "localizations": {
@@ -4005,8 +4091,7 @@
             "value": "🎉 Oracle Database: tunnel ready on 127.0.0.1:11521"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🎉 Servidor de aplicaciones: túnel listo en 127.0.0.1:52211": {
       "localizations": {
@@ -4016,8 +4101,46 @@
             "value": "🎉 App server: tunnel ready on 127.0.0.1:52211"
           }
         }
-      },
-      "shouldTranslate": true
+      }
+    },
+    "🎮": {
+      "shouldTranslate": false
+    },
+    "🎮 Demo: aquí se abriría Terminal ya conectado a «%@»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎮 Demo: Terminal would open here, already connected to “%@”"
+          }
+        }
+      }
+    },
+    "🎮 Demo: aquí tendrías localhost:%@ → %@:%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎮 Demo: you’d now have localhost:%@ → %@:%@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🎮 Demo: aquí tendrías localhost:%1$@ → %2$@:%3$@"
+          }
+        }
+      }
+    },
+    "🎮 Modo demostración: datos de ejemplo, nada se conecta de verdad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎮 Demo mode: sample data, nothing really connects"
+          }
+        }
+      }
     },
     "🏯": {
       "shouldTranslate": false
@@ -4031,6 +4154,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "👋 Disconnected"
+          }
+        }
+      }
+    },
+    "👋 Has salido de la demo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "👋 You left the demo"
           }
         }
       }
@@ -4108,8 +4241,7 @@
             "value": "🖥️ Opening SSH to App server"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🖥️ Servidor": {
       "localizations": {
@@ -4149,8 +4281,7 @@
             "value": "🚀 Connecting “Production”"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🚇 Túnel %@ → 127.0.0.1:%@": {
       "localizations": {
@@ -4212,8 +4343,7 @@
             "value": "🛎️ Oracle Database: session created, waiting for OCI"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "🛠️ Configuración actualizada": {
       "localizations": {

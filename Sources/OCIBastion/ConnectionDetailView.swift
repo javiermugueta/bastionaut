@@ -14,6 +14,21 @@ struct ConnectionDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
+                if manager.isDemo && !Showcase.hidesDemoBanner {
+                    HStack(spacing: 14) {
+                        IconTile(symbol: "gamecontroller.fill", color: .purple, size: 40)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Modo demostración 🎮").font(.headline)
+                            Text("Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda, pero nada se conecta de verdad ni se guarda.")
+                                .font(.callout).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button { manager.exitDemo() } label: { Label("Salir de la demo", systemImage: "xmark.circle.fill") }
+                            .buttonStyle(FunButtonStyle(tint: .purple))
+                    }
+                    .padding(14)
+                    .background(Color.purple.opacity(0.12), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
                 if manager.settings.account == nil {
                     HStack(spacing: 14) {
                         IconTile(symbol: "person.badge.key.fill", color: .orange, size: 40)
@@ -319,6 +334,7 @@ struct SettingsCard: View {
                         LabeledContent("Cuenta OCI", value: "\(manager.settings.account?.displayName ?? "—") · \(manager.settings.region ?? String(localized: "región del perfil"))")
                         LabeledContent("Bastion", value: manager.settings.bastionName ?? manager.settings.bastionID)
                         Button("Cambiar cuenta o Bastion con el asistente ✨", action: editWithWizard)
+                            .disabled(manager.isDemo)
                     }
                     Section("Sesión") {
                         Picker("Modo", selection: Binding(get: { manager.settings.effectiveSessionMode },
