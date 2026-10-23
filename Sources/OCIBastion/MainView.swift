@@ -14,6 +14,7 @@ struct MainView: View {
     @State private var importPlan: ConfigurationImportPlan?
     @State private var pendingDelete: SavedConnection?
     @State private var renaming: SavedConnection?
+    @Environment(\.openWindow) private var openHelp
 
     var body: some View {
         NavigationSplitView {
@@ -49,7 +50,13 @@ struct MainView: View {
         .sheet(item: $wizard) { mode in
             WizardView(manager: manager, mode: mode, firstRun: manager.needsOnboarding) { wizard = nil }
         }
-        .onAppear { if manager.needsOnboarding { wizard = .create } }
+        .onAppear {
+            if manager.needsOnboarding { wizard = .create }
+            if Showcase.isActive && Showcase.scene == "help" {
+                HelpRouter.shared.topic = .targets
+                openHelp(id: "help")
+            }
+        }
         .confirmationDialog("¿Sobrescribir?", isPresented: $showImportConfirmation) {
             Button("Importar y sobrescribir", role: .destructive) {
                 if let importPlan { manager.applyImport(importPlan) }
@@ -108,7 +115,7 @@ struct MainView: View {
                     Label("Nueva conexión", systemImage: "sparkles").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FunButtonStyle())
-                .disabled(manager.isRunning)
+                .disabled(manager.isRunning && !Showcase.isActive)
                 Menu {
                     Button("Importar…") { importConfiguration() }
                     Divider()

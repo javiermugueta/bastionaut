@@ -59,7 +59,16 @@ final class ForwardRunner {
         self.makeContext = makeContext
     }
 
-    var isActive: Bool { task != nil }
+    var isActive: Bool { task != nil || showcaseActive }
+    @ObservationIgnored private var showcaseActive = false
+
+    func applyShowcase(state: TunnelState, localPort: Int?, expiresAt: Date?, command: String?) {
+        self.state = state
+        self.localPort = localPort
+        sessionExpiresAt = expiresAt
+        bastionCommand = command
+        showcaseActive = state.isConnected || state.isBusy
+    }
 
     func start() {
         guard task == nil else { return }

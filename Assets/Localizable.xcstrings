@@ -714,6 +714,17 @@
         }
       }
     },
+    "Cliente ACME": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACME customer"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Comando SSH copiado 📋": {
       "localizations": {
         "en": {
@@ -2574,6 +2585,17 @@
         }
       }
     },
+    "Producción": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Production"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Proxy": {
       "shouldTranslate": false
     },
@@ -2881,6 +2903,17 @@
           }
         }
       }
+    },
+    "Servidor de aplicaciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App server"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Servidores": {
       "localizations": {
@@ -3880,6 +3913,17 @@
         }
       }
     },
+    "♻️ Servidor de aplicaciones: reutilizo una sesión que ya existía": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "♻️ App server: reusing an existing session"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "✅ Tu IP pública %@ está permitida en el Bastion.": {
       "localizations": {
         "en": {
@@ -3926,6 +3970,17 @@
         }
       }
     },
+    "🆘 %@: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🆘 %1$@: %2$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
     "🎉 %@: túnel listo en 127.0.0.1:%@": {
       "localizations": {
         "en": {
@@ -3941,6 +3996,28 @@
           }
         }
       }
+    },
+    "🎉 Oracle Database: túnel listo en 127.0.0.1:11521": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎉 Oracle Database: tunnel ready on 127.0.0.1:11521"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "🎉 Servidor de aplicaciones: túnel listo en 127.0.0.1:52211": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎉 App server: tunnel ready on 127.0.0.1:52211"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "🏯": {
       "shouldTranslate": false
@@ -4023,6 +4100,17 @@
         }
       }
     },
+    "🖥️ Abriendo SSH a Servidor de aplicaciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🖥️ Opening SSH to App server"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "🖥️ Servidor": {
       "localizations": {
         "en": {
@@ -4052,6 +4140,17 @@
           }
         }
       }
+    },
+    "🚀 Conectando «Producción»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚀 Connecting “Production”"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "🚇 Túnel %@ → 127.0.0.1:%@": {
       "localizations": {
@@ -4104,6 +4203,17 @@
           }
         }
       }
+    },
+    "🛎️ Oracle Database: sesión creada, esperando a OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🛎️ Oracle Database: session created, waiting for OCI"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "🛠️ Configuración actualizada": {
       "localizations": {

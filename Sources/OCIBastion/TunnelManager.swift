@@ -30,6 +30,10 @@ final class TunnelManager {
     @ObservationIgnored private var lastPorts: [UUID: Int] = [:]
 
     init() {
+        if Showcase.isActive {
+            loadShowcase()
+            return
+        }
         if let selected = settings.selectedSavedConnectionID,
            !(settings.savedConnections ?? []).contains(where: { $0.id == selected }) {
             settings.selectedSavedConnectionID = nil
@@ -40,6 +44,38 @@ final class TunnelManager {
             let pruned = SessionKeyStore.prune()
             if pruned > 0 { record(String(localized: "🧹 Borré \(pruned) clave(s) temporal(es) caducada(s)")) }
         }
+    }
+
+    /// Datos de demostración para las capturas: nada se guarda ni se ejecuta.
+    private func loadShowcase() {
+        settings = Showcase.settings()
+        bastionDetails = Showcase.bastion
+        for line in Showcase.logLines { record(line) }
+        let expires = Date().addingTimeInterval(2 * 3600 + 14 * 60 + 37)
+        let command = "ssh -i … -N -L 127.0.0.1:52211:10.0.1.23:22 -p 22 ocid1.bastionsession…@host.bastion.eu-madrid-1.oci.oraclecloud.com"
+        func runner(_ id: UUID, _ host: String, _ port: Int, _ name: String) -> ForwardRunner {
+            let value = ForwardRunner(id: id, target: .portForward(host: host, port: port), label: name, preferredPort: nil) {
+                throw CancellationError()
+            }
+            portRunners[id] = value
+            return value
+        }
+        let destinations = settings.destinations
+        let tunnels = settings.tunnels ?? []
+        if Showcase.scene == "attention" {
+            let failing = runner(destinations[0].id, destinations[0].host, 22, destinations[0].name)
+            let error = BastionError.bastionUnreachable(detail: "Operation timed out", allowList: Showcase.bastion.clientCidrBlockAllowList ?? [])
+            failing.showcase(state: .needsAttention(error.userMessage), localPort: nil, expiresAt: nil, command: nil)
+            publicIPReport = PublicIP.report(ip: "88.12.200.7", allowList: Showcase.bastion.clientCidrBlockAllowList ?? [])
+            record(String(localized: "🆘 \(destinations[0].name): \(error.localizedDescription)"))
+            return
+        }
+        runner(destinations[0].id, destinations[0].host, 22, destinations[0].name)
+            .showcase(state: .connected, localPort: 52211, expiresAt: expires, command: command)
+        runner(destinations[1].id, destinations[1].host, 22, destinations[1].name)
+            .showcase(state: .connected, localPort: 52214, expiresAt: expires.addingTimeInterval(600), command: command)
+        runner(tunnels[0].id, tunnels[0].remoteHost, tunnels[0].remotePort, tunnels[0].name)
+            .showcase(state: .connected, localPort: 11521, expiresAt: expires.addingTimeInterval(900), command: command)
     }
 
     // MARK: Estado
@@ -117,6 +153,7 @@ final class TunnelManager {
 
     /// Guarda en disco y vuelca los cambios en la conexión seleccionada.
     func save() {
+        guard !Showcase.isActive else { return }
         if let id = settings.selectedSavedConnectionID,
            var records = settings.savedConnections,
            let index = records.firstIndex(where: { $0.id == id }) {

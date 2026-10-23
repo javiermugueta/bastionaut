@@ -46,6 +46,7 @@ xcrun xcstringstool compile Assets/Localizable.xcstrings --output-directory "$ap
 # Al pasar a sandbox, macOS mueve los datos de versiones anteriores al contenedor de la app.
 cp Assets/container-migration.plist "$app/Contents/Resources/container-migration.plist"
 for lang in es en; do mkdir -p "$app/Contents/Resources/$lang.lproj"; cp "Assets/$lang.lproj/InfoPlist.strings" "$app/Contents/Resources/$lang.lproj/"; done
+python3 -I Scripts/source-strings.py Assets/Localizable.xcstrings "$app/Contents/Resources/es.lproj/Localizable.strings" >/dev/null
 cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
