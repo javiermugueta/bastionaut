@@ -35,7 +35,7 @@ final class TunnelManager {
            !(settings.savedConnections ?? []).contains(where: { $0.id == selected }) {
             settings.selectedSavedConnectionID = nil
         }
-        if settings.configPath.isEmpty { settings.configPath = OCIConfig.defaultPath }
+        if settings.configPath.isEmpty && !AppEdition.isAppStore { settings.configPath = OCIConfig.defaultPath }
         reloadProfiles()
         startup = Task {
             let closed = await OwnedTunnelRegistry.reclaimStale()
@@ -250,6 +250,9 @@ final class TunnelManager {
                 fresh.proxyHost = settings.proxyHost
                 fresh.proxyPort = settings.proxyPort
                 fresh.terminalApp = settings.terminalApp
+                fresh.accounts = settings.accounts
+                fresh.credentialSource = settings.credentialSource
+                fresh.accountID = settings.accountID
                 fresh.hasCompletedOnboarding = true
                 settings = fresh
                 portRunners = [:]
@@ -313,6 +316,7 @@ final class TunnelManager {
     // MARK: OCI
 
     func reloadProfiles() {
+        guard !AppEdition.isAppStore else { return }
         profiles = (try? OCIConfig.profiles(at: settings.configPath)) ?? []
     }
 
@@ -326,14 +330,39 @@ final class TunnelManager {
     }
 
     /// Cliente de API para una configuración (también la del asistente, que aún no está guardada).
-    func client(for value: Settings) async throws -> OCIAPIClient {
-        let profile = try OCIConfig.load(at: value.configPath, profile: value.profile)
+    var accounts: [OCIAccount] { settings.accounts ?? [] }
+
+    /// Credenciales de OCI de una configuración: un perfil de `~/.oci/config` o una cuenta de la app.
+    func ociProfile(for value: Settings) throws -> OCIProfile {
+        switch value.effectiveCredentialSource {
+        case .configFile:
+            return try OCIConfig.load(at: value.configPath, profile: value.profile)
+        case .app:
+            guard let id = value.accountID, let account = (value.accounts ?? accounts).first(where: { $0.id == id }) else {
+                throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
+            }
+            return account.profile(privateKeyPEM: try APIKeyKeychain.load(for: id))
+        }
+    }
+
+    /// Guarda (o actualiza) una cuenta y, si viene, su clave privada en el Llavero.
+    func saveAccount(_ account: OCIAccount, key: ImportedAPIKey?) throws {
+        if let key { try APIKeyKeychain.save(key.pem, for: account.id) }
+        var all = accounts
+        if let index = all.firstIndex(where: { $0.id == account.id }) { all[index] = account } else { all.append(account) }
+        settings.accounts = all
+        save()
+    }
+
+    func client(for value: Settings, profile override: OCIProfile? = nil) async throws -> OCIAPIClient {
+        let profile = try override ?? ociProfile(for: value)
         let proxy = try await resolvedProxy(for: value)
         return try await OCIAPIClient.make(profile: profile, region: value.region, proxy: proxy)
     }
 
     private func context(for snapshot: Settings) async throws -> RunnerContext {
-        let key = [snapshot.configPath, snapshot.profile, snapshot.region ?? "", snapshot.bastionID,
+        let key = [snapshot.effectiveCredentialSource.rawValue, snapshot.accountID?.uuidString ?? "",
+                   snapshot.configPath, snapshot.profile, snapshot.region ?? "", snapshot.bastionID,
                    snapshot.effectiveProxyMode.rawValue, snapshot.proxyHost, String(snapshot.proxyPort)].joined(separator: "|")
         if let contextCache, contextCache.key == key {
             do { return try await contextCache.task.value } catch { self.contextCache = nil; throw error }
@@ -341,7 +370,7 @@ final class TunnelManager {
         let task = Task { @MainActor in
             _ = try InputCheck.singleLine(snapshot.bastionID, name: "Bastion")
             let proxy = try await resolvedProxy(for: snapshot, fresh: true)
-            let profile = try OCIConfig.load(at: snapshot.configPath, profile: snapshot.profile)
+            let profile = try ociProfile(for: snapshot)
             let client = try await OCIAPIClient.make(profile: profile, region: snapshot.region, proxy: proxy)
             let bastion = try await client.getBastion(id: snapshot.bastionID)
             bastionDetails = bastion
@@ -352,8 +381,15 @@ final class TunnelManager {
     }
 
     private func validate(_ value: Settings) throws {
-        _ = try InputCheck.singleLine(value.configPath, name: "Configuración OCI")
-        _ = try InputCheck.singleLine(value.profile, name: "Perfil OCI")
+        switch value.effectiveCredentialSource {
+        case .configFile:
+            _ = try InputCheck.singleLine(value.configPath, name: "Configuración OCI")
+            _ = try InputCheck.singleLine(value.profile, name: "Perfil OCI")
+        case .app:
+            guard value.account != nil else {
+                throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
+            }
+        }
         _ = try InputCheck.singleLine(value.bastionID, name: "Bastion")
         if value.effectiveKeyMode == .custom {
             _ = try InputCheck.singleLine(value.publicKeyPath, name: "Clave pública")
@@ -494,7 +530,7 @@ final class TunnelManager {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
                                             name: tunnel.name, connectIfNeeded: true)
                 try await TerminalLauncher.open(command: SSHCommands.localTunnel(tunnel, route: route), in: terminal)
-                record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(tunnel.localPort)"))
+                record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(String(tunnel.localPort))"))
             } catch { report(error) }
         }
     }
@@ -520,8 +556,8 @@ final class TunnelManager {
         Task {
             do {
                 let port = try await runner.waitUntilConnected()
-                record(String(localized: "🚇 Túnel \(name): localhost:\(port) → \(tunnel.remoteHost):\(tunnel.remotePort)"))
-                showToast(String(localized: "Túnel listo en localhost:\(port) 🎉"))
+                record(String(localized: "🚇 Túnel \(name): localhost:\(String(port)) → \(tunnel.remoteHost):\(String(tunnel.remotePort))"))
+                showToast(String(localized: "Túnel listo en localhost:\(String(port)) 🎉"))
             } catch { report(error) }
         }
     }

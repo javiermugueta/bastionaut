@@ -167,12 +167,44 @@ struct FileField: View {
     let placeholder: LocalizedStringKey
     @Binding var path: String
     var directory: String? = nil
+    /// Claves SSH: en la versión App Store se guarda una copia privada, porque el sandbox no deja volver a leer la ruta.
+    var importsKey = false
+    @State private var problem: String?
 
     var body: some View {
-        HStack {
-            TextField("", text: $path, prompt: Text(placeholder)).labelsHidden().textFieldStyle(.roundedBorder)
-            Button("Elegir…") { if let value = pickFile(directory: directory) { path = value } }
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                TextField("", text: $path, prompt: Text(placeholder)).labelsHidden().textFieldStyle(.roundedBorder)
+                    .disabled(importsKey && AppEdition.isAppStore)
+                Button("Elegir…") {
+                    guard let value = pickFile(directory: directory) else { return }
+                    if importsKey && AppEdition.isAppStore {
+                        do { path = try SSHKeyImport.importCopy(of: URL(fileURLWithPath: value)); problem = nil }
+                        catch { problem = error.localizedDescription }
+                    } else {
+                        path = value
+                    }
+                }
+            }
+            if let problem { Text(problem).font(.caption).foregroundStyle(.red) }
         }
+    }
+}
+
+enum SSHKeyImport {
+    static var directory: URL {
+        Settings.fileURL.deletingLastPathComponent().appendingPathComponent("keys/imported", isDirectory: true)
+    }
+
+    /// Copia la clave a la carpeta privada de la app (0600) y devuelve la ruta de la copia.
+    static func importCopy(of source: URL) throws -> String {
+        let manager = FileManager.default
+        try manager.createDirectory(at: directory, withIntermediateDirectories: true,
+                                    attributes: [.posixPermissions: 0o700])
+        let target = directory.appendingPathComponent(UUID().uuidString.prefix(8) + "-" + source.lastPathComponent)
+        try manager.copyItem(at: source, to: target)
+        try manager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: target.path)
+        return target.path
     }
 }
 

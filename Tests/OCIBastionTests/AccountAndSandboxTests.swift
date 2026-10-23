@@ -1,0 +1,129 @@
+import XCTest
+@testable import OCIBastion
+
+final class AccountAndSandboxTests: XCTestCase {
+    private func run(_ executable: String, _ arguments: [String], input: Data? = nil) throws -> Data {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = Pipe()
+        if let input {
+            let stdin = Pipe()
+            process.standardInput = stdin
+            try process.run()
+            stdin.fileHandleForWriting.write(input)
+            try stdin.fileHandleForWriting.close()
+        } else {
+            try process.run()
+        }
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        XCTAssertEqual(process.terminationStatus, 0)
+        return data
+    }
+
+    func testFingerprintMatchesOpenSSL() async throws {
+        let pem = String(decoding: try run("/usr/bin/openssl", ["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048"]), as: UTF8.self)
+        let der = try run("/usr/bin/openssl", ["pkey", "-pubout", "-outform", "DER"], input: Data(pem.utf8))
+        let expected = String(decoding: try run("/usr/bin/openssl", ["md5", "-c"], input: der), as: UTF8.self)
+            .split(separator: " ").last.map(String.init)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let imported = try await APIKeyImport.prepare(pem: pem, passphrase: nil)
+        XCTAssertEqual(imported.fingerprint, expected)
+        XCTAssertEqual(imported.fingerprint.split(separator: ":").count, 16)
+    }
+
+    func testEncryptedKeyIsDecryptedOnImport() async throws {
+        let pem = String(decoding: try run("/usr/bin/openssl", ["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048",
+                                                                 "-aes256", "-pass", "pass:secreto"]), as: UTF8.self)
+        do {
+            _ = try await APIKeyImport.prepare(pem: pem, passphrase: nil)
+            XCTFail("Debería pedir la contraseña")
+        } catch {}
+        let imported = try await APIKeyImport.prepare(pem: pem, passphrase: "secreto")
+        XCTAssertFalse(imported.pem.contains("ENCRYPTED"))
+        _ = try PEMKey.rsaPrivateKey(pem: imported.pem)
+    }
+
+    func testFillFromConsoleSnippet() {
+        var account = OCIAccount()
+        let snippet = """
+        [DEFAULT]
+        user=ocid1.user.oc1..aaaa
+        fingerprint=12:34:56
+        tenancy=ocid1.tenancy.oc1..bbbb
+        region=eu-amsterdam-1
+        key_file=<path to your private keyfile> # TODO
+        """
+        XCTAssertTrue(account.fill(fromSnippet: snippet))
+        XCTAssertEqual(account.user, "ocid1.user.oc1..aaaa")
+        XCTAssertEqual(account.tenancy, "ocid1.tenancy.oc1..bbbb")
+        XCTAssertEqual(account.fingerprint, "12:34:56")
+        XCTAssertEqual(account.region, "eu-amsterdam-1")
+
+        var loose = OCIAccount()
+        XCTAssertTrue(loose.fill(fromSnippet: "tenancy=ocid1.tenancy.oc1..cccc\nregion=eu-madrid-1"))
+        XCTAssertEqual(loose.tenancy, "ocid1.tenancy.oc1..cccc")
+        XCTAssertFalse(loose.fill(fromSnippet: "nada útil aquí"))
+    }
+
+    func testAccountProfileUsesInMemoryKey() {
+        let account = OCIAccount(name: "Mi tenancy", tenancy: "t", user: "u", fingerprint: "f", region: "eu-madrid-1")
+        let profile = account.profile(privateKeyPEM: "PEM")
+        XCTAssertEqual(profile.keyPEM, "PEM")
+        XCTAssertEqual(profile.region, "eu-madrid-1")
+    }
+
+    func testCredentialSourceDefaultsAndSnapshot() {
+        var settings = Settings()
+        XCTAssertEqual(settings.effectiveCredentialSource, .configFile)
+        let account = OCIAccount(name: "A", tenancy: "t", user: "u", fingerprint: "f", region: "r")
+        settings.accounts = [account]
+        settings.credentialSource = .app
+        settings.accountID = account.id
+        XCTAssertEqual(settings.account, account)
+        var restored = Settings()
+        ConnectionSnapshot(settings: settings).apply(to: &restored)
+        XCTAssertEqual(restored.credentialSource, .app)
+        XCTAssertEqual(restored.accountID, account.id)
+    }
+
+    func testAppleScriptEscaping() {
+        let command = #"ssh -i '/a b/"k"' -o 'ProxyCommand=nc \x' user@host"#
+        let source = TerminalLauncher.source(command: command, app: .terminal)
+        XCTAssertTrue(source.contains(#"do script "ssh -i '/a b/\"k\"' -o 'ProxyCommand=nc \\x' user@host""#))
+        XCTAssertTrue(TerminalLauncher.source(command: "ls", app: .iterm).contains(#"create window with default profile command "ls""#))
+    }
+
+    func testPortProbes() throws {
+        let port = try XCTUnwrap(OwnedTunnelRecord.freeLocalPort())
+        XCTAssertTrue(OwnedTunnelRecord.isPortFree(port))
+        XCTAssertFalse(OwnedTunnelRecord.isListening(port))
+        let listener = Process()
+        listener.executableURL = URL(fileURLWithPath: "/usr/bin/nc")
+        listener.arguments = ["-l", "127.0.0.1", String(port)]
+        try listener.run()
+        defer { listener.terminate() }
+        var listening = false
+        for _ in 0..<30 where !listening {
+            Thread.sleep(forTimeInterval: 0.1)
+            listening = OwnedTunnelRecord.isListening(port)
+        }
+        XCTAssertTrue(listening)
+        XCTAssertFalse(OwnedTunnelRecord.isPortFree(port))
+    }
+
+    func testSystemProxySettingsParsing() {
+        XCTAssertEqual(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 1, "HTTPProxy": "proxy.corp", "HTTPPort": 8080]),
+                       try ProxyEndpoint(host: "proxy.corp", port: 8080))
+        XCTAssertEqual(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 0, "HTTPSEnable": 1, "HTTPSProxy": "p", "HTTPSPort": 3128]),
+                       try ProxyEndpoint(host: "p", port: 3128))
+        XCTAssertNil(ProxyResolver.endpoint(fromSystemSettings: ["HTTPEnable": 0]))
+    }
+
+    func testPortInUseMessageWithoutPID() {
+        XCTAssertTrue(BastionError.portInUse(port: 2222, pid: nil).localizedDescription.contains("2222"))
+        XCTAssertTrue(BastionError.portInUse(port: 2222, pid: 42).localizedDescription.contains("42"))
+    }
+}

@@ -47,6 +47,41 @@ struct OwnedTunnelRecord: Codable, Equatable {
             .flatMap { Int32($0.dropFirst()) }
     }
 
+    /// PID que escucha en el puerto, si `lsof` puede verlo (fuera del sandbox). Solo para mensajes.
+    static func describeListener(port: Int) async -> Int32? {
+        AppEdition.isAppStore ? nil : await listenerPID(port: port)
+    }
+
+    /// `true` si se puede reservar el puerto en 127.0.0.1 (nadie escucha en él).
+    static func isPortFree(_ port: Int) -> Bool {
+        withLoopbackSocket(port: port) { socketFD, address in
+            var reuse: Int32 = 1
+            setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size))
+            return bind(socketFD, address, socklen_t(MemoryLayout<sockaddr_in>.size)) == 0
+        } ?? false
+    }
+
+    /// `true` si algo acepta conexiones en 127.0.0.1:puerto.
+    static func isListening(_ port: Int) -> Bool {
+        withLoopbackSocket(port: port) { socketFD, address in
+            connect(socketFD, address, socklen_t(MemoryLayout<sockaddr_in>.size)) == 0
+        } ?? false
+    }
+
+    private static func withLoopbackSocket(port: Int, _ body: (Int32, UnsafePointer<sockaddr>) -> Bool) -> Bool? {
+        guard (1...65535).contains(port) else { return nil }
+        let socketFD = socket(AF_INET, SOCK_STREAM, 0)
+        guard socketFD >= 0 else { return nil }
+        defer { close(socketFD) }
+        var address = sockaddr_in()
+        address.sin_family = sa_family_t(AF_INET)
+        address.sin_port = UInt16(port).bigEndian
+        address.sin_addr.s_addr = inet_addr("127.0.0.1")
+        return withUnsafePointer(to: &address) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { body(socketFD, $0) }
+        }
+    }
+
     /// Puerto TCP libre en 127.0.0.1 asignado por el sistema.
     static func freeLocalPort() -> Int? {
         let socketFD = socket(AF_INET, SOCK_STREAM, 0)

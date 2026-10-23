@@ -9,7 +9,9 @@ struct OCIRequestSigner {
     let key: SecKey
 
     static func make(profile: OCIProfile) async throws -> OCIRequestSigner {
-        let key = try await PEMKey.loadRSA(path: profile.keyFile, passphrase: profile.passPhrase)
+        let key: SecKey
+        if let pem = profile.keyPEM { key = try PEMKey.rsaPrivateKey(pem: pem) }
+        else { key = try await PEMKey.loadRSA(path: profile.keyFile, passphrase: profile.passPhrase) }
         if let tokenFile = profile.securityTokenFile {
             guard let token = try? String(contentsOfFile: tokenFile, encoding: .utf8) else {
                 throw BastionError.keyFileMissing(path: tokenFile)

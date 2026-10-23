@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Versión Mac App Store: sandbox. La cuenta OCI y las claves viven dentro de la app (Llavero y contenedor). -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- API de OCI y SSH hacia el Bastion. -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- El ssh hijo escucha en 127.0.0.1 para los túneles (-D / -L). -->
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<!-- Importar claves (.pem, claves SSH) y exportar/importar configuraciones elegidas por el usuario. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- Abrir las sesiones SSH en Terminal o iTerm2. -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+	<key>com.apple.security.temporary-exception.apple-events</key>
+	<array>
+		<string>com.apple.Terminal</string>
+		<string>com.googlecode.iterm2</string>
+	</array>
+	<key>com.apple.application-identifier</key>
+	<string>L3TQ5FZ3YF.com.javiermugueta.ocibastion</string>
+	<key>com.apple.developer.team-identifier</key>
+	<string>L3TQ5FZ3YF</string>
+</dict>
+</plist>

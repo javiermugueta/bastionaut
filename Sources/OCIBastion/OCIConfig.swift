@@ -10,6 +10,8 @@ struct OCIProfile: Equatable {
     var region: String
     var passPhrase: String?
     var securityTokenFile: String?
+    /// Clave privada ya cargada (cuentas guardadas en la app); si está, se ignora `keyFile`.
+    var keyPEM: String? = nil
 }
 
 enum OCIConfig {

@@ -70,27 +70,27 @@ enum ProxyResolver {
     }
 
     private static func systemProxy() async -> ProxyEndpoint? {
-        guard let result = try? await CommandRunner.run("/usr/sbin/scutil", ["--proxy"]),
-              result.status == 0 else { return nil }
-        var values: [String: String] = [:]
-        for line in result.output.split(whereSeparator: \.isNewline) {
-            let pieces = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
-            if pieces.count == 2 { values[pieces[0]] = pieces[1] }
-        }
+        guard let values = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any] else { return nil }
+        return endpoint(fromSystemSettings: values)
+    }
+
+    static func endpoint(fromSystemSettings values: [String: Any]) -> ProxyEndpoint? {
         for prefix in ["HTTP", "HTTPS"] {
-            guard values[prefix + "Enable"] == "1",
-                  let host = values[prefix + "Proxy"],
-                  let portString = values[prefix + "Port"],
-                  let port = Int(portString) else { continue }
+            guard (values[prefix + "Enable"] as? Int) == 1,
+                  let host = values[prefix + "Proxy"] as? String,
+                  let port = values[prefix + "Port"] as? Int else { continue }
             if let endpoint = try? ProxyEndpoint(host: host, port: port) { return endpoint }
         }
         return nil
     }
 
     private static func wpadProxy() async -> ProxyEndpoint? {
-        guard let result = try? await CommandRunner.run("/usr/bin/curl", [
-            "--silent", "--show-error", "--fail", "--max-time", "5", "--noproxy", "*", "http://wpad/wpad.dat"
-        ]), result.status == 0 else { return nil }
-        return endpoint(fromWPAD: result.output)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.connectionProxyDictionary = [:]
+        configuration.timeoutIntervalForRequest = 5
+        guard let (data, response) = try? await URLSession(configuration: configuration)
+                .data(from: URL(string: "http://wpad/wpad.dat")!),
+              (response as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+        return endpoint(fromWPAD: String(decoding: data, as: UTF8.self))
     }
 }

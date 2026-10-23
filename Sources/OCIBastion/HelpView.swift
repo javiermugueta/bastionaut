@@ -276,6 +276,9 @@ struct HelpCommands: Commands {
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
+        CommandGroup(replacing: .appInfo) {
+            Button("Acerca de OCI Bastion") { AppCredits.showAboutPanel() }
+        }
         CommandGroup(replacing: .help) {
             Button("Ayuda de OCI Bastion") {
                 HelpRouter.shared.topic = .start

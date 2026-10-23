@@ -5,6 +5,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var onTerminate: () -> Void = {}
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        MainActor.assumeIsolated { SandboxSelfTest.runIfRequested() }
+        #endif
         guard let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
               let icon = NSImage(contentsOf: iconURL) else { return }
         NSApplication.shared.applicationIconImage = icon

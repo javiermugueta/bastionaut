@@ -9,6 +9,8 @@
 #   BUNDLE_ID      identificador del bundle (por defecto: com.javiermugueta.ocibastion)
 #   VERSION        CFBundleShortVersionString (por defecto: 0.1.0)
 #   BUILD_NUMBER   CFBundleVersion (por defecto: número de commits de git)
+#   EDITION        developer-id (por defecto) | appstore (sandbox, sin acceso a ~/.oci ni ~/.ssh)
+#   PROVISIONING_PROFILE  perfil «Mac App Store Connect» (.provisionprofile), obligatorio con EDITION=appstore
 set -euo pipefail
 cd "${0:A:h:h}"
 
@@ -18,6 +20,7 @@ sign_identity="${SIGN_IDENTITY:--}"
 bundle_id="${BUNDLE_ID:-com.javiermugueta.ocibastion}"
 version="${VERSION:-0.1.0}"
 build_number="${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}"
+edition="${EDITION:-developer-id}"
 
 mkdir -p .build/clang-cache .build/cache
 export CLANG_MODULE_CACHE_PATH="$PWD/.build/clang-cache"
@@ -25,7 +28,10 @@ if [[ -z "${SDKROOT:-}" && -d /Library/Developer/CommandLineTools/SDKs/MacOSX26.
   export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 fi
 
-build_args=(--disable-sandbox --scratch-path .build --cache-path .build/cache -c "$configuration")
+scratch=.build
+[[ $edition == appstore ]] && scratch=.build/appstore
+build_args=(--disable-sandbox --scratch-path "$scratch" --cache-path .build/cache -c "$configuration")
+[[ $edition == appstore ]] && build_args+=(-Xswiftc -DAPPSTORE)
 if [[ $universal == 1 ]]; then
   build_args+=(--arch arm64 --arch x86_64)
 fi
@@ -37,7 +43,6 @@ rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary" "$app/Contents/MacOS/OCIBastion"
 cp Assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
-cp Assets/LaunchITerm.applescript "$app/Contents/Resources/LaunchITerm.applescript"
 # Español e inglés desde el catálogo de textos (editable en Xcode).
 xcrun xcstringstool compile Assets/Localizable.xcstrings --output-directory "$app/Contents/Resources" --language es --language en
 for lang in es en; do mkdir -p "$app/Contents/Resources/$lang.lproj"; cp "Assets/$lang.lproj/InfoPlist.strings" "$app/Contents/Resources/$lang.lproj/"; done
@@ -58,12 +63,20 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <key>LSApplicationCategoryType</key><string>public.app-category.developer-tools</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSHighResolutionCapable</key><true/>
-<key>NSHumanReadableCopyright</key><string>© $(date +%Y) OCI Bastion</string>
+<key>NSHumanReadableCopyright</key><string>Original: Israel (israelgoracle) · Improvements: Javier Mugueta · © $(date +%Y)</string>
+<key>ITSAppUsesNonExemptEncryption</key><false/>
 <key>NSAppleEventsUsageDescription</key><string>OCI Bastion opens SSH connections in the terminal app you choose.</string>
 </dict></plist>
 PLIST
 
-if [[ $sign_identity == "-" ]]; then
+if [[ $edition == appstore ]]; then
+  [[ -f "${PROVISIONING_PROFILE:-}" ]] || { echo "Falta PROVISIONING_PROFILE (perfil Mac App Store Connect)." >&2; exit 1; }
+  cp "$PROVISIONING_PROFILE" "$app/Contents/embedded.provisionprofile"
+  codesign --force --options runtime --timestamp \
+    --entitlements Assets/OCIBastion.appstore.entitlements \
+    --sign "$sign_identity" "$app"
+  codesign --verify --deep --strict --verbose=2 "$app"
+elif [[ $sign_identity == "-" ]]; then
   codesign --force --sign - "$app"
 else
   # Hardened Runtime + marca de tiempo segura: obligatorios para notarizar.

@@ -24,7 +24,7 @@ enum BastionError: LocalizedError, Equatable {
     /// No se llega al Bastion: casi siempre es la lista de IPs permitidas o un proxy/cortafuegos.
     case bastionUnreachable(detail: String, allowList: [String])
     case sshExited(String)
-    case portInUse(port: Int, pid: Int32)
+    case portInUse(port: Int, pid: Int32?)
     case ownedTunnelCouldNotStop(pid: Int32)
     case notConnected
     case terminal(String)
@@ -73,10 +73,12 @@ enum BastionError: LocalizedError, Equatable {
             return String(localized: "No consigo conectar con el Bastion por SSH.\(list) (\(detail))")
         case .sshExited(let detail):
             return detail.isEmpty ? String(localized: "El túnel SSH terminó.") : detail
-        case .portInUse(let port, let pid):
-            return String(localized: "El puerto local \(port) lo está usando otro proceso (PID \(pid)). Libéralo o elige otro.")
+        case .portInUse(let port, let pid?):
+            return String(localized: "El puerto local \(String(port)) lo está usando otro proceso (PID \(String(pid))). Libéralo o elige otro.")
+        case .portInUse(let port, nil):
+            return String(localized: "El puerto local \(String(port)) lo está usando otro programa. Libéralo o elige otro.")
         case .ownedTunnelCouldNotStop(let pid):
-            return String(localized: "El SSH anterior (PID \(pid)) sigue vivo; no abro otro hasta que termine.")
+            return String(localized: "El SSH anterior (PID \(String(pid))) sigue vivo; no abro otro hasta que termine.")
         case .notConnected:
             return String(localized: "Conecta primero el Bastion.")
         case .terminal(let detail):

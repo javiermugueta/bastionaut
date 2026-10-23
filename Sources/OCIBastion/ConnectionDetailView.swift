@@ -301,7 +301,7 @@ struct SettingsCard: View {
             if expanded {
                 Form {
                     Section {
-                        LabeledContent("Cuenta OCI", value: "\(manager.settings.profile) · \(manager.settings.region ?? String(localized: "región del perfil"))")
+                        LabeledContent("Cuenta OCI", value: "\(manager.settings.effectiveCredentialSource == .app ? (manager.settings.account?.displayName ?? "—") : manager.settings.profile) · \(manager.settings.region ?? String(localized: "región del perfil"))")
                         LabeledContent("Bastion", value: manager.settings.bastionName ?? manager.settings.bastionID)
                         Button("Cambiar cuenta o Bastion con el asistente ✨", action: editWithWizard)
                     }
@@ -327,8 +327,8 @@ struct SettingsCard: View {
                             Text("Uso mis propias claves").tag(KeyMode.custom)
                         }
                         if manager.settings.effectiveKeyMode == .custom {
-                            FileField(placeholder: "Clave pública", path: $manager.settings.publicKeyPath)
-                            FileField(placeholder: "Clave privada", path: $manager.settings.privateKeyPath)
+                            FileField(placeholder: "Clave pública", path: $manager.settings.publicKeyPath, importsKey: true)
+                            FileField(placeholder: "Clave privada", path: $manager.settings.privateKeyPath, importsKey: true)
                         }
                     }
                     Section("Red y terminal") {
@@ -450,7 +450,7 @@ struct DestinationFields: View {
             TextField("Usuario", text: $destination.user)
             PortField(title: "Puerto SSH", value: $destination.port, prompt: "22")
             LabeledContent("Clave privada") {
-                FileField(placeholder: "~/.ssh/id_rsa", path: $destination.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
+                FileField(placeholder: "~/.ssh/id_rsa", path: $destination.privateKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
             }
         }
         .formStyle(.grouped)
@@ -506,7 +506,7 @@ struct TunnelForm: View {
                         TextField("Usuario", text: $tunnel.user)
                         PortField(title: "Puerto SSH", value: $tunnel.sshPort, prompt: "22")
                         LabeledContent("Clave privada") {
-                            FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
+                            FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
                         }
                     }
                 } footer: {

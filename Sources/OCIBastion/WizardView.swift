@@ -25,6 +25,11 @@ struct WizardView: View {
     @State private var step: Step = .account
     @State private var draft = Settings()
     @State private var regions: [String] = []
+    @State private var accountDraft = OCIAccount()
+    @State private var accountChoice: UUID?
+    @State private var keyText = ""
+    @State private var keyPassphrase = ""
+    @State private var importedKey: ImportedAPIKey?
     @State private var accountOK = false
     @State private var busy = false
     @State private var busyMessage: String?
@@ -152,14 +157,21 @@ struct WizardView: View {
 
     private var account: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Necesito un perfil de `~/.oci/config` con una clave de API.").foregroundStyle(.secondary)
+            if !AppEdition.isAppStore {
+                Picker("Credenciales", selection: Binding(get: { draft.effectiveCredentialSource },
+                                                          set: { draft.credentialSource = $0; accountOK = false })) {
+                    Text("Introducir mis datos").tag(OCICredentialSource.app)
+                    Text("Usar ~/.oci/config").tag(OCICredentialSource.configFile)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            if draft.effectiveCredentialSource == .app {
+                appAccount
+            } else {
+                configFileAccount
+            }
             Form {
-                LabeledContent("Archivo") {
-                    FileField(placeholder: "~/.oci/config", path: $draft.configPath, directory: NSHomeDirectory() + "/.oci")
-                }
-                Picker("Perfil", selection: $draft.profile) {
-                    ForEach(profiles, id: \.self) { Text($0).tag($0) }
-                }
                 ProxyPicker(settings: $draft)
                 if accountOK {
                     Picker("Región", selection: Binding(get: { draft.region ?? "" }, set: { draft.region = $0 })) {
@@ -168,16 +180,51 @@ struct WizardView: View {
                 }
             }
             .formStyle(.grouped)
-            .onChange(of: draft.configPath) { accountOK = false }
-            .onChange(of: draft.profile) { accountOK = false }
             .onChange(of: draft.region) { bastions = []; bastionDetails = nil }
             HStack {
                 Button(accountOK ? "Volver a probar" : "Probar conexión 🔌") { testAccount() }.disabled(busy)
                 if accountOK { Label("¡Conectado! \(regions.count) región(es) disponibles", systemImage: "checkmark.seal.fill").foregroundStyle(.green) }
             }
+        }
+    }
+
+    private var configFileAccount: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Uso un perfil de `~/.oci/config` con su clave de API.").foregroundStyle(.secondary)
+            Form {
+                LabeledContent("Archivo") {
+                    FileField(placeholder: "~/.oci/config", path: $draft.configPath, directory: NSHomeDirectory() + "/.oci")
+                }
+                Picker("Perfil", selection: $draft.profile) {
+                    ForEach(profiles, id: \.self) { Text($0).tag($0) }
+                }
+            }
+            .formStyle(.grouped)
+            .onChange(of: draft.configPath) { accountOK = false }
+            .onChange(of: draft.profile) { accountOK = false }
             if profiles.isEmpty {
                 Text("¿No tienes configuración? Créala con `oci setup config` o desde la consola de OCI › Perfil › Claves de API › Añadir clave de API.")
                     .font(.callout).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var appAccount: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if !manager.accounts.isEmpty {
+                Picker("Cuenta", selection: Binding(get: { accountChoice }, set: { selectAccount($0) })) {
+                    ForEach(manager.accounts) { Text("☁️ \($0.displayName)").tag(Optional($0.id)) }
+                    Divider()
+                    Text("➕ Nueva cuenta…").tag(UUID?.none)
+                }
+            }
+            if accountChoice == nil {
+                AccountFields(account: $accountDraft, keyText: $keyText, passphrase: $keyPassphrase, imported: importedKey)
+                    .onChange(of: accountDraft) { accountOK = false }
+                    .onChange(of: keyText) { accountOK = false; importedKey = nil }
+            } else if let chosen = manager.accounts.first(where: { $0.id == accountChoice }) {
+                Text("Tenancy …\(String(chosen.tenancy.suffix(12))) · \(chosen.region) · huella \(chosen.fingerprint)")
+                    .font(.caption.monospaced()).foregroundStyle(.secondary)
             }
         }
     }
@@ -298,8 +345,8 @@ struct WizardView: View {
                            selected: draft.effectiveKeyMode == .custom) { draft.keyMode = .custom }
             }
             if draft.effectiveKeyMode == .custom {
-                FileField(placeholder: "Clave pública (.pub)", path: $draft.publicKeyPath, directory: NSHomeDirectory() + "/.ssh")
-                FileField(placeholder: "Clave privada", path: $draft.privateKeyPath, directory: NSHomeDirectory() + "/.ssh")
+                FileField(placeholder: "Clave pública (.pub)", path: $draft.publicKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
+                FileField(placeholder: "Clave privada", path: $draft.privateKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
             }
         }
     }
@@ -332,10 +379,14 @@ struct WizardView: View {
             fresh.proxyHost = draft.proxyHost
             fresh.proxyPort = draft.proxyPort
             fresh.terminalApp = draft.terminalApp
+            fresh.credentialSource = draft.credentialSource
+            fresh.accountID = draft.accountID
             fresh.keyMode = .ephemeral
             draft = fresh
         }
         if !profiles.contains(draft.profile) { draft.profile = profiles.first ?? "DEFAULT" }
+        if draft.credentialSource == nil && (profiles.isEmpty || !manager.accounts.isEmpty) { draft.credentialSource = .app }
+        accountChoice = draft.accountID ?? manager.accounts.first?.id
         step = steps.first ?? .account
     }
 
@@ -388,15 +439,61 @@ struct WizardView: View {
         }
     }
 
+    private func selectAccount(_ id: UUID?) {
+        accountChoice = id
+        accountOK = false
+        if id == nil {
+            accountDraft = OCIAccount()
+            keyText = ""
+            keyPassphrase = ""
+            importedKey = nil
+        }
+    }
+
     private func testAccount() {
-        let snapshot = draft
+        var snapshot = draft
+        let newAccount = draft.effectiveCredentialSource == .app && accountChoice == nil
+        var candidate = accountDraft
+        let pem = keyText
+        let passphrase = keyPassphrase
+        if draft.effectiveCredentialSource == .app, let accountChoice { snapshot.accountID = accountChoice }
         run("Hablando con OCI para comprobar tu cuenta… 🔌") {
-            let client = try await manager.client(for: snapshot)
+            var profile: OCIProfile?
+            var key: ImportedAPIKey?
+            if newAccount {
+                for (value, field) in [(candidate.tenancy, "OCID de la tenancy"), (candidate.user, "OCID del usuario"),
+                                       (candidate.region, "Región")] where value.trimmingCharacters(in: .whitespaces).isEmpty {
+                    throw BastionError.message(String(localized: "Falta «\(String(localized: String.LocalizationValue(field)))»."))
+                }
+                guard !pem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    throw BastionError.message(String(localized: "Falta la clave privada de API: elige el archivo .pem o pégala."))
+                }
+                let prepared = try await APIKeyImport.prepare(pem: pem, passphrase: passphrase)
+                importedKey = prepared
+                key = prepared
+                if !candidate.fingerprint.isEmpty && candidate.fingerprint.lowercased() != prepared.fingerprint {
+                    throw BastionError.message(String(localized: "La huella escrita (\(candidate.fingerprint)) no corresponde a esta clave (\(prepared.fingerprint)). ¿Es la clave correcta?"))
+                }
+                candidate.fingerprint = prepared.fingerprint
+                accountDraft.fingerprint = prepared.fingerprint
+                profile = candidate.profile(privateKeyPEM: prepared.pem)
+            }
+            let client = try await manager.client(for: snapshot, profile: profile)
             let subscribed = try await client.regionSubscriptions()
                 .filter { $0.status == nil || $0.status == "READY" }
                 .map(\.regionName).sorted()
             regions = subscribed.isEmpty ? [client.profile.region] : subscribed
             if draft.region == nil || !(regions.contains(draft.region ?? "")) { draft.region = client.profile.region }
+            if newAccount, let key {
+                if candidate.name.isEmpty { candidate.name = String(localized: "Cuenta \(candidate.region)") }
+                try manager.saveAccount(candidate, key: key)
+                accountDraft = candidate
+                accountChoice = candidate.id
+            }
+            if draft.effectiveCredentialSource == .app {
+                draft.credentialSource = .app
+                draft.accountID = accountChoice
+            }
             accountOK = true
         }
     }
@@ -501,5 +598,68 @@ private struct Pulse: ViewModifier {
             .opacity(dim ? 0.4 : 1)
             .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: dim)
             .onAppear { dim = true }
+    }
+}
+
+/// Datos de una cuenta de OCI introducidos a mano.
+struct AccountFields: View {
+    @Binding var account: OCIAccount
+    @Binding var keyText: String
+    @Binding var passphrase: String
+    let imported: ImportedAPIKey?
+    @State private var snippet = ""
+    @State private var showSnippet = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            DisclosureGroup("Atajo: pega el fragmento de configuración que te da la consola de OCI", isExpanded: $showSnippet) {
+                VStack(alignment: .leading, spacing: 6) {
+                    TextEditor(text: $snippet)
+                        .font(.caption.monospaced())
+                        .frame(height: 90)
+                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.quaternary))
+                    Button("Rellenar los campos ✨") {
+                        if account.fill(fromSnippet: snippet) { showSnippet = false }
+                    }
+                    .disabled(snippet.isEmpty)
+                }
+                .padding(.top, 6)
+            }
+            Form {
+                TextField("Nombre", text: $account.name, prompt: Text("Mi tenancy"))
+                TextField("OCID de la tenancy", text: $account.tenancy, prompt: Text("ocid1.tenancy.oc1..aaaa…"))
+                TextField("OCID del usuario", text: $account.user, prompt: Text("ocid1.user.oc1..aaaa…"))
+                TextField("Región", text: $account.region, prompt: Text("eu-madrid-1"))
+                TextField("Huella (opcional)", text: $account.fingerprint, prompt: Text("La calculo a partir de la clave"))
+                Section("Clave privada de API") {
+                    HStack {
+                        Button("Elegir archivo .pem…") {
+                            let panel = NSOpenPanel()
+                            panel.showsHiddenFiles = true
+                            panel.allowedContentTypes = [.data, .text]
+                            if panel.runModal() == .OK, let url = panel.url,
+                               let contents = try? String(contentsOf: url, encoding: .utf8) {
+                                keyText = contents
+                            }
+                        }
+                        Text("o pégala aquí abajo").foregroundStyle(.secondary).font(.caption)
+                    }
+                    TextEditor(text: $keyText)
+                        .font(.caption2.monospaced())
+                        .frame(height: 80)
+                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.quaternary))
+                    if keyText.contains("ENCRYPTED") {
+                        SecureField("Contraseña de la clave", text: $passphrase)
+                    }
+                    if let imported {
+                        Label("Clave RSA válida · huella \(imported.fingerprint)", systemImage: "checkmark.seal.fill")
+                            .font(.caption).foregroundStyle(.green)
+                    }
+                }
+            }
+            .formStyle(.grouped)
+            Text("🔐 La clave privada se guarda cifrada en tu Llavero de macOS, solo para esta app.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
     }
 }

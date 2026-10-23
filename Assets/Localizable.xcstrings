@@ -242,6 +242,17 @@
         }
       }
     },
+    "Acerca de OCI Bastion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About OCI Bastion"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Ajustes": {
       "localizations": {
         "en": {
@@ -318,6 +329,17 @@
         }
       }
     },
+    "Atajo: pega el fragmento de configuración que te da la consola de OCI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shortcut: paste the configuration snippet the OCI console gives you"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Atrás": {
       "localizations": {
         "en": {
@@ -337,6 +359,17 @@
           }
         }
       }
+    },
+    "Autor original: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original author: %@"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Ayuda": {
       "localizations": {
@@ -571,6 +604,17 @@
         }
       }
     },
+    "Clave RSA válida · huella %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valid RSA key · fingerprint %@"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Clave privada": {
       "localizations": {
         "en": {
@@ -580,6 +624,17 @@
           }
         }
       }
+    },
+    "Clave privada de API": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API private key"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Clave privada de la instancia": {
       "localizations": {
@@ -821,6 +876,17 @@
         }
       }
     },
+    "Contraseña de la clave": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key passphrase"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Copiar SSH del Bastion": {
       "localizations": {
         "en": {
@@ -841,6 +907,17 @@
         }
       }
     },
+    "Credenciales": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credentials"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Creo una clave por sesión, la guardo solo para ti y la borro al caducar.": {
       "localizations": {
         "en": {
@@ -851,6 +928,28 @@
         }
       }
     },
+    "Cuenta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "Cuenta %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account %@"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Cuenta OCI": {
       "localizations": {
         "en": {
@@ -860,6 +959,17 @@
           }
         }
       }
+    },
+    "Código original en GitHub": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original code on GitHub"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "DER truncado.": {
       "localizations": {
@@ -1061,15 +1171,16 @@
         }
       }
     },
-    "El SSH anterior (PID %d) sigue vivo; no abro otro hasta que termine.": {
+    "El SSH anterior (PID %@) sigue vivo; no abro otro hasta que termine.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The previous SSH (PID %d) is still running; I won’t open another until it exits."
+            "value": "The previous SSH (PID %@) is still running; I won’t open another until it exits."
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "El archivo contiene conexiones duplicadas o sin nombre.": {
       "localizations": {
@@ -1121,21 +1232,33 @@
         }
       }
     },
-    "El puerto local %lld lo está usando otro proceso (PID %d). Libéralo o elige otro.": {
+    "El puerto local %@ lo está usando otro proceso (PID %@). Libéralo o elige otro.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Local port %lld is in use by another process (PID %d). Free it or pick another one."
+            "value": "Local port %@ is in use by another process (PID %@). Free it or pick another one."
           }
         },
         "es": {
           "stringUnit": {
             "state": "new",
-            "value": "El puerto local %1$lld lo está usando otro proceso (PID %2$d). Libéralo o elige otro."
+            "value": "El puerto local %1$@ lo está usando otro proceso (PID %2$@). Libéralo o elige otro."
           }
         }
-      }
+      },
+      "shouldTranslate": true
+    },
+    "El puerto local %@ lo está usando otro programa. Libéralo o elige otro.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local port %@ is in use by another program. Free it or pick another one."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "El túnel SSH terminó.": {
       "localizations": {
@@ -1156,6 +1279,17 @@
           }
         }
       }
+    },
+    "Elegir archivo .pem…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose .pem file…"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Elegir…": {
       "localizations": {
@@ -1277,6 +1411,17 @@
         }
       }
     },
+    "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This connection has no OCI account. Pick one with the assistant ✨."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Este Bastion no tiene SOCKS5 activado": {
       "localizations": {
         "en": {
@@ -1387,6 +1532,17 @@
         }
       }
     },
+    "Falta la clave privada de API: elige el archivo .pem o pégala.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The API private key is missing: choose the .pem file or paste it."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Falta la clave privada del servidor SSH.": {
       "localizations": {
         "en": {
@@ -1396,6 +1552,17 @@
           }
         }
       }
+    },
+    "Falta «%@».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is missing."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Faltan la IP y el usuario del servidor.": {
       "localizations": {
@@ -1520,6 +1687,17 @@
         }
       }
     },
+    "Huella (opcional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fingerprint (optional)"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "IP privada o DNS": {
       "localizations": {
         "en": {
@@ -1560,6 +1738,17 @@
         }
       }
     },
+    "Introducir mis datos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter my details"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "La **Bitácora 📜** de cada conexión cuenta paso a paso lo que ha pasado. Es lo primero que hay que mirar.": {
       "localizations": {
         "en": {
@@ -1589,6 +1778,17 @@
           }
         }
       }
+    },
+    "La calculo a partir de la clave": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I’ll work it out from the key"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "La clave de API %@ está cifrada. Añade pass_phrase al perfil OCI.": {
       "localizations": {
@@ -1699,6 +1899,23 @@
           }
         }
       }
+    },
+    "La huella escrita (%@) no corresponde a esta clave (%@). ¿Es la clave correcta?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The fingerprint you typed (%@) doesn’t match this key (%@). Is it the right key?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "La huella escrita (%1$@) no corresponde a esta clave (%2$@). ¿Es la clave correcta?"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "La sesión de OCI caduca a las %@": {
       "localizations": {
@@ -1813,6 +2030,17 @@
     "Manual": {
       "shouldTranslate": false
     },
+    "Mejoras: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Improvements: %@"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Mi servidor": {
       "localizations": {
         "en": {
@@ -1822,6 +2050,17 @@
           }
         }
       }
+    },
+    "Mi tenancy": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My tenancy"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Mis propias claves": {
       "localizations": {
@@ -1873,16 +2112,6 @@
         }
       }
     },
-    "Necesito un perfil de `~/.oci/config` con una clave de API.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I need a profile in `~/.oci/config` with an API key."
-          }
-        }
-      }
-    },
     "No consigo conectar con el Bastion por SSH.%@ (%@)": {
       "localizations": {
         "en": {
@@ -1928,6 +2157,17 @@
           }
         }
       }
+    },
+    "No encuentro la clave de API de esta cuenta en el Llavero. Vuelve a añadirla con el asistente ✨.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can’t find this account’s API key in the Keychain. Add it again with the assistant ✨."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "No encuentro un puerto local libre.": {
       "localizations": {
@@ -1998,6 +2238,17 @@
           }
         }
       }
+    },
+    "No se pudo guardar la clave en el Llavero (%d).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t save the key to the Keychain (%d)."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "No se pudo guardar la configuración: %@": {
       "localizations": {
@@ -2138,6 +2389,17 @@
         }
       }
     },
+    "OCID de la tenancy": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenancy OCID"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "OCID del Bastion": {
       "localizations": {
         "en": {
@@ -2147,6 +2409,17 @@
           }
         }
       }
+    },
+    "OCID del usuario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User OCID"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Ocultar": {
       "localizations": {
@@ -2450,6 +2723,17 @@
           }
         }
       }
+    },
+    "Rellenar los campos ✨": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill in the fields ✨"
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Renombrar conexión": {
       "localizations": {
@@ -2796,6 +3080,23 @@
         }
       }
     },
+    "Tenancy …%@ · %@ · huella %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenancy …%@ · %@ · fingerprint %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Tenancy …%1$@ · %2$@ · huella %3$@"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Terminal": {
       "shouldTranslate": false
     },
@@ -2905,15 +3206,16 @@
         }
       }
     },
-    "Túnel listo en localhost:%lld 🎉": {
+    "Túnel listo en localhost:%@ 🎉": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tunnel ready on localhost:%lld 🎉"
+            "value": "Tunnel ready on localhost:%@ 🎉"
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "Túneles a puertos": {
       "localizations": {
@@ -3061,6 +3363,17 @@
         }
       }
     },
+    "Usar ~/.oci/config": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use ~/.oci/config"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "Uso mis propias claves": {
       "localizations": {
         "en": {
@@ -3080,6 +3393,17 @@
           }
         }
       }
+    },
+    "Uso un perfil de `~/.oci/config` con su clave de API.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I use a profile from `~/.oci/config` with its API key."
+          }
+        }
+      },
+      "shouldTranslate": true
     },
     "Usuario": {
       "localizations": {
@@ -3184,6 +3508,9 @@
         }
       }
     },
+    "eu-madrid-1": {
+      "shouldTranslate": false
+    },
     "falta el bloque BEGIN/END del PEM.": {
       "localizations": {
         "en": {
@@ -3194,18 +3521,19 @@
         }
       }
     },
-    "falta el script de iTerm2 en la aplicación.": {
+    "iTerm2": {
+      "shouldTranslate": false
+    },
+    "la clave pegada": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "the iTerm2 script is missing from the app."
+            "value": "the pasted key"
           }
         }
-      }
-    },
-    "iTerm2": {
-      "shouldTranslate": false
+      },
+      "shouldTranslate": true
     },
     "la región": {
       "localizations": {
@@ -3227,6 +3555,17 @@
         }
       }
     },
+    "macOS no deja a OCI Bastion controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS won’t let OCI Bastion control the terminal. Turn it on in System Settings › Privacy & Security › Automation."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "no se pudo descifrar con pass_phrase.": {
       "localizations": {
         "en": {
@@ -3236,6 +3575,45 @@
           }
         }
       }
+    },
+    "no se pudo obtener la clave pública.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "couldn’t get the public key."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "no se pudo preparar el AppleScript.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "couldn’t prepare the AppleScript."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "o pégala aquí abajo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "or paste it below"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "ocid1.tenancy.oc1..aaaa…": {
+      "shouldTranslate": false
+    },
+    "ocid1.user.oc1..aaaa…": {
+      "shouldTranslate": false
     },
     "región del perfil": {
       "localizations": {
@@ -3559,6 +3937,9 @@
         }
       }
     },
+    "☁️ %@": {
+      "shouldTranslate": false
+    },
     "♻️ %@: reutilizo una sesión que ya existía": {
       "localizations": {
         "en": {
@@ -3605,21 +3986,33 @@
         }
       }
     },
-    "🎉 %@: túnel listo en 127.0.0.1:%lld": {
+    "➕ Nueva cuenta…": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🎉 %@: tunnel ready on 127.0.0.1:%lld"
+            "value": "➕ New account…"
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
+    "🎉 %@: túnel listo en 127.0.0.1:%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎉 %@: tunnel ready on 127.0.0.1:%@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "new",
-            "value": "🎉 %1$@: túnel listo en 127.0.0.1:%2$lld"
+            "value": "🎉 %1$@: túnel listo en 127.0.0.1:%2$@"
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "🏯": {
       "shouldTranslate": false
@@ -3682,6 +4075,17 @@
         }
       }
     },
+    "🔐 La clave privada se guarda cifrada en tu Llavero de macOS, solo para esta app.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🔐 The private key is stored encrypted in your macOS Keychain, for this app only."
+          }
+        }
+      },
+      "shouldTranslate": true
+    },
     "🖥️ Abriendo SSH a %@": {
       "localizations": {
         "en": {
@@ -3722,37 +4126,39 @@
         }
       }
     },
-    "🚇 Túnel %@ → 127.0.0.1:%lld": {
+    "🚇 Túnel %@ → 127.0.0.1:%@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🚇 Tunnel %@ → 127.0.0.1:%lld"
+            "value": "🚇 Tunnel %@ → 127.0.0.1:%@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "new",
-            "value": "🚇 Túnel %1$@ → 127.0.0.1:%2$lld"
+            "value": "🚇 Túnel %1$@ → 127.0.0.1:%2$@"
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
-    "🚇 Túnel %@: localhost:%lld → %@:%lld": {
+    "🚇 Túnel %@: localhost:%@ → %@:%@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🚇 Tunnel %@: localhost:%lld → %@:%lld"
+            "value": "🚇 Tunnel %@: localhost:%@ → %@:%@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "new",
-            "value": "🚇 Túnel %1$@: localhost:%2$lld → %3$@:%4$lld"
+            "value": "🚇 Túnel %1$@: localhost:%2$@ → %3$@:%4$@"
           }
         }
-      }
+      },
+      "shouldTranslate": true
     },
     "🚇 Túnel a un puerto": {
       "localizations": {

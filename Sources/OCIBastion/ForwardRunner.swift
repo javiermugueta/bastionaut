@@ -192,7 +192,7 @@ final class ForwardRunner {
         case .portForward:
             if let localPort { port = localPort }
             else if fixedPort, let preferredPort { port = preferredPort }
-            else if let preferredPort, await OwnedTunnelRecord.listenerPID(port: preferredPort) == nil { port = preferredPort }
+            else if let preferredPort, OwnedTunnelRecord.isPortFree(preferredPort) { port = preferredPort }
             else if let free = OwnedTunnelRecord.freeLocalPort() { port = free }
             else { throw BastionError.message(String(localized: "No encuentro un puerto local libre.")) }
         }
@@ -251,7 +251,9 @@ final class ForwardRunner {
 
     private func startForward(_ lease: SessionLease, context: RunnerContext, port: Int) async throws {
         state = .working(String(localized: "Abriendo el túnel 🚇"))
-        if let pid = await OwnedTunnelRecord.listenerPID(port: port) { throw BastionError.portInUse(port: port, pid: pid) }
+        if !OwnedTunnelRecord.isPortFree(port) {
+            throw BastionError.portInUse(port: port, pid: await OwnedTunnelRecord.describeListener(port: port))
+        }
         let forward: BastionForward
         switch target {
         case .dynamic: forward = .socks(localPort: port)
@@ -285,7 +287,7 @@ final class ForwardRunner {
         bastionCommand = try? SSHCommands.bastion(target: lease.sshTarget, privateKeyPath: lease.key.privateKeyPath,
                                                   forward: forward, proxy: context.proxy)
         state = .connected
-        onLog(String(localized: "🎉 \(label): túnel listo en 127.0.0.1:\(port)"))
+        onLog(String(localized: "🎉 \(label): túnel listo en 127.0.0.1:\(String(port))"))
     }
 
     static let listenTimeoutMessage = "SSH no abrió el puerto local a tiempo."
@@ -300,10 +302,8 @@ final class ForwardRunner {
         for _ in 0..<120 {
             try Task.checkCancellation()
             guard process.isRunning else { throw BastionError.fromSSH(Self.stderr(of: process)) }
-            if let pid = await OwnedTunnelRecord.listenerPID(port: port) {
-                if pid == process.processIdentifier { return }
-                throw BastionError.portInUse(port: port, pid: pid)
-            }
+            // Comprobamos antes de lanzar ssh que el puerto estaba libre: si ahora escucha, es nuestro ssh.
+            if OwnedTunnelRecord.isListening(port) { return }
             try await Task.sleep(nanoseconds: 250_000_000)
         }
         throw BastionError.sshExited(Self.listenTimeoutMessage)

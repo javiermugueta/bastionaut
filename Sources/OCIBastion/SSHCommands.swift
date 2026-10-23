@@ -87,6 +87,10 @@ enum SSHCommands {
             "-o", "StrictHostKeyChecking=accept-new",
             "-o", "SetEnv=OCIBASTION_TUNNEL_ID=\(token.uuidString)"
         ]
+        if AppEdition.isAppStore {
+            // En sandbox no se puede escribir ~/.ssh/known_hosts: usamos uno dentro del contenedor.
+            arguments += ["-F", "/dev/null", "-o", "UserKnownHostsFile=\(Settings.fileURL.deletingLastPathComponent().appendingPathComponent("known_hosts").path)"]
+        }
         if let proxy { arguments += ["-o", "ProxyCommand=/usr/bin/nc -X connect -x \(proxy.address) %h %p"] }
         arguments.append(target)
         return arguments
@@ -111,27 +115,43 @@ enum SSHCommands {
     }
 }
 
+/// Abre el comando en Terminal o iTerm2 con AppleScript, dentro del proceso de la app
+/// (así vale el permiso de Automatización de la propia app, también en sandbox).
+@MainActor
 enum TerminalLauncher {
     static func open(command: String, in app: TerminalApp) async throws {
-        let arguments: [String]
+        var error: NSDictionary?
+        guard let script = NSAppleScript(source: source(command: command, app: app)) else {
+            throw BastionError.terminal(String(localized: "no se pudo preparar el AppleScript."))
+        }
+        script.executeAndReturnError(&error)
+        if let error {
+            let number = error[NSAppleScript.errorNumber] as? Int ?? 0
+            let message = error[NSAppleScript.errorMessage] as? String ?? ""
+            if number == -1743 {
+                throw BastionError.terminal(String(localized: "macOS no deja a OCI Bastion controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización."))
+            }
+            throw BastionError.terminal(message.isEmpty ? "AppleScript \(number)" : message)
+        }
+    }
+
+    nonisolated static func source(command: String, app: TerminalApp) -> String {
+        let escaped = command.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         switch app {
         case .terminal:
-            let script = """
-            on run argv
-                tell application "Terminal"
-                    activate
-                    do script (item 1 of argv)
-                end tell
-            end run
+            return """
+            tell application id "com.apple.Terminal"
+                activate
+                do script "\(escaped)"
+            end tell
             """
-            arguments = ["-e", script, command]
         case .iterm:
-            guard let script = Bundle.main.url(forResource: "LaunchITerm", withExtension: "applescript") else {
-                throw BastionError.terminal(String(localized: "falta el script de iTerm2 en la aplicación."))
-            }
-            arguments = [script.path, command]
+            return """
+            tell application id "com.googlecode.iterm2"
+                activate
+                create window with default profile command "\(escaped)"
+            end tell
+            """
         }
-        let result = try await CommandRunner.run("/usr/bin/osascript", arguments)
-        guard result.status == 0 else { throw BastionError.terminal(result.error.trimmingCharacters(in: .whitespacesAndNewlines)) }
     }
 }
