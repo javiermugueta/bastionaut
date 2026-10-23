@@ -431,6 +431,7 @@ struct WizardView: View {
                                        (candidate.region, "Región")] where value.trimmingCharacters(in: .whitespaces).isEmpty {
                     throw BastionError.message(String(localized: "Falta «\(String(localized: String.LocalizationValue(field)))»."))
                 }
+                candidate.region = try InputCheck.region(candidate.region)
                 guard !pem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                     throw BastionError.message(String(localized: "Falta la clave privada de API: elige el archivo .pem o pégala."))
                 }

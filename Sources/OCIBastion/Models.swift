@@ -327,6 +327,15 @@ enum InputCheck {
         guard (1...65535).contains(value) else { throw BastionError.message(String(localized: "El puerto debe estar entre 1 y 65535.")) }
     }
 
+    /// Identificador de región de OCI: minúsculas, cifras y guiones (eu-madrid-1, us-gov-ashburn-1…).
+    static func region(_ value: String) throws -> String {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.range(of: #"^[a-z]{2,}(-[a-z0-9]+)+$"#, options: .regularExpression) != nil, trimmed.count <= 40 else {
+            throw BastionError.message(String(localized: "La región «\(trimmed)» no es válida. Tiene que ser algo como eu-madrid-1."))
+        }
+        return trimmed
+    }
+
     static func isIPAddress(_ value: String) -> Bool {
         var v4 = in_addr()
         var v6 = in6_addr()

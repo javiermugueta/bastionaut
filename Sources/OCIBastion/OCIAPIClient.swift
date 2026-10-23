@@ -98,34 +98,69 @@ enum OCIRealm {
         "\(service).\(region).oci.\(domain(for: region))"
     }
 
-    /// Destino representativo de la API (para elegir proxy).
-    static func apiURL(region: String) -> URL { URL(string: "https://" + host("bastion", region: region))! }
+    /// URL https de un host de OCI, validando la región (una mal escrita da error, no un cierre).
+    static func url(host: String) throws -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        guard let url = components.url, url.host == host else {
+            throw BastionError.message(String(localized: "URL de OCI no válida: \(host)"))
+        }
+        return url
+    }
 
     /// Host SSH de las sesiones del Bastion (para elegir proxy).
-    static func sshURL(region: String) -> URL { URL(string: "https://host." + host("bastion", region: region))! }
+    static func sshURL(region: String) throws -> URL {
+        try url(host: "host." + host("bastion", region: InputCheck.region(region)))
+    }
 }
 
 /// Cliente REST mínimo de OCI: Identity, Search y Bastion.
 struct OCIAPIClient {
+    /// Proxy para la URL real de cada petición (un PAC puede enviar Identity, Search y Bastion por caminos distintos).
+    typealias ProxyResolution = (URL) async throws -> ProxyEndpoint?
+
     let profile: OCIProfile
     let region: String
     private let signer: OCIRequestSigner
-    private let session: URLSession
+    private let proxyFor: ProxyResolution
+    private let sessions: SessionPool
 
     static func make(profile: OCIProfile, region: String? = nil, proxy: ProxyEndpoint?) async throws -> OCIAPIClient {
+        try await make(profile: profile, region: region, proxyFor: { _ in proxy })
+    }
+
+    static func make(profile: OCIProfile, region: String? = nil, proxyFor: @escaping ProxyResolution) async throws -> OCIAPIClient {
+        let chosen = try InputCheck.region(region.flatMap { $0.isEmpty ? nil : $0 } ?? profile.region)
+        _ = try InputCheck.region(profile.region)
         let signer = try await OCIRequestSigner.make(profile: profile)
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.timeoutIntervalForRequest = 30
-        if let proxy {
-            configuration.connectionProxyDictionary = [
-                kCFNetworkProxiesHTTPEnable: 1, kCFNetworkProxiesHTTPProxy: proxy.host, kCFNetworkProxiesHTTPPort: proxy.port,
-                kCFNetworkProxiesHTTPSEnable: 1, kCFNetworkProxiesHTTPSProxy: proxy.host, kCFNetworkProxiesHTTPSPort: proxy.port
-            ]
-        } else {
-            configuration.connectionProxyDictionary = [:]
+        return OCIAPIClient(profile: profile, region: chosen, signer: signer, proxyFor: proxyFor, sessions: SessionPool())
+    }
+
+    /// Una `URLSession` por proxy (la configuración de proxy es de la sesión, no de la petición).
+    final class SessionPool {
+        private var sessions: [String: URLSession] = [:]
+        private let lock = NSLock()
+
+        func session(for proxy: ProxyEndpoint?) -> URLSession {
+            lock.lock()
+            defer { lock.unlock() }
+            let key = proxy?.address ?? "direct"
+            if let existing = sessions[key] { return existing }
+            let configuration = URLSessionConfiguration.ephemeral
+            configuration.timeoutIntervalForRequest = 30
+            if let proxy {
+                configuration.connectionProxyDictionary = [
+                    kCFNetworkProxiesHTTPEnable: 1, kCFNetworkProxiesHTTPProxy: proxy.host, kCFNetworkProxiesHTTPPort: proxy.port,
+                    kCFNetworkProxiesHTTPSEnable: 1, kCFNetworkProxiesHTTPSProxy: proxy.host, kCFNetworkProxiesHTTPSPort: proxy.port
+                ]
+            } else {
+                configuration.connectionProxyDictionary = [:]
+            }
+            let session = URLSession(configuration: configuration)
+            sessions[key] = session
+            return session
         }
-        let chosen = region.flatMap { $0.isEmpty ? nil : $0 } ?? profile.region
-        return OCIAPIClient(profile: profile, region: chosen, signer: signer, session: URLSession(configuration: configuration))
     }
 
     // MARK: Identity
@@ -266,6 +301,7 @@ struct OCIAPIClient {
             request.setValue("application/json", forHTTPHeaderField: "content-type")
         }
         try signer.sign(&request)
+        let session = sessions.session(for: try await proxyFor(url))
         let data: Data
         let response: URLResponse
         do { (data, response) = try await session.data(for: request) }

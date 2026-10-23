@@ -107,8 +107,39 @@ enum ProxyResolver {
         return try? ProxyEndpoint(host: host, port: port)
     }
 
+    /// Scripts PAC descargados: un minuto, y se olvidan al cambiar la red.
+    final class ScriptCache {
+        private var entries: [URL: (date: Date, script: String)] = [:]
+        private let lock = NSLock()
+
+        func script(for url: URL, maxAge: TimeInterval = 60) -> String? {
+            lock.lock(); defer { lock.unlock() }
+            guard let entry = entries[url], Date().timeIntervalSince(entry.date) < maxAge else { return nil }
+            return entry.script
+        }
+
+        func store(_ script: String, for url: URL) {
+            lock.lock(); defer { lock.unlock() }
+            entries[url] = (Date(), script)
+        }
+
+        func clear() {
+            lock.lock(); defer { lock.unlock() }
+            entries.removeAll()
+        }
+    }
+
+    static let scriptCache = ScriptCache()
+
     /// Descarga un script PAC/WPAD de la URL configurada en el sistema, sin proxy y con límites de tiempo y tamaño.
     private static func downloadScript(_ url: URL) async -> String? {
+        if let cached = scriptCache.script(for: url) { return cached }
+        guard let script = await fetchScript(url) else { return nil }
+        scriptCache.store(script, for: url)
+        return script
+    }
+
+    private static func fetchScript(_ url: URL) async -> String? {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.connectionProxyDictionary = [:]
         configuration.timeoutIntervalForRequest = 5

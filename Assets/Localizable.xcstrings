@@ -1202,8 +1202,7 @@
             "value": "The file has an out-of-range value in “%@”."
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "El asistente consulta el Bastion y te propone el modo adecuado. Puedes cambiarlo en **Ajustes ⚙️**.": {
       "localizations": {
@@ -1970,6 +1969,16 @@
         }
       }
     },
+    "La región «%@» no es válida. Tiene que ser algo como eu-madrid-1.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region “%@” isn’t valid. It should look like eu-madrid-1."
+          }
+        }
+      }
+    },
     "La sesión de OCI caduca a las %@": {
       "localizations": {
         "en": {
@@ -2503,8 +2512,7 @@
             "value": "System PAC"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Para el modo SOCKS5, **FQDN y SOCKS5** activado en el Bastion. El modo reenvío de puerto no lo necesita.": {
       "localizations": {
@@ -3339,6 +3347,16 @@
         }
       }
     },
+    "URL de OCI no válida: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid OCI URL: %@"
+          }
+        }
+      }
+    },
     "URL de OCI no válida: %@%@": {
       "localizations": {
         "en": {
@@ -3543,8 +3561,7 @@
             "value": "WPAD (enabled in macOS)"
           }
         }
-      },
-      "shouldTranslate": true
+      }
     },
     "Ya existe una conexión llamada «%@».": {
       "localizations": {

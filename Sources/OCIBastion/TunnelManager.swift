@@ -469,6 +469,7 @@ final class TunnelManager {
     /// Wi-Fi, VPN o ajustes de red distintos: el proxy y el cliente de OCI se vuelven a calcular.
     func networkChanged() {
         proxyCache.removeAll()
+        ProxyResolver.scriptCache.clear()
         contextCache = nil
     }
 
@@ -495,9 +496,15 @@ final class TunnelManager {
     /// Cliente de API para una configuración (también la del asistente, que aún no está guardada).
     func client(for value: Settings, profile override: OCIProfile? = nil) async throws -> OCIAPIClient {
         let profile = try override ?? ociProfile(for: value)
-        let region = value.region.flatMap { $0.isEmpty ? nil : $0 } ?? profile.region
-        let proxy = try await resolvedProxy(for: value, destination: OCIRealm.apiURL(region: region))
-        return try await OCIAPIClient.make(profile: profile, region: region, proxy: proxy)
+        return try await OCIAPIClient.make(profile: profile, region: value.region, proxyFor: proxyResolver(for: value))
+    }
+
+    /// El cliente de OCI pide el proxy para la URL real de cada llamada (Identity, Search, Bastion…).
+    private func proxyResolver(for value: Settings) -> OCIAPIClient.ProxyResolution {
+        { [weak self] url in
+            guard let self else { return nil }
+            return try await self.resolvedProxy(for: value, destination: url)
+        }
     }
 
     /// Lo costoso de obtener: el cliente de OCI (ligado al proxy de la API) y los datos del Bastion.
@@ -506,10 +513,10 @@ final class TunnelManager {
         let bastion: BastionDetails
     }
 
-    /// Cuenta, región, Bastion y el proxy de la API ya resuelto: si cambia la red y con ella el proxy, cambia la clave.
-    nonisolated static func sharedContextKey(for snapshot: Settings, apiProxy: ProxyEndpoint?) -> String {
+    /// Cuenta, región, Bastion y ajustes de proxy. El proxy concreto lo resuelve el cliente en cada petición.
+    nonisolated static func sharedContextKey(for snapshot: Settings) -> String {
         [snapshot.accountID?.uuidString ?? "", snapshot.region ?? "", snapshot.bastionID,
-         apiProxy?.address ?? "direct"].joined(separator: "|")
+         snapshot.effectiveProxyMode.rawValue, snapshot.proxyHost, String(snapshot.proxyPort)].joined(separator: "|")
     }
 
     /// Contexto de una conexión. El proxy se resuelve de nuevo cada vez (al conectar y en cada reconexión),
@@ -519,17 +526,19 @@ final class TunnelManager {
         guard let account = snapshot.account ?? accounts.first(where: { $0.id == snapshot.accountID }) else {
             throw BastionError.message(String(localized: "Esta conexión no tiene cuenta de OCI. Elige una con el asistente ✨."))
         }
-        let region = snapshot.region.flatMap { $0.isEmpty ? nil : $0 } ?? account.region
-        let apiProxy = try await resolvedProxy(for: snapshot, destination: OCIRealm.apiURL(region: region), fresh: true)
+        let region = try InputCheck.region(snapshot.region.flatMap { $0.isEmpty ? nil : $0 } ?? account.region)
+        // Cada conexión y reconexión vuelve a resolver los proxies (la red puede haber cambiado).
+        proxyCache.removeAll()
         let sshProxy = try await resolvedProxy(for: snapshot, destination: OCIRealm.sshURL(region: region), fresh: true)
-        let key = Self.sharedContextKey(for: snapshot, apiProxy: apiProxy)
+        let key = Self.sharedContextKey(for: snapshot)
         let shared: SharedContext
         if let contextCache, contextCache.key == key {
             do { shared = try await contextCache.task.value } catch { self.contextCache = nil; throw error }
         } else {
             let task = Task { @MainActor in
                 // La clave del Llavero solo se lee cuando hace falta un cliente nuevo.
-                let client = try await OCIAPIClient.make(profile: try ociProfile(for: snapshot), region: region, proxy: apiProxy)
+                let client = try await OCIAPIClient.make(profile: try ociProfile(for: snapshot), region: region,
+                                                         proxyFor: proxyResolver(for: snapshot))
                 let bastion = try await client.getBastion(id: snapshot.bastionID)
                 bastionDetails = bastion
                 return SharedContext(client: client, bastion: bastion)
@@ -543,8 +552,8 @@ final class TunnelManager {
     var hasCachedSharedContext: Bool { contextCache != nil }
 
     /// Solo para tests: deja preparado lo costoso sin llamar a OCI.
-    func primeSharedContext(_ shared: SharedContext, for snapshot: Settings, apiProxy: ProxyEndpoint? = nil) {
-        contextCache = (Self.sharedContextKey(for: snapshot, apiProxy: apiProxy), Task { shared })
+    func primeSharedContext(_ shared: SharedContext, for snapshot: Settings) {
+        contextCache = (Self.sharedContextKey(for: snapshot), Task { shared })
     }
 
     private func validate(_ value: Settings) throws {

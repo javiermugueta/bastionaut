@@ -75,7 +75,7 @@ final class ReviewFixesTests: XCTestCase {
         changed.keyMode = .custom
         changed.renewMarginMinutes = 10
         changed.socksPort = 3333
-        XCTAssertEqual(TunnelManager.sharedContextKey(for: first, apiProxy: nil), TunnelManager.sharedContextKey(for: changed, apiProxy: nil))
+        XCTAssertEqual(TunnelManager.sharedContextKey(for: first), TunnelManager.sharedContextKey(for: changed))
         let context = try await manager.context(for: changed)
         XCTAssertEqual(context.settings.ttlSeconds, 3600)
         XCTAssertEqual(context.settings.effectiveKeyMode, .custom)
@@ -88,11 +88,6 @@ final class ReviewFixesTests: XCTestCase {
         var settings = Settings()
         settings.accountID = UUID()
         settings.bastionID = "b"
-        let proxy = try ProxyEndpoint(host: "proxy.corp", port: 3128)
-        XCTAssertNotEqual(TunnelManager.sharedContextKey(for: settings, apiProxy: nil),
-                          TunnelManager.sharedContextKey(for: settings, apiProxy: proxy),
-                          "Si la red cambia el proxy de la API, el cliente cacheado deja de valer")
-
         let pem = String(decoding: try runOpenSSL(["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048"]), as: UTF8.self)
         let account = OCIAccount(name: "A", tenancy: "t", user: "u", fingerprint: "f", region: "eu-madrid-1")
         let client = try await OCIAPIClient.make(profile: account.profile(privateKeyPEM: pem), proxy: nil)
@@ -101,6 +96,62 @@ final class ReviewFixesTests: XCTestCase {
         XCTAssertTrue(manager.hasCachedSharedContext)
         manager.networkChanged()
         XCTAssertFalse(manager.hasCachedSharedContext)
+    }
+
+    // MARK: 5. Región mal escrita
+
+    func testRegionValidation() throws {
+        for good in ["eu-madrid-1", "us-gov-ashburn-1", "me-dubai-1", "sa-saopaulo-1"] {
+            XCTAssertEqual(try InputCheck.region(" \(good) "), good)
+        }
+        for bad in ["[", "eu-madrid-1:bad", "", "EU-MADRID-1", "eu madrid 1", "eu-madrid-1/x", "-eu-1", "a-1"] {
+            XCTAssertThrowsError(try InputCheck.region(bad), bad)
+        }
+        XCTAssertThrowsError(try OCIRealm.sshURL(region: "["))
+        XCTAssertEqual(try OCIRealm.sshURL(region: "eu-madrid-1").host, "host.bastion.eu-madrid-1.oci.oraclecloud.com")
+    }
+
+    func testClientRejectsBadRegionInsteadOfCrashing() async throws {
+        let pem = String(decoding: try runOpenSSL(["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048"]), as: UTF8.self)
+        let account = OCIAccount(name: "A", tenancy: "t", user: "u", fingerprint: "f", region: "eu-madrid-1:bad")
+        do {
+            _ = try await OCIAPIClient.make(profile: account.profile(privateKeyPEM: pem), proxy: nil)
+            XCTFail("Debería rechazar la región")
+        } catch {}
+    }
+
+    // MARK: 6. Proxy para la URL real de cada petición
+
+    private struct StopBeforeNetwork: Error {}
+
+    private actor HostLog {
+        var hosts: [String] = []
+        func add(_ host: String) { hosts.append(host) }
+    }
+
+    func testEachRequestAsksProxyForItsOwnHost() async throws {
+        let pem = String(decoding: try runOpenSSL(["genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048"]), as: UTF8.self)
+        let account = OCIAccount(name: "A", tenancy: "ocid1.tenancy.oc1..t", user: "u", fingerprint: "f", region: "eu-madrid-1")
+        let log = HostLog()
+        let client = try await OCIAPIClient.make(profile: account.profile(privateKeyPEM: pem), region: "eu-frankfurt-1") { url in
+            await log.add(url.host ?? "")
+            throw StopBeforeNetwork()
+        }
+        _ = try? await client.regionSubscriptions()
+        _ = try? await client.searchBastions()
+        _ = try? await client.getBastion(id: "ocid1.bastion.x")
+        let hosts = await log.hosts
+        XCTAssertEqual(hosts, ["identity.eu-madrid-1.oci.oraclecloud.com",
+                               "query.eu-frankfurt-1.oci.oraclecloud.com",
+                               "bastion.eu-frankfurt-1.oci.oraclecloud.com"])
+    }
+
+    func testPACCacheIsClearedOnNetworkChange() {
+        let url = URL(string: "http://pac.corp/proxy.pac")!
+        ProxyResolver.scriptCache.store("function FindProxyForURL(u,h){return \"DIRECT\";}", for: url)
+        XCTAssertNotNil(ProxyResolver.scriptCache.script(for: url))
+        ProxyResolver.scriptCache.clear()
+        XCTAssertNil(ProxyResolver.scriptCache.script(for: url))
     }
 
     // MARK: 4b. Migración de huellas
