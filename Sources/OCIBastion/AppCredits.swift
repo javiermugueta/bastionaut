@@ -15,6 +15,7 @@ enum AppCredits {
         var link = body
         link[.link] = originalRepository
         credits.append(NSAttributedString(string: String(localized: "Código original en GitHub"), attributes: link))
+        credits.append(NSAttributedString(string: "\n\n" + String(localized: "Terminal integrado: SwiftTerm, © Miguel de Icaza (licencia MIT)"), attributes: body))
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         credits.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: credits.length))

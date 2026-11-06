@@ -101,11 +101,26 @@ final class AccountAndSandboxTests: XCTestCase {
         XCTAssertTrue(arguments.contains { $0.hasPrefix("UserKnownHostsFile=\"") && $0.hasSuffix("/OCIBastion/known_hosts\"") })
     }
 
-    func testAppleScriptEscaping() {
+    func testEntitlementsHaveNoAppleEvents() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        for name in ["OCIBastion.entitlements", "OCIBastion.appstore.entitlements"] {
+            let text = try String(contentsOf: root.appendingPathComponent("Assets/\(name)"), encoding: .utf8)
+            XCTAssertFalse(text.contains("apple-events"), name)
+        }
+    }
+
+    func testEmbeddedTerminalRunsCommandThroughShell() throws {
         let command = #"ssh -i '/a b/"k"' -o 'ProxyCommand=nc \x' user@host"#
-        let source = TerminalLauncher.source(command: command, app: .terminal)
-        XCTAssertTrue(source.contains(#"do script "ssh -i '/a b/\"k\"' -o 'ProxyCommand=nc \\x' user@host""#))
-        XCTAssertTrue(TerminalLauncher.source(command: "ls", app: .iterm).contains(#"create window with default profile command "ls""#))
+        let launch = TerminalWindows.launch(command: command)
+        XCTAssertEqual(launch.executable, "/bin/sh")
+        XCTAssertEqual(launch.args, ["-c", command])
+        // El shell recibe exactamente el comando que se copia al portapapeles.
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: launch.executable)
+        process.arguments = ["-c", "printf '%s|' " + "'/a b/\"k\"' 'ProxyCommand=nc \\x'"]
+        let pipe = Pipe(); process.standardOutput = pipe
+        try process.run(); process.waitUntilExit()
+        XCTAssertEqual(String(decoding: pipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self), #"/a b/"k"|ProxyCommand=nc \x|"#)
     }
 
     func testPortProbes() throws {

@@ -71,7 +71,7 @@ TÚNELES QUE SE CUIDAN SOLOS
 • Si la red se cae, reconecta sola.
 
 UN CLIC PARA ENTRAR
-• «Abrir SSH» abre Terminal o iTerm2 ya conectados.
+• «Abrir SSH» abre un terminal integrado ya conectado.
 • Túneles a puertos: lleva una base de datos, una consola web o lo que necesites a un puerto de tu Mac.
 • Copia cualquier comando para usarlo donde quieras.
 
@@ -140,7 +140,7 @@ TUNNELS THAT LOOK AFTER THEMSELVES
 • Reconnects on its own if the network drops.
 
 ONE CLICK TO GET IN
-• "Open SSH" opens Terminal or iTerm2 already connected.
+• "Open SSH" opens a built-in terminal already connected.
 • Port tunnels: bring a database, a web console or whatever you need to a port on your Mac.
 • Copy any command to use it wherever you like.
 
@@ -192,9 +192,9 @@ All real OCI calls go directly to the official OCI REST API with the user's own 
 
 Entitlements:
 - com.apple.security.network.client: OCI REST API and SSH connections to the Bastion.
-- com.apple.security.network.server: the bundled system ssh process listens only on 127.0.0.1 for the user's port forwards (SOCKS5 / local forwarding).
+- com.apple.security.network.server: the app's core feature is SSH port forwarding through an OCI Bastion. The app launches /usr/bin/ssh as a child process (which inherits the sandbox) with -D (SOCKS5) or -L (local forwarding); that ssh process binds a listening socket on 127.0.0.1:<port> so the user's own tools (database client, browser, ssh) can connect to localhost and reach a private server in their cloud network. The app itself also binds 127.0.0.1 briefly to check that the chosen local port is free. Without this entitlement the tunnels cannot listen and the app cannot work. Where to see it: Connect 🚀 creates the SOCKS5 tunnel on localhost (default port 1080); a server's "Open tunnel" forwards e.g. localhost:5432.
 - com.apple.security.files.user-selected.read-write: importing the user's API key (.pem) and SSH keys, and exporting/importing connection settings, always through the open/save panels.
-- com.apple.security.temporary-exception.apple-events (com.apple.Terminal, com.googlecode.iterm2): the core feature "Open SSH" opens a new Terminal or iTerm2 window running the ssh command for the selected server. This is done with a single "do script" / "create window" Apple Event when the user clicks the button; the user can also just copy the command instead.
+- No Apple Events / temporary exceptions: "Open SSH" now opens a terminal window inside the app itself.
 ```
 
 **Información de contacto para la revisión**: nombre, teléfono y email de contacto (los pide App Store Connect).

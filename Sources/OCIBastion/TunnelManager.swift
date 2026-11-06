@@ -686,15 +686,15 @@ final class TunnelManager {
         if isDemo {
             let name = destination.name.isEmpty ? destination.host : destination.name
             return demoOpen(id: destination.id, host: destination.host, port: destination.port, name: destination.name, localPort: nil) { _ in
-                String(localized: "🎮 Demo: aquí se abriría Terminal ya conectado a «\(name)»")
+                String(localized: "🎮 Demo: aquí se abriría el terminal ya conectado a «\(name)»")
             }
         }
-        let terminal = settings.effectiveTerminalApp
         Task {
             do {
                 let route = try await route(id: destination.id, host: destination.host, port: destination.port,
                                             name: destination.name, connectIfNeeded: true)
-                try await TerminalLauncher.open(command: SSHCommands.destination(destination, route: route), in: terminal)
+                TerminalWindows.shared.open(command: try SSHCommands.destination(destination, route: route),
+                                            title: destination.name.isEmpty ? destination.host : destination.name)
                 record(String(localized: "🖥️ Abriendo SSH a \(destination.name.isEmpty ? destination.host : destination.name)"))
             } catch { report(error) }
         }
@@ -709,12 +709,12 @@ final class TunnelManager {
             }
         }
         if tunnel.isDirect { return openDirectTunnel(tunnel) }
-        let terminal = settings.effectiveTerminalApp
         Task {
             do {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
                                             name: tunnel.name, connectIfNeeded: true)
-                try await TerminalLauncher.open(command: SSHCommands.localTunnel(tunnel, route: route), in: terminal)
+                TerminalWindows.shared.open(command: try SSHCommands.localTunnel(tunnel, route: route),
+                                            title: "🚇 " + (tunnel.name.isEmpty ? tunnel.host : tunnel.name))
                 record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(String(tunnel.localPort))"))
             } catch { report(error) }
         }

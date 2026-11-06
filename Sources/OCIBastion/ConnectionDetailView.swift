@@ -362,15 +362,10 @@ struct SettingsCard: View {
                             FileField(placeholder: "Clave privada", path: $manager.settings.privateKeyPath, importsKey: true)
                         }
                     }
-                    Section("Red y terminal") {
+                    Section("Red") {
                         ProxyPicker(settings: $manager.settings)
                         if !manager.proxyDescription.isEmpty {
                             Text(manager.proxyDescription).font(.caption).foregroundStyle(.secondary)
-                        }
-                        Picker("Terminal", selection: Binding(get: { manager.settings.effectiveTerminalApp },
-                                                              set: { manager.settings.terminalApp = $0 })) {
-                            Text("Terminal").tag(TerminalApp.terminal)
-                            Text("iTerm2").tag(TerminalApp.iterm)
                         }
                     }
                 }
@@ -380,7 +375,6 @@ struct SettingsCard: View {
                 .onChange(of: manager.settings.keyMode) { manager.save() }
                 .onChange(of: manager.settings.ttlSeconds) { manager.save() }
                 .onChange(of: manager.settings.renewMarginMinutes) { manager.save() }
-                .onChange(of: manager.settings.terminalApp) { manager.save() }
                 .onChange(of: manager.settings.proxyMode) { manager.save() }
                 if manager.isRunning {
                     Text("Desconecta para cambiar los ajustes.").font(.caption).foregroundStyle(.secondary)

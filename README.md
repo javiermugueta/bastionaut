@@ -15,7 +15,7 @@ Original author: [Israel Gutiérrez](https://github.com/israelgoracle/OCIBastion
 - **Guided setup**: paste the configuration snippet from the OCI console, and the assistant finds your bastions across the whole tenancy (OCI Search).
 - **Two session types**: SOCKS5 (one tunnel for every server; needs "FQDN and SOCKS5" on the bastion) or managed port forwarding (one session per server; works with any bastion).
 - **Self-maintaining tunnels**: reuses active sessions, renews them before they expire (30 min ahead by default) and reconnects if the network drops.
-- **One click**: "Open SSH" opens Terminal or iTerm2 already connected; port tunnels bring a database or web console to `localhost`, straight through the bastion or via an SSH server.
+- **One click**: "Open SSH" opens a built-in terminal already connected; port tunnels bring a database or web console to `localhost`, straight through the bastion or via an SSH server.
 - **Explains failures**: detects when your IP isn't on the bastion's allowed list, gives a tip for every error and keeps an activity log.
 - **Secure**: talks straight to the OCI REST API (no OCI CLI or Python), keeps the API key in the macOS Keychain, uses temporary per-session bastion keys and runs in the macOS sandbox. No data is collected.
 - **Demo mode**: *Help › Try with sample data* lets anyone (including App Review) try the app without an OCI account.
@@ -27,7 +27,7 @@ The in-app help (**Help › Bastionaut Help**, ⌘?) covers them in detail under
 
 **On your Mac**
 - macOS 14 Sonoma or later.
-- Terminal or iTerm2. The first time, allow the **Automation** permission so the app can open SSH sessions.
+- Nothing else for SSH: the app has its own terminal (based on [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm), MIT) and uses the `ssh` that ships with macOS.
 - Optional corporate HTTP CONNECT proxy: taken from `http_proxy`/`https_proxy` or from macOS network settings (explicit proxy, PAC file, or WPAD only if "Auto proxy discovery" is enabled there), or set by hand.
 
 **OCI account**
@@ -114,7 +114,7 @@ Autor original: [Israel Gutiérrez](https://github.com/israelgoracle/OCIBastion_
 - **Configuración guiada**: pega el fragmento de configuración de la consola de OCI y el asistente busca tus bastiones en toda la tenancy (OCI Search).
 - **Dos tipos de sesión**: SOCKS5 (un túnel para todos los servidores; requiere «FQDN y SOCKS5» en el Bastion) o reenvío de puerto gestionado (una sesión por servidor; funciona con cualquier Bastion).
 - **Túneles que se cuidan solos**: reutiliza sesiones activas, las renueva antes de que caduquen (30 min antes por defecto) y reconecta si cae la red.
-- **Un clic**: «Abrir SSH» abre Terminal o iTerm2 ya conectado; los túneles a puertos llevan una base de datos o una consola web a `localhost`, directamente por el Bastion o a través de un servidor SSH.
+- **Un clic**: «Abrir SSH» abre un terminal integrado ya conectado; los túneles a puertos llevan una base de datos o una consola web a `localhost`, directamente por el Bastion o a través de un servidor SSH.
 - **Explica los fallos**: detecta si tu IP no está en la lista de permitidas del Bastion, da un consejo para cada error y lleva una bitácora.
 - **Seguro**: habla directamente con la API REST de OCI (sin OCI CLI ni Python), guarda la clave de API en el Llavero, usa claves temporales por sesión para el Bastion y funciona dentro del sandbox de macOS. No recopila datos.
 - **Modo demostración**: *Ayuda › Probar con datos de ejemplo* permite probar la app sin cuenta de OCI (también al equipo de revisión de Apple).
@@ -126,7 +126,7 @@ La ayuda de la app (**Ayuda › Ayuda de Bastionaut**, ⌘?) los explica con det
 
 **En tu Mac**
 - macOS 14 Sonoma o posterior.
-- Terminal o iTerm2. La primera vez, acepta el permiso de **Automatización** para que la app abra las sesiones SSH.
+- Nada más para SSH: la app trae su propio terminal (basado en [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm), MIT) y usa el `ssh` que incluye macOS.
 - Proxy corporativo HTTP CONNECT opcional: se toma de `http_proxy`/`https_proxy` o de los ajustes de red de macOS (proxy explícito, archivo PAC, o WPAD solo si «Detección automática de proxy» está activada allí), o se indica a mano.
 
 **Cuenta de OCI**

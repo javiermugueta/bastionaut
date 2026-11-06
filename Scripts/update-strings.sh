@@ -13,5 +13,8 @@ swift build --disable-sandbox --scratch-path .build/l10n --cache-path .build/cac
   -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$PWD/$out" >/dev/null
 catalog=Assets/Localizable.xcstrings
 [[ -f $catalog ]] || echo '{"sourceLanguage":"es","strings":{},"version":"1.0"}' > "$catalog"
-xcrun xcstringstool sync "$catalog" --stringsdata "$out"/*.stringsdata
+# Solo los textos de la app (no los de dependencias como SwiftTerm).
+own=()
+for f in Sources/OCIBastion/*.swift; do [[ -f "$out/${f:t:r}.stringsdata" ]] && own+=("$out/${f:t:r}.stringsdata"); done
+xcrun xcstringstool sync "$catalog" --stringsdata "${own[@]}"
 echo "$(xcrun xcstringstool print "$catalog" | grep -c . ) textos en $catalog"

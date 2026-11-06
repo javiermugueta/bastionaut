@@ -89,7 +89,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
         case .targets:
             return [
                 .heading("Servidores 🖥️"),
-                .text("Un servidor es una máquina a la que entras por SSH. **Abrir SSH** abre una ventana de Terminal o iTerm2 ya conectada. **Copiar** te deja el comando en el portapapeles por si quieres usarlo en otro sitio."),
+                .text("Un servidor es una máquina a la que entras por SSH. **Abrir SSH** abre una ventana de terminal de la propia app, ya conectada. **Copiar** te deja el comando en el portapapeles por si quieres usarlo en otro sitio."),
                 .heading("Túneles a puertos 🚇"),
                 .text("Un túnel lleva un puerto remoto (una base de datos, una consola web…) a un puerto de tu Mac. Después conectas tu herramienta a `localhost` y ese puerto."),
                 .bullets([
@@ -131,7 +131,7 @@ enum HelpTopic: String, CaseIterable, Identifiable {
                 .bullets([
                     "**macOS 14 Sonoma** o posterior.",
                     "**No hace falta el OCI CLI** ni Python: la app habla directamente con la API de OCI.",
-                    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que Bastionaut controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).",
+                    "Nada más para las sesiones SSH: Bastionaut trae su propio terminal y usa el `ssh` de macOS.",
                     "Si estás detrás de un **proxy corporativo**, la app lo detecta sola; también puedes indicarlo a mano en Ajustes.",
                 ]),
                 .heading("Tu cuenta de OCI ☁️"),

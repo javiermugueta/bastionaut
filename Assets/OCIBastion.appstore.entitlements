@@ -14,14 +14,6 @@
 	<!-- Importar claves (.pem, claves SSH) y exportar/importar configuraciones elegidas por el usuario. -->
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
-	<!-- Abrir las sesiones SSH en Terminal o iTerm2. -->
-	<key>com.apple.security.automation.apple-events</key>
-	<true/>
-	<key>com.apple.security.temporary-exception.apple-events</key>
-	<array>
-		<string>com.apple.Terminal</string>
-		<string>com.googlecode.iterm2</string>
-	</array>
 	<key>com.apple.application-identifier</key>
 	<string>L3TQ5FZ3YF.com.javiermugueta.ocibastion</string>
 	<key>com.apple.developer.team-identifier</key>

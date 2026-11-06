@@ -55,6 +55,7 @@ cp Assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 xcrun xcstringstool compile Assets/Localizable.xcstrings --output-directory "$app/Contents/Resources" --language es --language en
 # Al pasar a sandbox, macOS mueve los datos de versiones anteriores al contenedor de la app.
 cp Assets/container-migration.plist "$app/Contents/Resources/container-migration.plist"
+cp -R Assets/Licenses "$app/Contents/Resources/Licenses"
 for lang in es en; do mkdir -p "$app/Contents/Resources/$lang.lproj"; cp "Assets/$lang.lproj/InfoPlist.strings" "$app/Contents/Resources/$lang.lproj/"; done
 python3 -I Scripts/source-strings.py Assets/Localizable.xcstrings "$app/Contents/Resources/es.lproj/Localizable.strings" >/dev/null
 cat > "$app/Contents/Info.plist" <<PLIST
@@ -76,7 +77,6 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <key>NSHighResolutionCapable</key><true/>
 <key>NSHumanReadableCopyright</key><string>Original: Israel Gutiérrez · Improvements: Javier Mugueta · © $(date +%Y)</string>
 <key>ITSAppUsesNonExemptEncryption</key><false/>
-<key>NSAppleEventsUsageDescription</key><string>Bastionaut opens SSH connections in the terminal app you choose.</string>
 </dict></plist>
 PLIST
 

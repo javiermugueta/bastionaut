@@ -844,6 +844,16 @@
         }
       }
     },
+    "Conexión cerrada (código %@). Ya puedes cerrar esta ventana.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection closed (code %@). You can close this window now."
+          }
+        }
+      }
+    },
     "Conexión directa": {
       "localizations": {
         "en": {
@@ -2152,6 +2162,16 @@
         }
       }
     },
+    "Nada más para las sesiones SSH: Bastionaut trae su propio terminal y usa el `ssh` de macOS.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing else for SSH sessions: Bastionaut has its own built-in terminal and uses the macOS `ssh`."
+          }
+        }
+      }
+    },
     "Necesitas tu clave de API de OCI, un Bastion que llegue a tus máquinas y tu IP en su lista de permitidas. El detalle está en **Requisitos**.": {
       "localizations": {
         "en": {
@@ -2767,12 +2787,12 @@
         }
       }
     },
-    "Red y terminal": {
+    "Red": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Network and terminal"
+            "value": "Network"
           }
         }
       }
@@ -3198,15 +3218,12 @@
         }
       }
     },
-    "Terminal": {
-      "shouldTranslate": false
-    },
-    "Terminal (incluido en macOS) o **iTerm2** para las sesiones SSH. La primera vez, macOS te pedirá permiso para que Bastionaut controle la terminal: acéptalo (o actívalo en Ajustes del Sistema › Privacidad y seguridad › **Automatización**).": {
+    "Terminal integrado: SwiftTerm, © Miguel de Icaza (licencia MIT)": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Terminal (built into macOS) or **iTerm2** for SSH sessions. The first time, macOS asks for permission for Bastionaut to control the terminal: allow it (or turn it on in System Settings › Privacy & Security › **Automation**)."
+            "value": "Built-in terminal: SwiftTerm, © Miguel de Icaza (MIT license)"
           }
         }
       }
@@ -3383,12 +3400,12 @@
         }
       }
     },
-    "Un servidor es una máquina a la que entras por SSH. **Abrir SSH** abre una ventana de Terminal o iTerm2 ya conectada. **Copiar** te deja el comando en el portapapeles por si quieres usarlo en otro sitio.": {
+    "Un servidor es una máquina a la que entras por SSH. **Abrir SSH** abre una ventana de terminal de la propia app, ya conectada. **Copiar** te deja el comando en el portapapeles por si quieres usarlo en otro sitio.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A server is a machine you SSH into. **Open SSH** opens a Terminal or iTerm2 window that’s already connected. **Copy** puts the command on the clipboard in case you want to use it elsewhere."
+            "value": "A server is a machine you SSH into. **Open SSH** opens one of the app’s own terminal windows, already connected. **Copy** puts the command on the clipboard in case you want to use it elsewhere."
           }
         }
       }
@@ -3573,6 +3590,16 @@
         }
       }
     },
+    "cerrada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closed"
+          }
+        }
+      }
+    },
     "el PEM no contiene base64 válido.": {
       "localizations": {
         "en": {
@@ -3606,9 +3633,6 @@
         }
       }
     },
-    "iTerm2": {
-      "shouldTranslate": false
-    },
     "la clave pegada": {
       "localizations": {
         "en": {
@@ -3639,16 +3663,6 @@
         }
       }
     },
-    "macOS no deja a Bastionaut controlar la terminal. Actívalo en Ajustes del Sistema › Privacidad y seguridad › Automatización.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS won’t let Bastionaut control the terminal. Turn it on in System Settings › Privacy & Security › Automation."
-          }
-        }
-      }
-    },
     "no se pudo descifrar con pass_phrase.": {
       "localizations": {
         "en": {
@@ -3665,16 +3679,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "couldn’t get the public key."
-          }
-        }
-      }
-    },
-    "no se pudo preparar el AppleScript.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "couldn’t prepare the AppleScript."
           }
         }
       }
@@ -4153,12 +4157,12 @@
     "🎮": {
       "shouldTranslate": false
     },
-    "🎮 Demo: aquí se abriría Terminal ya conectado a «%@»": {
+    "🎮 Demo: aquí se abriría el terminal ya conectado a «%@»": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🎮 Demo: Terminal would open here, already connected to “%@”"
+            "value": "🎮 Demo: this would open the terminal already connected to “%@”"
           }
         }
       }
