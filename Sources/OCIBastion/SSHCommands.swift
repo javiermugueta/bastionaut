@@ -44,20 +44,26 @@ enum SSHCommands {
         }
     }
 
-    static func destination(_ destination: Destination, route: SSHRoute) throws -> String {
+    /// Opciones para el terminal integrado: en sandbox no se puede leer ~/.ssh, así que usa el known_hosts de la app.
+    /// (El comando para copiar no las lleva: en Terminal se usan tu ~/.ssh/config y tu known_hosts.)
+    static func embeddedOptions(_ embedded: Bool) -> [String] {
+        embedded ? ["-F", "/dev/null", "-o", quote(knownHostsOption(knownHostsURL.path))] : []
+    }
+
+    static func destination(_ destination: Destination, route: SSHRoute, embedded: Bool = false) throws -> String {
         let host = try InputCheck.sshToken(destination.host, name: "Host")
         let user = try InputCheck.sshToken(destination.user, name: "Usuario")
         let key = try InputCheck.singleLine(destination.privateKeyPath, name: "Clave privada de la instancia")
         try InputCheck.port(destination.port)
         let routed = try routeOptions(route, host: host, port: destination.port)
-        return (["ssh", "-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
+        return (["ssh"] + embeddedOptions(embedded) + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
             "-o", quote("ServerAliveInterval=30"),
             "-o", quote("ServerAliveCountMax=3"),
             "-p", String(routed.port), quote("\(user)@\(routed.host)")
         ]).joined(separator: " ")
     }
 
-    static func localTunnel(_ tunnel: LocalTunnel, route: SSHRoute) throws -> String {
+    static func localTunnel(_ tunnel: LocalTunnel, route: SSHRoute, embedded: Bool = false) throws -> String {
         let host = try InputCheck.sshToken(tunnel.host, name: "Host SSH")
         let user = try InputCheck.sshToken(tunnel.user, name: "Usuario SSH")
         let remoteHost = try InputCheck.sshToken(tunnel.remoteHost, name: "Host destino del túnel")
@@ -67,7 +73,7 @@ enum SSHCommands {
         try InputCheck.port(tunnel.remotePort)
         let routed = try routeOptions(route, host: host, port: tunnel.sshPort)
         let forwarding = "127.0.0.1:\(tunnel.localPort):\(remoteHost):\(tunnel.remotePort)"
-        return (["ssh", "-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
+        return (["ssh"] + embeddedOptions(embedded) + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
             "-o", quote("ExitOnForwardFailure=yes"),
             "-o", quote("ServerAliveInterval=30"),
             "-o", quote("ServerAliveCountMax=3"),

@@ -693,7 +693,7 @@ final class TunnelManager {
             do {
                 let route = try await route(id: destination.id, host: destination.host, port: destination.port,
                                             name: destination.name, connectIfNeeded: true)
-                TerminalWindows.shared.open(command: try SSHCommands.destination(destination, route: route),
+                TerminalWindows.shared.open(command: try SSHCommands.destination(destination, route: route, embedded: true),
                                             title: destination.name.isEmpty ? destination.host : destination.name)
                 record(String(localized: "🖥️ Abriendo SSH a \(destination.name.isEmpty ? destination.host : destination.name)"))
             } catch { report(error) }
@@ -713,7 +713,7 @@ final class TunnelManager {
             do {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
                                             name: tunnel.name, connectIfNeeded: true)
-                TerminalWindows.shared.open(command: try SSHCommands.localTunnel(tunnel, route: route),
+                TerminalWindows.shared.open(command: try SSHCommands.localTunnel(tunnel, route: route, embedded: true),
                                             title: "🚇 " + (tunnel.name.isEmpty ? tunnel.host : tunnel.name))
                 record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(String(tunnel.localPort))"))
             } catch { report(error) }

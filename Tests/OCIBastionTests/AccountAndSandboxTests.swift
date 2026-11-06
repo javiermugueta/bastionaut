@@ -94,6 +94,31 @@ final class AccountAndSandboxTests: XCTestCase {
         XCTAssertNil(settings.account)
     }
 
+    /// `ssh -G` resuelve la configuración sin conectar: comprueba lo que usará de verdad el terminal integrado.
+    func testEmbeddedSSHUsesAppKnownHosts() throws {
+        let key = FileManager.default.temporaryDirectory.appendingPathComponent("clave \(UUID().uuidString)")
+        try "x".write(to: key, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: key) }
+        let destination = Destination(name: "d", host: "10.0.0.5", privateKeyPath: key.path)
+        func resolved(_ command: String) throws -> String {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/sh")
+            process.arguments = ["-c", command.replacingOccurrences(of: "ssh ", with: "/usr/bin/ssh -G ", options: .anchored)]
+            let pipe = Pipe(); process.standardOutput = pipe; process.standardError = Pipe()
+            try process.run(); process.waitUntilExit()
+            return String(decoding: pipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+        }
+        let embedded = try resolved(SSHCommands.destination(destination, route: .jump(localPort: 2201), embedded: true))
+        // Un único archivo (la ruta lleva espacios) y la clave tal cual.
+        XCTAssertTrue(embedded.contains("userknownhostsfile \(SSHCommands.knownHostsURL.path)\n"), embedded)
+        XCTAssertTrue(embedded.contains("identityfile \(key.path)\n"), embedded)
+        XCTAssertFalse(try SSHCommands.destination(destination, route: .socks(port: 1080)).contains("UserKnownHostsFile"))
+        var tunnel = LocalTunnel()
+        tunnel.host = "10.0.0.6"; tunnel.user = "opc"; tunnel.remoteHost = "db"; tunnel.privateKeyPath = "/k"
+        tunnel.sshPort = 22; tunnel.localPort = 15432; tunnel.remotePort = 5432
+        XCTAssertTrue(try SSHCommands.localTunnel(tunnel, route: .socks(port: 1080), embedded: true).hasPrefix("ssh -F /dev/null -o "))
+    }
+
     func testBastionSSHUsesOwnKnownHosts() {
         let arguments = SSHCommands.bastionArguments(target: "a@b", privateKeyPath: "/k", forward: .socks(localPort: 2222),
                                                      proxy: nil, token: UUID())
