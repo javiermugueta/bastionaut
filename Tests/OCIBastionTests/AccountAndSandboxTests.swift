@@ -139,6 +139,18 @@ final class AccountAndSandboxTests: XCTestCase {
         }
     }
 
+    func testUnreadableKeyIsReportedBeforeConnecting() throws {
+        XCTAssertFalse(SSHKeys.isUnreadable(""))
+        XCTAssertTrue(SSHKeys.isUnreadable("/no/existe/exo.key"))
+        XCTAssertThrowsError(try SSHKeys.requireReadable("/no/existe/exo.key")) { error in
+            XCTAssertTrue((error as? BastionError)?.userMessage.contains("exo.key") == true)
+        }
+        let key = FileManager.default.temporaryDirectory.appendingPathComponent("k-\(UUID().uuidString)")
+        try "x".write(to: key, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: key) }
+        XCTAssertNoThrow(try SSHKeys.requireReadable(key.path))
+    }
+
     func testBastionSSHUsesOwnKnownHosts() {
         let arguments = SSHCommands.bastionArguments(target: "a@b", privateKeyPath: "/k", forward: .socks(localPort: 2222),
                                                      proxy: nil, token: UUID())

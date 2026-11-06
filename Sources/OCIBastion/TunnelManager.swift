@@ -689,6 +689,7 @@ final class TunnelManager {
                 String(localized: "🎮 Demo: aquí se abriría el terminal ya conectado a «\(name)»")
             }
         }
+        do { try SSHKeys.requireReadable(destination.privateKeyPath) } catch { return report(error) }
         Task {
             do {
                 let route = try await route(id: destination.id, host: destination.host, port: destination.port,
@@ -709,6 +710,7 @@ final class TunnelManager {
             }
         }
         if tunnel.isDirect { return openDirectTunnel(tunnel) }
+        do { try SSHKeys.requireReadable(tunnel.privateKeyPath) } catch { return report(error) }
         Task {
             do {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,

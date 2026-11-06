@@ -436,6 +436,30 @@ enum SSHKeys {
         return ["id_ed25519", "id_rsa", "id_ecdsa"].map { "\(home)/.ssh/\($0)" }
             .first { FileManager.default.fileExists(atPath: $0) } ?? ""
     }
+
+    /// Con sandbox la app solo lee sus propias copias de las claves: una ruta guardada antes (p. ej. ~/keys/x.key) falla.
+    static func isUnreadable(_ path: String) -> Bool {
+        !path.isEmpty && !FileManager.default.isReadableFile(atPath: (path as NSString).expandingTildeInPath)
+    }
+
+    static func requireReadable(_ path: String) throws {
+        guard isUnreadable(path) else { return }
+        let name = (path as NSString).lastPathComponent
+        throw BastionError.message(String(localized: "Bastionaut no puede leer la clave «\(name)»: macOS solo le deja abrir las claves que eliges desde la app. Edita el servidor o el túnel y vuelve a elegir la clave con «Elegir…»; la app guardará su propia copia."))
+    }
+}
+
+/// Aviso en los formularios cuando la clave elegida no se puede leer.
+struct UnreadableKeyNote: View {
+    let path: String
+
+    var body: some View {
+        if SSHKeys.isUnreadable(path) {
+            Label("La app no puede leer esta clave. Vuelve a elegirla con «Elegir…» para que guarde su propia copia.",
+                  systemImage: "exclamationmark.triangle.fill")
+                .font(.callout).foregroundStyle(.orange)
+        }
+    }
 }
 
 struct DestinationForm: View {
@@ -447,6 +471,7 @@ struct DestinationForm: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("🖥️ Servidor").font(.title2.weight(.bold))
             DestinationFields(destination: $destination)
+            UnreadableKeyNote(path: destination.privateKeyPath)
             HStack {
                 if destination.host.isEmpty || destination.user.isEmpty {
                     Label("Faltan la IP y el usuario del servidor.", systemImage: "info.circle")
@@ -531,7 +556,10 @@ struct TunnelForm: View {
                         TextField("Usuario", text: $tunnel.user)
                         PortField(title: "Puerto SSH", value: $tunnel.sshPort, prompt: "22")
                         LabeledContent("Clave privada") {
-                            FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
+                            VStack(alignment: .leading) {
+                                FileField(placeholder: "~/.ssh/id_rsa", path: $tunnel.privateKeyPath, directory: NSHomeDirectory() + "/.ssh", importsKey: true)
+                                UnreadableKeyNote(path: tunnel.privateKeyPath)
+                            }
                         }
                     }
                 } footer: {

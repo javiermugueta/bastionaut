@@ -444,6 +444,16 @@
         }
       }
     },
+    "Bastionaut no puede leer la clave «%@»: macOS solo le deja abrir las claves que eliges desde la app. Edita el servidor o el túnel y vuelve a elegir la clave con «Elegir…»; la app guardará su propia copia.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastionaut can’t read the key “%@”: macOS only lets it open keys you pick from within the app. Edit the server or tunnel and pick the key again with “Choose…”; the app will keep its own copy."
+          }
+        }
+      }
+    },
     "Bitácora": {
       "localizations": {
         "en": {
@@ -1819,6 +1829,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "The app talks **only** to the OCI API in your region and to the bastion. There’s no telemetry."
+          }
+        }
+      }
+    },
+    "La app no puede leer esta clave. Vuelve a elegirla con «Elegir…» para que guarde su propia copia.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app can’t read this key. Pick it again with “Choose…” so the app keeps its own copy."
           }
         }
       }
