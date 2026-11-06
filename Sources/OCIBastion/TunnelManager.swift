@@ -733,7 +733,8 @@ final class TunnelManager {
                 let route = try await route(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort,
                                             name: tunnel.name, connectIfNeeded: true)
                 TerminalWindows.shared.open(command: try SSHCommands.localTunnel(tunnel, route: route, embedded: true),
-                                            title: "🚇 " + (tunnel.name.isEmpty ? tunnel.host : tunnel.name))
+                                            title: "🚇 " + (tunnel.name.isEmpty ? tunnel.host : tunnel.name),
+                                            banner: String(localized: "🚇 Abriendo túnel localhost:\(String(tunnel.localPort)) → \(tunnel.remoteHost):\(String(tunnel.remotePort)) a través de \(tunnel.host)…"))
                 record(String(localized: "🚇 Túnel \(tunnel.name.isEmpty ? tunnel.host : tunnel.name) → 127.0.0.1:\(String(tunnel.localPort))"))
             } catch { report(error) }
         }

@@ -4091,6 +4091,22 @@
         }
       }
     },
+    "✅ Túnel listo: localhost:%@ → %@:%@. Deja esta ventana abierta; al cerrarla se cierra el túnel.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✅ Tunnel ready: localhost:%1$@ → %2$@:%3$@. Keep this window open; closing it closes the tunnel."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "✅ Túnel listo: localhost:%1$@ → %2$@:%3$@. Deja esta ventana abierta; al cerrarla se cierra el túnel."
+          }
+        }
+      }
+    },
     "✨ Conexión «%@» creada": {
       "localizations": {
         "en": {
@@ -4366,6 +4382,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "🚀 Connecting “Production”"
+          }
+        }
+      }
+    },
+    "🚇 Abriendo túnel localhost:%@ → %@:%@ a través de %@…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🚇 Opening tunnel localhost:%1$@ → %2$@:%3$@ through %4$@…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🚇 Abriendo túnel localhost:%1$@ → %2$@:%3$@ a través de %4$@…"
           }
         }
       }

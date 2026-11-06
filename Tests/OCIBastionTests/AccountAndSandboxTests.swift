@@ -117,7 +117,13 @@ final class AccountAndSandboxTests: XCTestCase {
         var tunnel = LocalTunnel()
         tunnel.host = "10.0.0.6"; tunnel.user = "opc"; tunnel.remoteHost = "db"; tunnel.privateKeyPath = "/k"
         tunnel.sshPort = 22; tunnel.localPort = 15432; tunnel.remotePort = 5432
-        XCTAssertTrue(try SSHCommands.localTunnel(tunnel, route: .socks(port: 1080), embedded: true).hasPrefix("ssh -F /dev/null -o "))
+        let tunnelCommand = try SSHCommands.localTunnel(tunnel, route: .socks(port: 1080), embedded: true)
+        XCTAssertTrue(tunnelCommand.hasPrefix("ssh -F /dev/null -o "))
+        let tunnelConfig = try resolved(tunnelCommand)
+        XCTAssertTrue(tunnelConfig.contains("permitlocalcommand yes"), tunnelConfig)
+        XCTAssertTrue(tunnelConfig.contains("localcommand echo '") && tunnelConfig.contains("localhost:15432"), tunnelConfig)
+        XCTAssertFalse(try SSHCommands.localTunnel(tunnel, route: .socks(port: 1080)).contains("LocalCommand"))
+        XCTAssertEqual(SSHCommands.safeEcho("it's 100%"), "it’s 100")
     }
 
     func testEmbeddedTerminalAsksThroughAppAskpass() throws {

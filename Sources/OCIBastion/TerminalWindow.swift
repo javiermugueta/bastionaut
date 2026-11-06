@@ -8,8 +8,8 @@ final class TerminalWindows {
     static let shared = TerminalWindows()
     private var controllers: [TerminalWindowController] = []
 
-    func open(command: String, title: String) {
-        let controller = TerminalWindowController(command: command, title: title) { [weak self] closed in
+    func open(command: String, title: String, banner: String? = nil) {
+        let controller = TerminalWindowController(command: command, title: title, banner: banner) { [weak self] closed in
             self?.controllers.removeAll { $0 === closed }
         }
         controllers.append(controller)
@@ -47,7 +47,7 @@ final class TerminalWindowController: NSWindowController, NSWindowDelegate, Loca
     private let onClose: (TerminalWindowController) -> Void
     private var finished = false
 
-    init(command: String, title: String, onClose: @escaping (TerminalWindowController) -> Void) {
+    init(command: String, title: String, banner: String?, onClose: @escaping (TerminalWindowController) -> Void) {
         self.baseTitle = title
         self.onClose = onClose
         terminal = LocalProcessTerminalView(frame: NSRect(x: 0, y: 0, width: 860, height: 520))
@@ -64,6 +64,7 @@ final class TerminalWindowController: NSWindowController, NSWindowDelegate, Loca
         window.delegate = self
         terminal.processDelegate = self
         terminal.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        if let banner { terminal.feed(text: "\u{1B}[2m\(banner)\u{1B}[0m\r\n") }
         let launch = TerminalWindows.launch(command: command)
         terminal.startProcess(executable: launch.executable, args: launch.args,
                               environment: TerminalWindows.environment())

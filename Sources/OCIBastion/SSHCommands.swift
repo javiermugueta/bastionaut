@@ -68,6 +68,15 @@ enum SSHCommands {
         ]).joined(separator: " ")
     }
 
+    static func tunnelReadyMessage(_ tunnel: LocalTunnel, remoteHost: String) -> String {
+        String(localized: "✅ Túnel listo: localhost:\(String(tunnel.localPort)) → \(remoteHost):\(String(tunnel.remotePort)). Deja esta ventana abierta; al cerrarla se cierra el túnel.")
+    }
+
+    /// Texto seguro dentro de `echo '…'` en LocalCommand: sin comillas simples ni % (ssh expande %h, %p…).
+    static func safeEcho(_ text: String) -> String {
+        text.replacingOccurrences(of: "'", with: "’").replacingOccurrences(of: "%", with: "")
+    }
+
     static func localTunnel(_ tunnel: LocalTunnel, route: SSHRoute, embedded: Bool = false) throws -> String {
         let host = try InputCheck.sshToken(tunnel.host, name: "Host SSH")
         let user = try InputCheck.sshToken(tunnel.user, name: "Usuario SSH")
@@ -78,7 +87,10 @@ enum SSHCommands {
         try InputCheck.port(tunnel.remotePort)
         let routed = try routeOptions(route, host: host, port: tunnel.sshPort)
         let forwarding = "127.0.0.1:\(tunnel.localPort):\(remoteHost):\(tunnel.remotePort)"
-        return (["ssh"] + embeddedOptions(embedded) + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
+        // En el terminal integrado, `ssh -N` no muestra nada: LocalCommand avisa cuando ya está conectado.
+        let ready = embedded ? ["-o", quote("PermitLocalCommand=yes"),
+                                "-o", quote("LocalCommand=echo '\(safeEcho(tunnelReadyMessage(tunnel, remoteHost: remoteHost)))'")] : []
+        return (["ssh"] + embeddedOptions(embedded) + ready + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
             "-o", quote("ExitOnForwardFailure=yes"),
             "-o", quote("ServerAliveInterval=30"),
             "-o", quote("ServerAliveCountMax=3"),
