@@ -47,8 +47,13 @@ enum SSHCommands {
     /// Opciones para el terminal integrado: en sandbox no se puede leer ~/.ssh, así que usa el known_hosts de la app.
     /// (El comando para copiar no las lleva: en Terminal se usan tu ~/.ssh/config y tu known_hosts.)
     static func embeddedOptions(_ embedded: Bool) -> [String] {
-        embedded ? ["-F", "/dev/null", "-o", quote(knownHostsOption(knownHostsURL.path))] : []
+        embedded ? ["-F", "/dev/null", "-o", quote(knownHostsOption(knownHostsURL.path))] + quietPQWarning.flatMap { ["-o", $0] } : []
     }
+
+    /// OpenSSH 10 avisa en cada conexión si el servidor no usa intercambio de claves post-cuántico (los de OCI aún no):
+    /// en la app no aporta nada que el usuario pueda arreglar. Solo se apaga ese aviso; los de cifrado débil siguen.
+    /// IgnoreUnknown va primero para que los ssh anteriores (macOS 14) no fallen con una opción que no conocen.
+    static let quietPQWarning = ["IgnoreUnknown=WarnWeakCrypto", "WarnWeakCrypto=no-pq-kex"]
 
     static func destination(_ destination: Destination, route: SSHRoute, embedded: Bool = false) throws -> String {
         let host = try InputCheck.sshToken(destination.host, name: "Host")
@@ -95,7 +100,7 @@ enum SSHCommands {
         ]
         // En sandbox no se puede leer ~/.ssh/config ni escribir ~/.ssh/known_hosts: usamos uno propio del contenedor.
         // Entre comillas: OpenSSH separa por espacios varios archivos en esta opción, y la ruta lleva «Application Support».
-        arguments += ["-F", "/dev/null", "-o", knownHostsOption(knownHostsURL.path)]
+        arguments += ["-F", "/dev/null", "-o", knownHostsOption(knownHostsURL.path)] + quietPQWarning.flatMap { ["-o", $0] }
         if let proxy { arguments += ["-o", "ProxyCommand=/usr/bin/nc -X connect -x \(proxy.address) %h %p"] }
         arguments.append(target)
         return arguments

@@ -111,6 +111,7 @@ final class AccountAndSandboxTests: XCTestCase {
         let embedded = try resolved(SSHCommands.destination(destination, route: .jump(localPort: 2201), embedded: true))
         // Un único archivo (la ruta lleva espacios) y la clave tal cual.
         XCTAssertTrue(embedded.contains("userknownhostsfile \(SSHCommands.knownHostsURL.path)\n"), embedded)
+        XCTAssertTrue(embedded.contains("warnweakcrypto no-pq-kex") || embedded.contains("warnweakcrypto no"), embedded)
         XCTAssertTrue(embedded.contains("identityfile \(key.path)\n"), embedded)
         XCTAssertFalse(try SSHCommands.destination(destination, route: .socks(port: 1080)).contains("UserKnownHostsFile"))
         var tunnel = LocalTunnel()
