@@ -31,6 +31,7 @@ final class TunnelManager {
     @ObservationIgnored private var networkMonitor: NWPathMonitor?
     @ObservationIgnored private var startup: Task<Void, Never>?
     @ObservationIgnored private var toastTask: Task<Void, Never>?
+    @ObservationIgnored private var keyImportObserver: NSObjectProtocol?
     @ObservationIgnored private var lastPorts: [UUID: Int] = [:]
 
     /// `startServices: false` (tests) no cierra túneles antiguos ni limpia claves al arrancar.
@@ -45,6 +46,10 @@ final class TunnelManager {
             settings.selectedSavedConnectionID = nil
         }
         guard startServices else { return }
+        keyImportObserver = NotificationCenter.default.addObserver(forName: SSHKeyImport.didImport, object: nil, queue: .main) { [weak self] note in
+            guard let original = note.userInfo?["original"] as? String, let copy = note.userInfo?["copy"] as? String else { return }
+            MainActor.assumeIsolated { _ = self?.relinkImportedKey(original: original, copy: copy) }
+        }
         SSHCommands.migrateMisplacedKnownHosts()
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { [weak self] _ in
@@ -212,6 +217,18 @@ final class TunnelManager {
     }
 
     func runner(for id: UUID) -> ForwardRunner? { portRunners[id] }
+
+    /// Al elegir una clave, arregla los demás servidores y túneles que apuntaban al mismo archivo y no se podía leer.
+    @discardableResult
+    func relinkImportedKey(original: String, copy: String, isUnreadable: (String) -> Bool = SSHKeys.isUnreadable) -> Int {
+        guard !isDemo else { return 0 }
+        let count = settings.relinkKeys(from: original, to: copy, isUnreadable: isUnreadable)
+        guard count > 0 else { return 0 }
+        save()
+        let name = (original as NSString).lastPathComponent
+        record(String(localized: "🔑 Clave «\(name)» actualizada en todo lo que la usaba (\(count))"))
+        return count
+    }
 
     func record(_ message: String) {
         log.append(LogEntry(message: message))

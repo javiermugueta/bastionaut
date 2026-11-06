@@ -342,3 +342,44 @@ enum InputCheck {
         return inet_pton(AF_INET, value, &v4) == 1 || inet_pton(AF_INET6, value, &v6) == 1
     }
 }
+
+extension Settings {
+    /// Cambia por `copy` las rutas de clave iguales a `original` que la app ya no puede leer
+    /// (configuraciones importadas o guardadas antes del sandbox), en todas las conexiones. Devuelve cuántas cambió.
+    /// Las rutas que se pueden leer o que apuntan a otra clave no se tocan.
+    mutating func relinkKeys(from original: String, to copy: String,
+                             isUnreadable: (String) -> Bool = SSHKeys.isUnreadable) -> Int {
+        let target = Self.normalizedKeyPath(original)
+        var count = 0
+        func fix(_ path: inout String) {
+            guard !path.isEmpty, path != copy, Self.normalizedKeyPath(path) == target, isUnreadable(path) else { return }
+            path = copy
+            count += 1
+        }
+        func fix(_ destinations: inout [Destination], _ tunnels: inout [LocalTunnel]?) {
+            for index in destinations.indices { fix(&destinations[index].privateKeyPath) }
+            if var records = tunnels {
+                for index in records.indices { fix(&records[index].privateKeyPath) }
+                tunnels = records
+            }
+        }
+        fix(&privateKeyPath)
+        fix(&publicKeyPath)
+        fix(&destinations, &tunnels)
+        if var saved = savedConnections {
+            for index in saved.indices {
+                var snapshot = saved[index].snapshot
+                fix(&snapshot.privateKeyPath)
+                fix(&snapshot.publicKeyPath)
+                fix(&snapshot.destinations, &snapshot.tunnels)
+                saved[index].snapshot = snapshot
+            }
+            savedConnections = saved
+        }
+        return count
+    }
+
+    static func normalizedKeyPath(_ path: String) -> String {
+        ((path as NSString).expandingTildeInPath as NSString).standardizingPath
+    }
+}

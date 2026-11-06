@@ -179,7 +179,11 @@ struct FileField: View {
                 Button("Elegir…") {
                     guard let value = pickFile(directory: directory) else { return }
                     if importsKey {
-                        do { path = try SSHKeyImport.importCopy(of: URL(fileURLWithPath: value)); problem = nil }
+                        do {
+                            path = try SSHKeyImport.importCopy(of: URL(fileURLWithPath: value)); problem = nil
+                            NotificationCenter.default.post(name: SSHKeyImport.didImport, object: nil,
+                                                            userInfo: ["original": value, "copy": path])
+                        }
                         catch { problem = error.localizedDescription }
                     } else {
                         path = value
@@ -196,11 +200,22 @@ enum SSHKeyImport {
         Settings.fileURL.deletingLastPathComponent().appendingPathComponent("keys/imported", isDirectory: true)
     }
 
+    /// Aviso de clave importada (`original`, `copy`): sirve para arreglar las demás rutas que apuntaban al mismo archivo.
+    static let didImport = Notification.Name("Bastionaut.SSHKeyImport.didImport")
+
     /// Copia la clave a la carpeta privada de la app (0600) y devuelve la ruta de la copia.
-    static func importCopy(of source: URL) throws -> String {
+    /// Si ya hay una copia con el mismo contenido, se reutiliza en vez de duplicarla.
+    static func importCopy(of source: URL, into directory: URL = directory) throws -> String {
         let manager = FileManager.default
         try manager.createDirectory(at: directory, withIntermediateDirectories: true,
                                     attributes: [.posixPermissions: 0o700])
+        let contents = try Data(contentsOf: source)
+        let existing = (try? manager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+        if let same = existing.sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+            .first(where: { $0.lastPathComponent.hasSuffix("-" + source.lastPathComponent) && (try? Data(contentsOf: $0)) == contents })
+            ?? existing.first(where: { (try? Data(contentsOf: $0)) == contents }) {
+            return directory.appendingPathComponent(same.lastPathComponent).path
+        }
         let target = directory.appendingPathComponent(UUID().uuidString.prefix(8) + "-" + source.lastPathComponent)
         try manager.copyItem(at: source, to: target)
         try manager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: target.path)

@@ -4294,6 +4294,22 @@
         }
       }
     },
+    "🔑 Clave «%@» actualizada en todo lo que la usaba (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🔑 Key “%1$@” updated everywhere it was used (%2$lld)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🔑 Clave «%1$@» actualizada en todo lo que la usaba (%2$lld)"
+          }
+        }
+      }
+    },
     "🖥️ Abriendo SSH a %@": {
       "localizations": {
         "en": {
