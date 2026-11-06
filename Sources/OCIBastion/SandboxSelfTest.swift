@@ -22,11 +22,20 @@ enum SandboxSelfTest {
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             func typeText(_ text: String) {
                 for character in text {
-                    let chars = character == "\t" ? "\t" : String(character)
-                    let code: UInt16 = character == "\t" ? 48 : (character == "\r" ? 36 : (character == "@" ? 19 : 0))
+                    var chars = character == "\t" ? "\t" : String(character)
+                    var code: UInt16 = character == "\t" ? 48 : (character == "\r" ? 36 : (character == "@" ? 19 : 0))
                     // «@» como en el teclado español: ⌥2.
-                    let flags: NSEvent.ModifierFlags = character == "@" ? [.option] : []
-                    let ignoring = character == "@" ? "2" : chars
+                    var flags: NSEvent.ModifierFlags = character == "@" ? [.option] : []
+                    var ignoring = character == "@" ? "2" : chars
+                    // ↑ ↓ ← → como flechas de verdad y ⌫ como la tecla de borrar.
+                    let arrows: [Character: (Int, UInt16)] = ["↑": (NSUpArrowFunctionKey, 126), "↓": (NSDownArrowFunctionKey, 125),
+                                                              "←": (NSLeftArrowFunctionKey, 123), "→": (NSRightArrowFunctionKey, 124)]
+                    if let (key, keyCode) = arrows[character] {
+                        chars = String(Character(UnicodeScalar(UInt32(key))!)); ignoring = chars; code = keyCode
+                        flags = [.numericPad, .function]
+                    } else if character == "⌫" {
+                        chars = "\u{7F}"; ignoring = chars; code = 51
+                    }
                     for type in [NSEvent.EventType.keyDown, .keyUp] {
                         if let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: flags, timestamp: 0,
                                                         windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
@@ -55,12 +64,19 @@ enum SandboxSelfTest {
                     let set = tcsetattr(fd, TCSANOW, &tio)
                     print("  raw desde la app: get=\(got) set=\(set) errno=\(errno)")
                 }
+                if let width = ProcessInfo.processInfo.environment["OCIB_FOCUS_RESIZE"].flatMap(Double.init),
+                   let window = NSApp.windows.first(where: { $0.title.contains("prueba") }) {
+                    window.setContentSize(NSSize(width: width, height: 400))
+                    print("  tras redimensionar: ventana=\(window.frame.size) vista=\(window.contentView?.frame.size ?? .zero) cols=\((window.contentView as? LocalProcessTerminalView)?.getTerminal().cols ?? 0)")
+                    try? await Task.sleep(nanoseconds: 800_000_000)
+                }
                 for part in (ProcessInfo.processInfo.environment["OCIB_FOCUS_KEYS"] ?? "abc\t\r").split(separator: "¦") {
                     typeText(String(part))
                     try? await Task.sleep(nanoseconds: 800_000_000)
                 }
                 try? await Task.sleep(nanoseconds: 700_000_000)
-                if let view = NSApp.keyWindow?.contentView as? LocalProcessTerminalView ?? (NSApp.keyWindow?.firstResponder as? LocalProcessTerminalView) {
+                print("  key tras teclear: \(NSApp.keyWindow?.title ?? "nil")")
+                if let view = NSApp.windows.first(where: { $0.title.contains("prueba") })?.contentView as? LocalProcessTerminalView {
                     let text = String(decoding: view.getTerminal().getBufferAsData(), as: UTF8.self)
                     print("  pantalla: \(text.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\n", with: " | "))")
                 }

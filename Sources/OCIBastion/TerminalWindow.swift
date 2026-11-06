@@ -147,12 +147,25 @@ final class SandboxTerminalView: LocalProcessTerminalView {
         if !bytes.isEmpty { super.dataReceived(slice: bytes[...]) }
     }
 
-    /// SwiftTerm arranca el proceso con el PTY a 0×0 y solo lo actualiza en los cambios de tamaño posteriores:
-    /// sin esto ssh pediría al servidor 80×24 aunque la ventana sea más grande.
+    /// SwiftTerm arranca el proceso con el PTY a 0×0 y tampoco lo actualiza al redimensionar (en esta versión):
+    /// sin esto ssh pediría al servidor 80×24 y bash redibujaría mal las líneas al cambiar el ancho.
+    private var appliedSize: (cols: UInt16, rows: UInt16) = (0, 0)
+
     func syncWindowSize() {
         var size = getWindowSize()
-        guard process.childfd >= 0, size.ws_col > 0, size.ws_row > 0 else { return }
-        _ = PseudoTerminalHelpers.setWinSize(masterPtyDescriptor: process.childfd, windowSize: &size)
+        guard process != nil, process.childfd >= 0, size.ws_col > 0, size.ws_row > 0,
+              (size.ws_col, size.ws_row) != appliedSize else { return }
+        guard PseudoTerminalHelpers.setWinSize(masterPtyDescriptor: process.childfd, windowSize: &size) == 0 else { return }
+        appliedSize = (size.ws_col, size.ws_row)
+        // En sandbox el sistema no llega a mandar SIGWINCH al cambiar el tamaño del PTY (comprobado): lo manda la app
+        // al grupo de procesos del terminal (sh y el ssh que lanza), para que ssh avise al servidor.
+        let group = process.shellPid
+        if group > 0 { killpg(group, SIGWINCH) }
+    }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        syncWindowSize()
     }
 
     func setEcho(_ on: Bool) {
