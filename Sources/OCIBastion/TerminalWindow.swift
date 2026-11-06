@@ -25,8 +25,18 @@ final class TerminalWindows {
     }
 
     /// Argumentos con los que se lanza el comando: un shell no interactivo que ejecuta la línea de `ssh` ya escapada.
+    /// Antes deja en OCIB_TTY el dispositivo del PTY para el askpass (el sandbox no deja abrir /dev/tty).
     nonisolated static func launch(command: String) -> (executable: String, args: [String]) {
-        ("/bin/sh", ["-c", command])
+        ("/bin/sh", ["-c", "OCIB_TTY=$(tty); export OCIB_TTY; " + command])
+    }
+
+    /// Entorno del proceso: el de SwiftTerm más el askpass de la app, para que ssh pueda preguntar.
+    nonisolated static func environment(askpass: String? = Bundle.main.path(forResource: "askpass", ofType: "sh")) -> [String] {
+        var environment = Terminal.getEnvironmentVariables(termName: "xterm-256color")
+        if let askpass, FileManager.default.isExecutableFile(atPath: askpass) {
+            environment += ["SSH_ASKPASS=\(askpass)", "SSH_ASKPASS_REQUIRE=force"]
+        }
+        return environment
     }
 }
 
@@ -56,7 +66,7 @@ final class TerminalWindowController: NSWindowController, NSWindowDelegate, Loca
         terminal.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
         let launch = TerminalWindows.launch(command: command)
         terminal.startProcess(executable: launch.executable, args: launch.args,
-                              environment: Terminal.getEnvironmentVariables(termName: "xterm-256color"))
+                              environment: TerminalWindows.environment())
         window.makeFirstResponder(terminal)
     }
 

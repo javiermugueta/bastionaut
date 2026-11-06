@@ -119,6 +119,26 @@ final class AccountAndSandboxTests: XCTestCase {
         XCTAssertTrue(try SSHCommands.localTunnel(tunnel, route: .socks(port: 1080), embedded: true).hasPrefix("ssh -F /dev/null -o "))
     }
 
+    func testEmbeddedTerminalAsksThroughAppAskpass() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let askpass = root.appendingPathComponent("Assets/askpass.sh").path
+        XCTAssertTrue(FileManager.default.isExecutableFile(atPath: askpass))
+        let environment = TerminalWindows.environment(askpass: askpass)
+        XCTAssertTrue(environment.contains("SSH_ASKPASS=\(askpass)"))
+        XCTAssertTrue(environment.contains("SSH_ASKPASS_REQUIRE=force"))
+        XCTAssertFalse(TerminalWindows.environment(askpass: nil).contains { $0.hasPrefix("SSH_ASKPASS") })
+        // Sin un PTY válido en OCIB_TTY no responde nada (nunca cae en /dev/tty).
+        for tty in ["", "/dev/tty", "/etc/passwd"] {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: askpass)
+            process.arguments = ["Are you sure?"]
+            process.environment = ["OCIB_TTY": tty]
+            process.standardOutput = Pipe()
+            try process.run(); process.waitUntilExit()
+            XCTAssertEqual(process.terminationStatus, 1, tty)
+        }
+    }
+
     func testBastionSSHUsesOwnKnownHosts() {
         let arguments = SSHCommands.bastionArguments(target: "a@b", privateKeyPath: "/k", forward: .socks(localPort: 2222),
                                                      proxy: nil, token: UUID())
@@ -138,7 +158,7 @@ final class AccountAndSandboxTests: XCTestCase {
         let command = #"ssh -i '/a b/"k"' -o 'ProxyCommand=nc \x' user@host"#
         let launch = TerminalWindows.launch(command: command)
         XCTAssertEqual(launch.executable, "/bin/sh")
-        XCTAssertEqual(launch.args, ["-c", command])
+        XCTAssertEqual(launch.args, ["-c", "OCIB_TTY=$(tty); export OCIB_TTY; " + command])
         // El shell recibe exactamente el comando que se copia al portapapeles.
         let process = Process()
         process.executableURL = URL(fileURLWithPath: launch.executable)

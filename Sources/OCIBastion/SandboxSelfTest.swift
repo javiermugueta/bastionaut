@@ -46,8 +46,11 @@ enum SandboxSelfTest {
             view.processDelegate = probe
             let code: Int32? = await withCheckedContinuation { continuation in
                 probe.done = { continuation.resume(returning: $0) }
-                let launch = TerminalWindows.launch(command: "test -t 0 && /usr/bin/ssh -V")
-                view.startProcess(executable: launch.executable, args: launch.args)
+                let launch = TerminalWindows.launch(command: ProcessInfo.processInfo.environment["OCIB_PTY_CMD"] ?? "test -t 0 && /usr/bin/ssh -V")
+                view.startProcess(executable: launch.executable, args: launch.args, environment: TerminalWindows.environment())
+                if let answer = ProcessInfo.processInfo.environment["OCIB_PTY_ANSWER"] {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { view.send(txt: answer + "\r") }
+                }
             }
             report("terminal integrado (PTY + ssh)", code == 0, "código \(code.map(String.init) ?? "?")")
             let api = try? await URLSession.shared.data(from: URL(string: "https://identity.eu-madrid-1.oci.oraclecloud.com/20160918/regions")!)
