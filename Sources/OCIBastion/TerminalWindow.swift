@@ -65,6 +65,9 @@ final class TerminalWindowController: NSWindowController, NSWindowDelegate, Loca
         window.delegate = self
         terminal.processDelegate = self
         terminal.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        // Opción escribe caracteres (en el teclado español, ⌥2 es @, ⌥º es \…), como en Terminal de macOS;
+        // como Meta mandaría Esc+tecla y bash vería «(arg: 2)».
+        terminal.optionAsMetaKey = false
         if let banner { terminal.feed(text: "\u{1B}[2m\(banner)\u{1B}[0m\r\n") }
         let launch = TerminalWindows.launch(command: command)
         terminal.startProcess(executable: launch.executable, args: launch.args,

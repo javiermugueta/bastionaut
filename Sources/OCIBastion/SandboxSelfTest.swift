@@ -23,11 +23,14 @@ enum SandboxSelfTest {
             func typeText(_ text: String) {
                 for character in text {
                     let chars = character == "\t" ? "\t" : String(character)
-                    let code: UInt16 = character == "\t" ? 48 : (character == "\r" ? 36 : 0)
+                    let code: UInt16 = character == "\t" ? 48 : (character == "\r" ? 36 : (character == "@" ? 19 : 0))
+                    // «@» como en el teclado español: ⌥2.
+                    let flags: NSEvent.ModifierFlags = character == "@" ? [.option] : []
+                    let ignoring = character == "@" ? "2" : chars
                     for type in [NSEvent.EventType.keyDown, .keyUp] {
-                        if let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: [], timestamp: 0,
+                        if let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: flags, timestamp: 0,
                                                         windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
-                                                        characters: chars, charactersIgnoringModifiers: chars,
+                                                        characters: chars, charactersIgnoringModifiers: ignoring,
                                                         isARepeat: false, keyCode: code) {
                             NSApp.sendEvent(event)
                         }
