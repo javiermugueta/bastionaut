@@ -12,9 +12,10 @@ case "$1" in
   *assword*|*assphrase*|*PIN*|*passcode*) secret=1 ;;
 esac
 printf '%s ' "$1" > "$tty"
-[ -n "$secret" ] && stty -echo < "$tty"
+# En sandbox stty no puede cambiar el terminal: se pide a la app (marca invisible) que apague el eco.
+[ -n "$secret" ] && printf '\033]2;bastionaut-noecho\007' > "$tty" && sleep 0.2
 IFS= read -r answer < "$tty"
 result=$?
-[ -n "$secret" ] && { stty echo < "$tty"; printf '\n' > "$tty"; }
+[ -n "$secret" ] && printf '\033]2;bastionaut-echo\007\n' > "$tty"
 [ $result -eq 0 ] || exit 1
 printf '%s\n' "$answer"

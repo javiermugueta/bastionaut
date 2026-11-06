@@ -61,7 +61,9 @@ enum SSHCommands {
         let key = try InputCheck.singleLine(destination.privateKeyPath, name: "Clave privada de la instancia")
         try InputCheck.port(destination.port)
         let routed = try routeOptions(route, host: host, port: destination.port)
-        return (["ssh"] + embeddedOptions(embedded) + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
+        // Terminal integrado: al autenticarse, avisa a la app para que ponga el modo raw (ssh no puede en sandbox).
+        let raw = embedded ? ["-o", quote("PermitLocalCommand=yes"), "-o", quote(#"LocalCommand=printf '\033]2;bastionaut-raw\007'"#)] : []
+        return (["ssh"] + embeddedOptions(embedded) + raw + ["-i", quote(key), "-o", quote("IdentitiesOnly=yes")] + routed.options + [
             "-o", quote("ServerAliveInterval=30"),
             "-o", quote("ServerAliveCountMax=3"),
             "-p", String(routed.port), quote("\(user)@\(routed.host)")

@@ -1,4 +1,5 @@
 #if DEBUG
+import AppKit
 import Foundation
 import SwiftTerm
 
@@ -14,7 +15,59 @@ private final class PTYProbe: NSObject, LocalProcessTerminalViewDelegate {
 /// Autotest para comprobar la versión con sandbox: `OCIB_SANDBOX_SELFTEST=1` al lanzar el ejecutable.
 @MainActor
 enum SandboxSelfTest {
+    /// Abre dos ventanas de terminal, teclea con eventos reales de teclado y comprueba qué llega al proceso.
+    static func focusTestIfRequested() {
+        guard ProcessInfo.processInfo.environment["OCIB_TERMINAL_FOCUS_TEST"] == "1" else { return }
+        Task {
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            func typeText(_ text: String) {
+                for character in text {
+                    let chars = character == "\t" ? "\t" : String(character)
+                    let code: UInt16 = character == "\t" ? 48 : (character == "\r" ? 36 : 0)
+                    for type in [NSEvent.EventType.keyDown, .keyUp] {
+                        if let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: [], timestamp: 0,
+                                                        windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
+                                                        characters: chars, charactersIgnoringModifiers: chars,
+                                                        isARepeat: false, keyCode: code) {
+                            NSApp.sendEvent(event)
+                        }
+                    }
+                }
+            }
+            for round in 1...(ProcessInfo.processInfo.environment["OCIB_FOCUS_CMD"] == nil ? 2 : 1) {
+                TerminalWindows.shared.open(command: ProcessInfo.processInfo.environment["OCIB_FOCUS_CMD"] ?? "cat -vt", title: "prueba \(round)")
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                NSApp.activate(ignoringOtherApps: true)
+                NSApp.windows.first { $0.title.contains("prueba") }?.makeKeyAndOrderFront(nil)
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                let responder = NSApp.keyWindow?.firstResponder
+                print("ventana \(round): key=\(NSApp.keyWindow?.title ?? "nil") responder=\(responder.map { String(describing: type(of: $0)) } ?? "nil") activa=\(NSApp.isActive)")
+                if ProcessInfo.processInfo.environment["OCIB_FOCUS_RAW"] == "1",
+                   let view = NSApp.keyWindow?.contentView as? LocalProcessTerminalView {
+                    var tio = termios()
+                    let fd = view.process.childfd
+                    let got = tcgetattr(fd, &tio)
+                    cfmakeraw(&tio)
+                    let set = tcsetattr(fd, TCSANOW, &tio)
+                    print("  raw desde la app: get=\(got) set=\(set) errno=\(errno)")
+                }
+                for part in (ProcessInfo.processInfo.environment["OCIB_FOCUS_KEYS"] ?? "abc\t\r").split(separator: "¦") {
+                    typeText(String(part))
+                    try? await Task.sleep(nanoseconds: 800_000_000)
+                }
+                try? await Task.sleep(nanoseconds: 700_000_000)
+                if let view = NSApp.keyWindow?.contentView as? LocalProcessTerminalView ?? (NSApp.keyWindow?.firstResponder as? LocalProcessTerminalView) {
+                    let text = String(decoding: view.getTerminal().getBufferAsData(), as: UTF8.self)
+                    print("  pantalla: \(text.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\n", with: " | "))")
+                }
+            }
+            exit(0)
+        }
+    }
+
     static func runIfRequested() {
+        focusTestIfRequested()
         guard ProcessInfo.processInfo.environment["OCIB_SANDBOX_SELFTEST"] == "1" else { return }
         Task {
             func report(_ name: String, _ ok: Bool, _ detail: String = "") { print("\(ok ? "✅" : "❌") \(name) \(detail)") }
