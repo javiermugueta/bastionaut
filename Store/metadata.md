@@ -177,38 +177,24 @@ First release of Bastionaut. 🚀
 
 ## Notas para la revisión de Apple (App Review Information › Notes)
 
-En inglés, que es lo que lee el equipo de revisión. Responde a los 6 puntos que pidió Apple (Guideline 2.1, nov. 2026); máximo 4000 caracteres. Sustituir `<VIDEO_URL>` por el enlace al vídeo:
+En inglés, que es lo que lee el equipo de revisión:
 
 ```
-1. SCREEN RECORDING
-Recorded on a Mac (Apple silicon) running the latest macOS, starting from launching the app: <VIDEO_URL>
-It shows the typical flow with a real OCI account: launch, Connect 🚀 (bastion session created, SOCKS5 tunnel ready with countdown), Open SSH (built-in terminal connected to a private server), Open tunnel (localhost port forwarded to a private server), then the sample-data demo mode. The app has no account registration, no user-generated content and no paid content.
+Bastionaut is a client for the Oracle Cloud Infrastructure (OCI) Bastion service. Using it for real requires an OCI tenancy with an API key and a Bastion resource.
 
-2. PURPOSE AND AUDIENCE
-Bastionaut is for developers, DevOps engineers and system administrators who use Oracle Cloud Infrastructure (OCI). Their servers live in private networks with no public IP; the official way in is the OCI Bastion service, which requires creating a session, uploading a temporary SSH key, waiting for it, building a long ssh command and renewing the session before it expires (max 3 h). Bastionaut does all of that with one click, renews and reconnects automatically, and explains errors (e.g. the user's IP not allowed by the bastion). It is a general-purpose tool for any OCI customer, not for a specific company.
+TO REVIEW WITHOUT AN OCI ACCOUNT, use the built-in demo mode:
+1. On first launch, the welcome assistant shows "Try with sample data" (also on the empty screen and in Help › Try with sample data).
+2. The app loads sample connections, servers and tunnels in memory. A purple "Demo mode" banner is always visible.
+3. Press "Connect 🚀": the app walks through the real steps (session request, OCI preparing it, tunnel ready with its countdown) in a simulated way. "Open SSH" / "Open tunnel" explain what they would do; "Copy" copies the real command; Help and Settings work normally.
+4. "Exit demo" restores the user's real configuration. Nothing is saved, no network connection is made and no process is launched in demo mode.
 
-3. SETUP AND ACCESS
-No login to our own service exists. Real use needs the user's own OCI tenancy: in the OCI console the user creates an API key, pastes the configuration snippet into the welcome assistant and picks the .pem key; the app then lists the bastions and the user adds servers (private IP, user, SSH key).
-To review without an OCI account, use the built-in demo mode: on first launch choose "Try with sample data" (also on the empty screen and in Help). It loads sample connections, servers and tunnels in memory with a purple "Demo mode" banner; Connect 🚀 simulates the real steps; "Exit demo" restores the real configuration. Nothing is saved and no network connection is made in demo mode.
+All real OCI calls go directly to the official OCI REST API with the user's own API key, which is stored in the macOS Keychain. The app collects no data.
 
-4. EXTERNAL SERVICES
-- Oracle Cloud Infrastructure REST APIs of the user's own tenancy (Identity: regions, tenancies, compartments; Resource Search; Bastion: bastions and sessions), signed with the user's API key stored in the macOS Keychain.
-- OCI Bastion SSH endpoint (host.bastion.<region>.oci.oraclecloud.com), through macOS's built-in /usr/bin/ssh.
-- checkip.amazonaws.com, only when the user presses "Is my IP allowed?".
-- SwiftTerm (open-source MIT library, bundled) for the built-in terminal.
-No authentication provider, payments, analytics, advertising or AI services. The app collects no data.
-
-5. REGIONS
-The app works the same in all regions and countries. It supports every OCI region; the UI is in English and Spanish.
-
-6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
-Not applicable. Bastionaut is an independent app that uses Oracle's public, documented APIs with the user's own credentials; it is not affiliated with Oracle and contains no protected third-party content. It is based on the open-source project by Israel Gutiérrez (github.com/israelgoracle/OCIBastion_MacOs), improved by Javier Mugueta.
-
-ENTITLEMENTS
-- network.client: OCI REST API and SSH to the bastion.
-- network.server: core feature. The app runs /usr/bin/ssh (child process, inherits the sandbox) with -D (SOCKS5) or -L; that ssh listens on 127.0.0.1:<port> so the user's tools (database client, browser, ssh) connect to localhost and reach a private cloud server. Loopback only. Without it tunnels fail with "bind: Operation not permitted". Seen in the video: Connect 🚀 (localhost:1080) and Open tunnel.
-- files.user-selected.read-write: importing the API key and SSH keys, exporting/importing settings, via open/save panels.
-No Apple Events: "Open SSH" opens a terminal window inside the app.
+Entitlements:
+- com.apple.security.network.client: OCI REST API and SSH connections to the Bastion.
+- com.apple.security.network.server: the app's core feature is SSH port forwarding through an OCI Bastion. The app launches /usr/bin/ssh as a child process (which inherits the sandbox) with -D (SOCKS5) or -L (local forwarding); that ssh process binds a listening socket on 127.0.0.1:<port> so the user's own tools (database client, browser, ssh) can connect to localhost and reach a private server in their cloud network. The app itself also binds 127.0.0.1 briefly to check that the chosen local port is free. Without this entitlement the tunnels cannot listen and the app cannot work. Where to see it: Connect 🚀 creates the SOCKS5 tunnel on localhost (default port 1080); a server's "Open tunnel" forwards e.g. localhost:5432.
+- com.apple.security.files.user-selected.read-write: importing the user's API key (.pem) and SSH keys, and exporting/importing connection settings, always through the open/save panels.
+- No Apple Events / temporary exceptions: "Open SSH" now opens a terminal window inside the app itself.
 ```
 
 **Información de contacto para la revisión**: nombre, teléfono y email de contacto (los pide App Store Connect).
