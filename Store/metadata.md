@@ -185,14 +185,15 @@ Bastionaut is a client for the Oracle Cloud Infrastructure (OCI) Bastion service
 TO REVIEW WITHOUT AN OCI ACCOUNT, use the built-in demo mode:
 1. On first launch, the welcome assistant shows "Try with sample data" (also on the empty screen and in Help › Try with sample data).
 2. The app loads sample connections, servers and tunnels in memory. A purple "Demo mode" banner is always visible.
-3. Press "Connect 🚀": the app walks through the real steps (session request, OCI preparing it, tunnel ready with its countdown) in a simulated way. "Open SSH" / "Open tunnel" explain what they would do; "Copy" copies the real command; Help and Settings work normally.
-4. "Exit demo" restores the user's real configuration. Nothing is saved, no network connection is made and no process is launched in demo mode.
+3. Press "Connect 🚀": the app walks through the real steps (session request, OCI preparing it, tunnel ready with its countdown) in a simulated way. "Open SSH" explains what it would do; "Copy" copies the real command; Help and Settings work normally.
+4. To see the network.server entitlement in use: on the "Oracle Database" or "Grafana" tunnel press "Open tunnel". The app really listens on 127.0.0.1 (localhost:11521 / localhost:13000) and opens that address in the browser, which shows a sample page served through the local port. With a real OCI account the listener is the ssh -L process and the traffic goes through the OCI Bastion.
+5. "Exit demo" restores the user's real configuration and closes the local ports. Nothing is saved, no connection to Oracle Cloud is made and no process is launched in demo mode.
 
 All real OCI calls go directly to the official OCI REST API with the user's own API key, which is stored in the macOS Keychain. The app collects no data.
 
 Entitlements:
 - com.apple.security.network.client: OCI REST API and SSH connections to the Bastion.
-- com.apple.security.network.server: the app's core feature is SSH port forwarding through an OCI Bastion. The app launches /usr/bin/ssh as a child process (which inherits the sandbox) with -D (SOCKS5) or -L (local forwarding); that ssh process binds a listening socket on 127.0.0.1:<port> so the user's own tools (database client, browser, ssh) can connect to localhost and reach a private server in their cloud network. The app itself also binds 127.0.0.1 briefly to check that the chosen local port is free. Without this entitlement the tunnels cannot listen and the app cannot work. Where to see it: Connect 🚀 creates the SOCKS5 tunnel on localhost (default port 1080); a server's "Open tunnel" forwards e.g. localhost:5432.
+- com.apple.security.network.server: the app's core feature is SSH port forwarding through an OCI Bastion. The app launches /usr/bin/ssh as a child process (which inherits the sandbox) with -D (SOCKS5) or -L (local forwarding); that ssh process binds a listening socket on 127.0.0.1:<port> so the user's own tools (database client, browser, ssh) can connect to localhost and reach a private server in their cloud network. The app itself also binds 127.0.0.1 briefly to check that the chosen local port is free. Without this entitlement the tunnels cannot listen and the app cannot work. Where to see it: Connect 🚀 creates the SOCKS5 tunnel on localhost (default port 1080); a server's "Open tunnel" forwards e.g. localhost:5432. Without an OCI account, see step 4 of the demo mode above.
 - com.apple.security.files.user-selected.read-write: importing the user's API key (.pem) and SSH keys, and exporting/importing connection settings, always through the open/save panels.
 - No Apple Events / temporary exceptions: "Open SSH" now opens a terminal window inside the app itself.
 ```

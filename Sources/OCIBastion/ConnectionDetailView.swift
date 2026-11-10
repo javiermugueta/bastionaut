@@ -19,7 +19,7 @@ struct ConnectionDetailView: View {
                         IconTile(symbol: "gamecontroller.fill", color: .purple, size: 40)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Modo demostración 🎮").font(.headline)
-                            Text("Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda, pero nada se conecta de verdad ni se guarda.")
+                            Text("Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda. No se conecta a Oracle Cloud ni se guarda nada; «Abrir túnel» escucha de verdad en localhost y te enseña una página de ejemplo.")
                                 .font(.callout).foregroundStyle(.secondary)
                         }
                         Spacer()

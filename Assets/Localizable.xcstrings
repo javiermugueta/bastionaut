@@ -262,6 +262,16 @@
         }
       }
     },
+    "Al desconectar o salir de la demo, el puerto se cierra.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you disconnect or exit the demo, the port is closed."
+          }
+        }
+      }
+    },
     "Al perfil «%@» le falta el campo «%@».": {
       "localizations": {
         "en": {
@@ -790,6 +800,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Make sure your public IP is in the bastion’s allowed IP list (OCI console › Bastion › Edit). If you go through a proxy or VPN, its egress IP is what counts."
+          }
+        }
+      }
+    },
+    "Con una cuenta de Oracle Cloud, en este puerto escucha el ssh que lanza Bastionaut y cada conexión viaja por el Bastion de OCI hasta %@:%@, un servidor privado de tu red en la nube.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Con una cuenta de Oracle Cloud, en este puerto escucha el ssh que lanza Bastionaut y cada conexión viaja por el Bastion de OCI hasta %1$@:%2$@, un servidor privado de tu red en la nube."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With an Oracle Cloud account, the ssh launched by Bastionaut listens on this port and every connection travels through the OCI Bastion to %@:%@, a private server in your cloud network."
           }
         }
       }
@@ -1456,6 +1482,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "This connection has no OCI account. Pick one with the assistant ✨."
+          }
+        }
+      }
+    },
+    "Esta página llega a través de localhost:%@. La sirve el modo demostración de Bastionaut, que está escuchando de verdad en 127.0.0.1.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This page reaches you through localhost:%@. It is served by Bastionaut's demo mode, which is really listening on 127.0.0.1."
           }
         }
       }
@@ -2318,6 +2354,16 @@
         }
       }
     },
+    "No pude abrir ningún puerto en localhost para «%@».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I couldn't open any port on localhost for “%@”."
+          }
+        }
+      }
+    },
     "No puedo usar la clave de API de OCI: %@": {
       "localizations": {
         "en": {
@@ -2717,12 +2763,12 @@
         }
       }
     },
-    "Prueba la app con datos de ejemplo. No se conecta nada de verdad.": {
+    "Prueba la app con datos de ejemplo, sin conectarte a Oracle Cloud.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Try the app with sample data. Nothing really connects."
+            "value": "Try the app with sample data, without connecting to Oracle Cloud."
           }
         }
       }
@@ -3172,12 +3218,12 @@
         }
       }
     },
-    "Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda, pero nada se conecta de verdad ni se guarda.": {
+    "Son datos de ejemplo: puedes conectar, abrir servidores y túneles y ver la ayuda. No se conecta a Oracle Cloud ni se guarda nada; «Abrir túnel» escucha de verdad en localhost y te enseña una página de ejemplo.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This is sample data: you can connect, open servers and tunnels and browse the help, but nothing really connects or gets saved."
+            "value": "This is sample data: you can connect, open servers and tunnels and browse the help. Nothing connects to Oracle Cloud and nothing is saved; “Open tunnel” really listens on localhost and shows you a sample page."
           }
         }
       }
@@ -3340,6 +3386,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your servers 🖥️"
+          }
+        }
+      }
+    },
+    "Túnel de ejemplo: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample tunnel: %@"
           }
         }
       }
@@ -4193,6 +4249,22 @@
     "🎮": {
       "shouldTranslate": false
     },
+    "🎮 %@: escuchando de verdad en 127.0.0.1:%@ con una página de ejemplo": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "new",
+            "value": "🎮 %1$@: escuchando de verdad en 127.0.0.1:%2$@ con una página de ejemplo"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎮 %@: really listening on 127.0.0.1:%@ with a sample page"
+          }
+        }
+      }
+    },
     "🎮 Demo: aquí se abriría el terminal ya conectado a «%@»": {
       "localizations": {
         "en": {
@@ -4203,28 +4275,22 @@
         }
       }
     },
-    "🎮 Demo: aquí tendrías localhost:%@ → %@:%@": {
+    "🎮 Demo: túnel abierto en localhost:%@; lo abro en el navegador 🌐": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🎮 Demo: you’d now have localhost:%@ → %@:%@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "new",
-            "value": "🎮 Demo: aquí tendrías localhost:%1$@ → %2$@:%3$@"
+            "value": "🎮 Demo: tunnel open on localhost:%@; opening it in your browser 🌐"
           }
         }
       }
     },
-    "🎮 Modo demostración: datos de ejemplo, nada se conecta de verdad": {
+    "🎮 Modo demostración: datos de ejemplo; los túneles escuchan de verdad en localhost con una página de ejemplo": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "🎮 Demo mode: sample data, nothing really connects"
+            "value": "🎮 Demo mode: sample data; tunnels really listen on localhost with a sample page"
           }
         }
       }

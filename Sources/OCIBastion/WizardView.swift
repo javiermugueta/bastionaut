@@ -637,7 +637,7 @@ struct DemoOffer: View {
             Text("🎮").font(.title)
             VStack(alignment: .leading, spacing: 2) {
                 Text("¿Sin cuenta de OCI a mano?").font(.headline)
-                Text("Prueba la app con datos de ejemplo. No se conecta nada de verdad.").font(.callout).foregroundStyle(.secondary)
+                Text("Prueba la app con datos de ejemplo, sin conectarte a Oracle Cloud.").font(.callout).foregroundStyle(.secondary)
             }
             Spacer()
             Button("Probar con datos de ejemplo", action: action).buttonStyle(SoftButtonStyle(tint: .purple))

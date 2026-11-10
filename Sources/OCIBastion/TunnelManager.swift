@@ -68,10 +68,12 @@ final class TunnelManager {
     // MARK: Modo demostración
 
     /// Datos de ejemplo en memoria (para probar la app sin cuenta de OCI y para la revisión de Apple).
-    /// La configuración real queda apartada: no se guarda nada ni se lanza ningún proceso.
+    /// La configuración real queda apartada: no se guarda nada ni se lanza ningún proceso. Los túneles a puertos sí
+    /// escuchan de verdad en 127.0.0.1 con una página de ejemplo (DemoTunnelServer), para verlos funcionar.
     private(set) var isDemo = false
     @ObservationIgnored private var realSettings: Settings?
     @ObservationIgnored private var demoTasks: [UUID: Task<Void, Never>] = [:]
+    @ObservationIgnored private let demoServer = DemoTunnelServer()
 
     func enterDemo(scene: String? = nil) {
         guard !isDemo, !isRunning else { return }
@@ -104,7 +106,7 @@ final class TunnelManager {
             demoRunner(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name)
                 .showcase(state: .connected, localPort: tunnel.localPort, expiresAt: expires.addingTimeInterval(900), command: Showcase.command(port: tunnel.localPort, host: tunnel.remoteHost, remotePort: tunnel.remotePort))
         default:
-            record(String(localized: "🎮 Modo demostración: datos de ejemplo, nada se conecta de verdad"))
+            record(String(localized: "🎮 Modo demostración: datos de ejemplo; los túneles escuchan de verdad en localhost con una página de ejemplo"))
         }
     }
 
@@ -112,6 +114,7 @@ final class TunnelManager {
         guard isDemo else { return }
         demoTasks.values.forEach { $0.cancel() }
         demoTasks = [:]
+        demoServer.stopAll()
         portRunners = [:]
         socksRunner = nil
         bastionDetails = nil
@@ -134,11 +137,13 @@ final class TunnelManager {
     }
 
     /// Recorre los mismos pasos que una conexión real, sin red, y deja el túnel «conectado».
-    private func demoConnect(id: UUID, host: String, port: Int, name: String, localPort: Int?) -> Task<Void, Never> {
+    /// Con `serve`, el túnel (sin servidor SSH) escucha de verdad en su puerto local con la página de ejemplo.
+    private func demoConnect(id: UUID, host: String, port: Int, name: String, localPort: Int?,
+                             serve tunnel: LocalTunnel? = nil) -> Task<Void, Never> {
         if let running = demoTasks[id] { return running }
         let runner = demoRunner(id: id, host: host, port: port, name: name)
         runner.showcase(state: .working(String(localized: "Calentando motores 🔥")), localPort: nil, expiresAt: nil, command: nil)
-        let local = localPort ?? Int.random(in: 52000...52999)
+        var local = localPort ?? Int.random(in: 52000...52999)
         let task = Task { @MainActor [weak self] in
             @MainActor func step(_ state: TunnelState, _ seconds: Double) async -> Bool {
                 runner.showcase(state: state, localPort: nil, expiresAt: nil, command: nil)
@@ -152,6 +157,10 @@ final class TunnelManager {
                 guard await step(.working(String(localized: "OCI está preparando la sesión ☕️ · \(elapsed) s")), 0.5) else { return }
             }
             guard await step(.working(String(localized: "Llamando a la puerta del Bastion 🚪")), 0.6) else { return }
+            if let tunnel, let self {
+                guard let served = await self.demoServe(tunnel), !Task.isCancelled else { return }
+                local = served
+            }
             runner.showcase(state: .connected, localPort: local, expiresAt: Date().addingTimeInterval(3 * 3600),
                             command: Showcase.command(port: local, host: host, remotePort: port))
             self?.record(String(localized: "🎉 \(name): túnel listo en 127.0.0.1:\(String(local))"))
@@ -168,7 +177,8 @@ final class TunnelManager {
         }
         for tunnel in settings.tunnels ?? [] {
             _ = tunnel.isDirect
-                ? demoConnect(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name, localPort: tunnel.localPort)
+                ? demoConnect(id: tunnel.id, host: tunnel.remoteHost, port: tunnel.remotePort, name: tunnel.name,
+                              localPort: tunnel.localPort, serve: tunnel)
                 : demoConnect(id: tunnel.id, host: tunnel.host, port: tunnel.sshPort, name: tunnel.name, localPort: nil)
         }
     }
@@ -177,9 +187,38 @@ final class TunnelManager {
         let targets = id.map { [$0] } ?? Array(portRunners.keys)
         for target in targets {
             demoTasks.removeValue(forKey: target)?.cancel()
+            demoServer.stop(id: target)
             portRunners[target]?.showcase(state: .idle, localPort: nil, expiresAt: nil, command: nil)
         }
         if id == nil { record(String(localized: "👋 Desconectado")) }
+    }
+
+    /// Pone a escuchar el túnel de ejemplo en 127.0.0.1 (en su puerto o, si está ocupado, en otro libre).
+    private func demoServe(_ tunnel: LocalTunnel) async -> Int? {
+        let name = tunnel.name.isEmpty ? tunnel.remoteHost : tunnel.name
+        if let port = demoServer.port(for: tunnel.id) { return port }
+        let page = DemoTunnelServer.page(name: name, localPort: tunnel.localPort, remoteHost: tunnel.remoteHost, remotePort: tunnel.remotePort)
+        guard let port = await demoServer.serve(id: tunnel.id, preferredPort: tunnel.localPort, page: page) else {
+            report(BastionError.message(String(localized: "No pude abrir ningún puerto en localhost para «\(name)».")))
+            return nil
+        }
+        record(String(localized: "🎮 \(name): escuchando de verdad en 127.0.0.1:\(String(port)) con una página de ejemplo"))
+        return port
+    }
+
+    /// «Abrir túnel» en la demo: conecta si hace falta, escucha en localhost y lo abre en el navegador.
+    private func demoOpenTunnel(_ tunnel: LocalTunnel) {
+        let direct = tunnel.isDirect
+        let task = portRunners[tunnel.id]?.state.isConnected == true ? nil
+            : demoConnect(id: tunnel.id, host: direct ? tunnel.remoteHost : tunnel.host, port: direct ? tunnel.remotePort : tunnel.sshPort,
+                          name: tunnel.name, localPort: direct ? tunnel.localPort : nil, serve: direct ? tunnel : nil)
+        Task {
+            await task?.value
+            guard portRunners[tunnel.id]?.state.isConnected == true, let port = await demoServe(tunnel),
+                  let url = URL(string: "http://localhost:\(port)/") else { return }
+            NSWorkspace.shared.open(url)
+            showToast(String(localized: "🎮 Demo: túnel abierto en localhost:\(String(port)); lo abro en el navegador 🌐"))
+        }
     }
 
     private func demoOpen(id: UUID, host: String, port: Int, name: String, localPort: Int?, message: @escaping (Int) -> String) {
@@ -719,13 +758,7 @@ final class TunnelManager {
     }
 
     func openLocalTunnel(_ tunnel: LocalTunnel) {
-        if isDemo {
-            let direct = tunnel.isDirect
-            return demoOpen(id: tunnel.id, host: direct ? tunnel.remoteHost : tunnel.host, port: direct ? tunnel.remotePort : tunnel.sshPort,
-                            name: tunnel.name, localPort: direct ? tunnel.localPort : nil) { _ in
-                String(localized: "🎮 Demo: aquí tendrías localhost:\(String(tunnel.localPort)) → \(tunnel.remoteHost):\(String(tunnel.remotePort))")
-            }
-        }
+        if isDemo { return demoOpenTunnel(tunnel) }
         if tunnel.isDirect { return openDirectTunnel(tunnel) }
         do { try SSHKeys.requireReadable(tunnel.privateKeyPath) } catch { return report(error) }
         Task {

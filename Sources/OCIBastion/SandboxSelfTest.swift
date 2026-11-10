@@ -125,6 +125,13 @@ enum SandboxSelfTest {
                 }
             }
             report("terminal integrado (PTY + ssh)", code == 0, "código \(code.map(String.init) ?? "?")")
+            let demo = DemoTunnelServer()
+            if let port = await demo.serve(id: UUID(), preferredPort: 13000, page: "demo-ok"),
+               let url = URL(string: "http://localhost:\(port)/") {
+                let body = try? await URLSession(configuration: .ephemeral).data(from: url)
+                report("túnel de la demo escucha en 127.0.0.1", body.map { String(decoding: $0.0, as: UTF8.self) } == "demo-ok", "puerto \(port)")
+            } else { report("túnel de la demo escucha en 127.0.0.1", false) }
+            demo.stopAll()
             let api = try? await URLSession.shared.data(from: URL(string: "https://identity.eu-madrid-1.oci.oraclecloud.com/20160918/regions")!)
             report("red hacia la API de OCI", (api?.1 as? HTTPURLResponse) != nil, "HTTP \((api?.1 as? HTTPURLResponse)?.statusCode ?? 0)")
             exit(0)
